@@ -1,3 +1,20 @@
 body {
     background-repeat: no-repeat; /* prevents multiple repeats of the image */
+    background-image: url("cloud.png");
+    background-color: #333333;
+    font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
+}
+
+input {
+    background-color: transparent
+    border: 0
+    border-bottom: 2px solid $tundora
+    color: white
+    font-size: 36px
+    letter-spacing: -1px
+    outline: 0
+    padding: 5px 20px
+    text-align: center
+    transition: all 0.3s
+    width: 200px
 }
