@@ -18,6 +18,7 @@ class LoginRegistration {
         this.expanded = false;
         this.clicks = 0;
     }
+
     createMainDiv() {
         var self = this;
         $("body").append("<div class = movable id = login></div>");
@@ -88,25 +89,27 @@ class LoginRegistration {
     }
 
     cssText() {
-        $(".box").css("border-radius", "0%");
-        $(".box").css("position", "relative");
+        $(".box").css("border-radius", "0%"); // no circular boxes, edgy boxes only
+        $(".box").css("position", "relative"); // movable element
         $(".box").css("height", "30px").css("width", "50%").css("font-size", "18px");
-        $(".box").css("background", "transparent");
-        $(".box").css("color", "white").css("border", "none");
-        $(".box").css("border-bottom", "1px solid white");
-        $(".box").focusin(function() { $(this).attr("placeholder", "");});
+        $(".box").css("background", "transparent"); // makes the background transparent of the text boxes
+        $(".box").css("color", "white").css("border", "none"); // color of the text is white and contains no borders
+        $(".box").css("border-bottom", "1px solid white"); // only contains a bottom border which is white
+        $(".box").focusin(function() { $(this).attr("placeholder", "");}); // adds a placeholder name when focused in
         $("#name").focusout(function() { $(this).attr("placeholder", "              username"); });
         $("#password").focusout(function() { $(this).attr("placeholder", "              password");});
-        $("#name").css("top", "20px");
-        $("#password").css("top", "50px");
+        $("#name").css("top", "20px"); // changing position
+        $("#password").css("top", "50px"); // changing position
     }
 
     cssButtonSubmit() {
+        // position and dimension change
         $("#submit").css("position", "relative");
         $("#submit").css("top", "110px");
         $("#submit").css("border-radius", "0px");
         $("#submit").css("height", "45px");
         $("#submit").css("width", "200px");
+        // looks and definition
         $("#submit").css("background", "white");
         $("#submit").css("box-shadow", "rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0");
         $("#submit").css("text-shadow", "#545759 0 1px 0");
@@ -115,8 +118,9 @@ class LoginRegistration {
         $("#submit").css("font-family", "helvetica, serif");
         $("#submit").css("text-decoration", "none");
         $("#submit").css("vertical-align", "middle");
-        $("#submit").css("cursor", "pointer");
+        $("#submit").css("cursor", "pointer"); // changes the cursor to a pointer
 
+        // on mouse over change properties
         $("#submit").on("mouseover", function() {
             $("#submit").css("border", "0px solid #4e565e");
             $("#submit").css("text-shadow", "#8c9aa3 0 1px 0");
@@ -125,6 +129,7 @@ class LoginRegistration {
             $("#submit").css("color", "#ebebeb");
         });
 
+        // on mouse out change property back to default
         $("#submit").on("mouseout", function() {
             $("#submit").css("border", "none");
             $("#submit").css("text-shadow", "#545759 0 1px 0");
@@ -141,7 +146,7 @@ class LoginRegistration {
         $(cls).css("border", "1px black solid");
         $(cls).css("position", "fixed");
         $(cls).css("background", "#333333");
-        $(cls).css("box-shadow", "2px 0px 4px grey");
+        $(cls).css("box-shadow", "2px 0px 4px grey"); // adds a shadow to the box divs
         $(cls).css("height", "70px");
         $(cls).css("width", "150px");
         $(cls).css("border-radius", "2%");
