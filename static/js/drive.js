@@ -43,16 +43,21 @@ class LoginRegistration {
 		// to the cross div that gets dynamically added
 		var self = this;
 		if (!this.expanded && this.clicks % 2 != 0) {
-			if (divId == "#login") $(divId).animate({right: '300px', top: '200px', height: '420px', width: '400px'});
-			else $(divId).animate({left: '580px', top: '200px', height: '420px', width: '400px'});
+			if (divId == "#login") $(divId).animate({left: '450px', top: '5px', height: '700px', width: '700px'});
+			else $(divId).animate({left: '480px', top: '5px', height: '700px', width: '700px'});
 			$(divId).css("z-index", "1"); // z-index specifies the stack order of an element
 											// an element with a higher stack order is always on top the other element
 			$(divId).append("<img id = close-icon src = 'static/imgs/close.png'></img>");
 
 			this.createTextFields(divId);
 
-			$("#close-icon").css("height", "5%").css("width", "5%").css("position", "relative").css("bottom", "50px").css("left", "175px");
-
+			$("#close-icon").css("height", "1.5%").css("width", "1.5%").css("position", "relative").css("top", "240px").css("left", "150px");
+			
+			if (divId == "#login") {
+				$("#l").css("top", "230px").css("right", "100px");
+			} else {
+				$("#r").css("top", "230px").css("right", "100px");
+			}
 
 			// attaches the event handler to the cross icon
 			$("#close-icon").on("click", function() {
@@ -72,17 +77,17 @@ class LoginRegistration {
 			$(divId).animate({left: '600px', top: '250px', height: '200px', width: '200'});
 			$(divId).css("z-index", "0"); // z-index specifies the stack order of an element
 										// an element with a higher stack order is always on top the other element
+			$("#l").css("top", "80px").css("right", "0px");								
 		} else {
 			$(divId).animate({left: '800px', top: '250px', height: '200px', width: '200'});
 			$(divId).css("z-index", "0"); // z-index specifies the stack order of an element
+			$("#r").css("top", "80px").css("right", "0px");	
 		}
 		$("input").remove();
 		$("button").remove();
 		$("#close-icon").remove(); // the close icon should be also responsible for deleting itself and should be inside the body
 								   // of the close event handler
 	}
-
-
 
 	createTextFields(divId) {
 		$(divId).append("<div><input class = box id = name type = text placeholder = '              username'></input><div>");
@@ -94,6 +99,7 @@ class LoginRegistration {
 	}
 
 	submitForm(divId) {
+		var self = this;
 		$("#submit").on("click", function() {
 			var dataToSend = {};
 			dataToSend.username = $("#name").val();
@@ -101,8 +107,16 @@ class LoginRegistration {
 			dataToSend.which = divId;
 			$.ajax({
 				url: "/authenticate",
+				dataType: "text",
 				type: "POST",
 				data: dataToSend,
+				success: function(data) {
+					if (data === "0") {
+						$("#name").css("border-bottom", "1px solid #ff3333");
+					} else {
+						self.collapse(divId);
+					}
+				}
 			})
 		})
 	}
@@ -117,14 +131,14 @@ class LoginRegistration {
 		$(".box").focusin(function() { $(this).attr("placeholder", "");}); // adds a placeholder name when focused in
 		$("#name").focusout(function() { $(this).attr("placeholder", "              username"); });
 		$("#password").focusout(function() { $(this).attr("placeholder", "              password");});
-		$("#name").css("top", "20px"); // changing position
-		$("#password").css("top", "50px"); // changing position
+		$("#name").css("top", "250px"); // changing position
+		$("#password").css("top", "280px"); // changing position
 	}
 
 	cssButtonSubmit() {
 		// position and dimension change
 		$("#submit").css("position", "relative");
-		$("#submit").css("top", "110px");
+		$("#submit").css("top", "350px").css("right", "75px");
 		$("#submit").css("border-radius", "0px");
 		$("#submit").css("height", "45px");
 		$("#submit").css("width", "200px");
@@ -163,9 +177,9 @@ class LoginRegistration {
 		var register = "#register";
 		var l = "#l";
 		var r = "#r";
-		$(cls).css("background-image", "url(static/imgs/cloud-3.png)");
-		$(cls).css("background-repeat", "no-repeat");
-		$(cls).css("background-size", "contain");		
+		$(cls).css("background-image", "url(static/imgs/cloud-3.png)"); // images for the div
+		$(cls).css("background-repeat", "no-repeat"); // prevents image from repeating to fill background
+		$(cls).css("background-size", "contain"); // allows the background image to be filled around the div
 		$(cls).css("text-align", "center");
 		$(cls).css("border", "none");
 		$(cls).css("position", "fixed");
