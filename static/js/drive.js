@@ -96,6 +96,7 @@ class LoginRegistration {
 		this.cssText();
 		this.cssButtonSubmit();
 		this.submitForm(divId);
+		this.nameCheck(divId);
 	}
 
 	submitForm(divId) {
@@ -119,6 +120,32 @@ class LoginRegistration {
 				}
 			})
 		})
+	}
+
+	nameCheck(divId) {
+		var reqBody = {};
+		if (divId === "#register") {
+			$("#name").on("keyup", function() {
+				reqBody.val = $("#name").val();
+				if (reqBody.val === "") {
+					$("#name").css("border-bottom", "1px solid white");
+					return;
+				}
+				$.ajax({
+					url: "/nameCheck",
+					type: "POST",
+					dataType: "text",
+					data: reqBody,
+					success: function(data) {
+						if (data === "0") {
+							$("#name").css("border-bottom", "1px solid #ff3333");
+						} else {
+							$("#name").css("border-bottom", "1px solid #4dff4d");
+						}
+					}
+				})
+			});
+		}
 	}
 
 	cssText() {
