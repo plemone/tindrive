@@ -51,7 +51,7 @@ class LoginRegistration {
 
 			this.createTextFields(divId);
 
-			$("#close-icon").css("height", "1.5%").css("width", "1.5%").css("position", "relative").css("top", "240px").css("left", "150px");
+			$("#close-icon").css("height", "1.5%").css("width", "1.5%").css("position", "relative").css("top", "240px").css("left", "135px");
 			
 			if (divId == "#login") {
 				$("#l").css("top", "230px").css("right", "100px");
@@ -65,14 +65,13 @@ class LoginRegistration {
 								 // as one of the condition is that you only expand if and only if it is even so the next time you click
 								// has to be the time when it is actually even as 1 + 1 = 2, and when you lick again it will be 3 allowing this
 								// function to be executed
-				self.collapse(divId);
-				self.expanded = false;
+				self.collapse(divId, self);
 			}); // attaching event handler
 			this.expanded = true;
 		}
 	}
 
-	collapse(divId) {
+	collapse(divId, self) {
 		if (divId == "#login") {
 			$(divId).animate({left: '600px', top: '250px', height: '200px', width: '200'});
 			$(divId).css("z-index", "0"); // z-index specifies the stack order of an element
@@ -84,41 +83,56 @@ class LoginRegistration {
 			$("#r").css("top", "80px").css("right", "0px");	
 		}
 		$("input").remove();
-		$("button").remove();
+		// $("button").remove();
 		$("#close-icon").remove(); // the close icon should be also responsible for deleting itself and should be inside the body
 								   // of the close event handler
+		self.expanded = false;								   
 	}
 
 	createTextFields(divId) {
 		$(divId).append("<div><input class = box id = name type = text placeholder = '              username'></input><div>");
 		$(divId).append("<div><input class = box id = password type = password placeholder = '              password'></input><div>");
-		$(divId).append("<button id = submit>submit</button>");
+		// $(divId).append("<button id = submit>submit</button>");
 		this.cssText();
-		this.cssButtonSubmit();
+		//this.cssButtonSubmit();
 		this.submitForm(divId);
 		this.nameCheck(divId);
 	}
 
 	submitForm(divId) {
 		var self = this;
-		$("#submit").on("click", function() {
-			var dataToSend = {};
-			dataToSend.username = $("#name").val();
-			dataToSend.password = $("#password").val();
-			dataToSend.which = divId;
-			$.ajax({
-				url: "/authenticate",
-				dataType: "text",
-				type: "POST",
-				data: dataToSend,
-				success: function(data) {
-					if (data === "0") {
-						$("#name").css("border-bottom", "1px solid #ff3333");
-					} else {
-						self.collapse(divId);
+		$(divId).on("keypress", function(event) {
+			if (event.keyCode === 13) {
+				var dataToSend = {};
+				dataToSend.username = $("#name").val();
+				dataToSend.password = $("#password").val();
+				dataToSend.which = divId;
+				$.ajax({
+					url: "/authenticate",
+					dataType: "text",
+					type: "POST",
+					data: dataToSend,
+					success: function(data) {
+						if (data === "0") {
+							$("#name").css("border-bottom", "1px solid #ff3333");
+						} else {
+							self.collapse(divId, self);
+
+
+
+
+
+							// MAKE MAJOR CHANGES HERE
+
+
+
+
+
+
+						}
 					}
-				}
-			})
+				})
+			}
 		})
 	}
 
@@ -151,7 +165,7 @@ class LoginRegistration {
 	cssText() {
 		$(".box").css("border-radius", "0%"); // no circular boxes, edgy boxes only
 		$(".box").css("position", "relative"); // movable element
-		$(".box").css("height", "30px").css("width", "50%").css("font-size", "18px");
+		$(".box").css("height", "28px").css("width", "40%").css("right", "5%").css("font-size", "18px");
 		$(".box").css("background", "transparent"); // makes the background transparent of the text boxes
 		$(".box").css("color", "white").css("border", "none"); // color of the text is white and contains no borders
 		$(".box").css("border-bottom", "1px solid white"); // only contains a bottom border which is white
@@ -162,41 +176,41 @@ class LoginRegistration {
 		$("#password").css("top", "280px"); // changing position
 	}
 
-	cssButtonSubmit() {
-		// position and dimension change
-		$("#submit").css("position", "relative");
-		$("#submit").css("top", "350px").css("right", "75px");
-		$("#submit").css("border-radius", "0px");
-		$("#submit").css("height", "45px");
-		$("#submit").css("width", "200px");
-		// looks and definition
-		$("#submit").css("background", "white");
-		$("#submit").css("box-shadow", "rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0");
-		$("#submit").css("text-shadow", "#545759 0 1px 0");
-		$("#submit").css("color", "#548db3");
-		$("#submit").css("font-size", "23px");
-		$("#submit").css("font-family", "helvetica, serif");
-		$("#submit").css("text-decoration", "none");
-		$("#submit").css("vertical-align", "middle");
-		$("#submit").css("cursor", "pointer"); // changes the cursor to a pointer
+	// cssButtonSubmit() {
+	// 	// position and dimension change
+	// 	$("#submit").css("position", "relative");
+	// 	$("#submit").css("top", "350px").css("right", "75px");
+	// 	$("#submit").css("border-radius", "0px");
+	// 	$("#submit").css("height", "45px");
+	// 	$("#submit").css("width", "200px");
+	// 	// looks and definition
+	// 	$("#submit").css("background", "white");
+	// 	$("#submit").css("box-shadow", "rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0");
+	// 	$("#submit").css("text-shadow", "#545759 0 1px 0");
+	// 	$("#submit").css("color", "#548db3");
+	// 	$("#submit").css("font-size", "23px");
+	// 	$("#submit").css("font-family", "helvetica, serif");
+	// 	$("#submit").css("text-decoration", "none");
+	// 	$("#submit").css("vertical-align", "middle");
+	// 	$("#submit").css("cursor", "pointer"); // changes the cursor to a pointer
 
-		// on mouse over change properties
-		$("#submit").on("mouseover", function() {
-			$("#submit").css("border", "0px solid #4e565e");
-			$("#submit").css("text-shadow", "#8c9aa3 0 1px 0");
-			$("#submit").css("background", "#3e779d");
-			$("#submit").css("border", "0px solid #4e565e");
-			$("#submit").css("color", "#ebebeb");
-		});
+	// 	// on mouse over change properties
+	// 	$("#submit").on("mouseover", function() {
+	// 		$("#submit").css("border", "0px solid #4e565e");
+	// 		$("#submit").css("text-shadow", "#8c9aa3 0 1px 0");
+	// 		$("#submit").css("background", "#3e779d");
+	// 		$("#submit").css("border", "0px solid #4e565e");
+	// 		$("#submit").css("color", "#ebebeb");
+	// 	});
 
-		// on mouse out change property back to default
-		$("#submit").on("mouseout", function() {
-			$("#submit").css("border", "none");
-			$("#submit").css("text-shadow", "#545759 0 1px 0");
-			$("#submit").css("background", "white");
-			$("#submit").css("color", "#548db3");
-		});
-	}
+	// 	// on mouse out change property back to default
+	// 	$("#submit").on("mouseout", function() {
+	// 		$("#submit").css("border", "none");
+	// 		$("#submit").css("text-shadow", "#545759 0 1px 0");
+	// 		$("#submit").css("background", "white");
+	// 		$("#submit").css("color", "#548db3");	
+	// 	});
+	// }
 
 	cssMainDiv() {
 		var cls = ".movable";

@@ -34,31 +34,48 @@ app.post("/authenticate", function(req, res) {
 		else {
 			console.log("Access to TinDrive database successful...");
 			var collection = db.collection("Users");
-			if (req.body.which == "#login") {
+			if (req.body.which === "#login") {
 				// handle login
 
+				collection.findOne({"name": req.body.username}, function(err, doc) {
+					if (err) console.log("Error in iterating databse...");
+					else {
+						if (doc === null) {
+							res.status(200).send("0");
+							db.close();
+						} else {
+							res.status(200).send("1");
+							db.close();
+						}
+					}
+				});
 			} else {
 				// handle registration
 				var userDetails = {}; 
 				// always use find one if you are absolutely sure that there is one document you are looking for
 				collection.findOne({"name": req.body.username}, function(err, doc) {
-					if (doc != null && doc.name === req.body.username) {
-						res.status(200).send("0");
-						db.close();
-					} else {
-						bcrypt.genSalt(SALT, function(err, salt) {
-							bcrypt.hash(req.body.password, salt, function(err, hash) {
-								userDetails.password = hash;
-								collection.insert(userDetails);
-								// closes the opened database to make sure data gets saved
-								db.close(); 
-								// this function body is the last thing that gets executed in this funciton body
-								res.status(200).send("1");
+			
+						if (doc != null && doc.name === req.body.username) {
+							res.status(200).send("0");
+							db.close();
+						} else {
+							bcrypt.genSalt(SALT, function(err, salt) {
+								bcrypt.hash(req.body.password, salt, function(err, hash) {
+									userDetails.password = hash;
+									if (req.body.username != "") {
+										collection.insert(userDetails);
+										// closes the opened database to make sure data gets saved
+										db.close(); 
+										// this function body is the last thing that gets executed in this funciton body
+										res.status(200).send("1");
+									} else {
+										res.status(200).send("0");
+									}
+								});
 							});
-						});
-						// asynchronousity allows this to run first
-						userDetails.name = req.body.username;
-					}
+							// asynchronousity allows this to run first
+							userDetails.name = req.body.username;
+						}
 				});
 			}
 		}
