@@ -4,7 +4,7 @@
 
 'use strict';
 
-var IdGenerator = require("./static/js/IdGenerator.js")
+var IdGenerator = require("./src/IdGenerator.js")
 var express = require("express"); // importing express module
 var app = express(); // an instance of the express server
 var bodyParser = require("body-parser"); // body parser to parse the body of post requests
@@ -12,6 +12,7 @@ var MongoClient = require("mongodb").MongoClient; // database module
 var bcrypt = require("bcrypt"); // password encryption module
 const ROOT = "./"; // Root directory
 const SALT = 10;
+const DB = "mongodb://localhost:27017/TinDriveUsers";
 
 // binding middlewares
 
@@ -23,7 +24,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(function(req, res, next) {
 	console.log(req.method + " request for: " + req.url);
-	next();
+	next(); // next without parameter simply invokes the next route in the file
 });
 
 // routing
@@ -33,7 +34,7 @@ app.get("/", function(req, res) {
 
 app.post("/authenticate", function(req, res) {
 	var genObj = new IdGenerator();
-	MongoClient.connect("mongodb://localhost:27017/TinDrive", function(err, db) {
+	MongoClient.connect(DB, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			console.log("Access to TinDrive database successful...");
@@ -100,7 +101,7 @@ app.post("/authenticate", function(req, res) {
 
 
 app.post("/nameCheck", function(req, res) {
-	MongoClient.connect("mongodb://localhost:27017/TinDrive", function(err, db) {
+	MongoClient.connect(DB, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive databse...");
 		else {
 			console.log("Access to TinDrive database successful...");
