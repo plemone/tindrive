@@ -5,11 +5,9 @@ $(document).ready(function() {
 	main();
 });
 
-
 function main() {
 	var componentOne = new LoginRegistration();
 	componentOne.createMainDiv();
-
 }
 
 class LoginRegistration {
