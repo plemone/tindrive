@@ -40,16 +40,28 @@ app.post("/authenticate", function(req, res) {
 			var collection = db.collection("Users");
 			if (req.body.which === "#login") {
 				// handle login
-
 				collection.findOne({"name": req.body.username}, function(err, doc) {
-					if (err) console.log("Error in iterating databse...");
+					if (err) console.log("Error in iterating database...");
 					else {
 						if (doc === null) {
-							res.status(200).send("0");
+							res.status(200).send("login-name-error");
 							db.close();
+							return; // return to prevent the async function from running
 						} else {
-							res.status(200).send("1");
-							db.close();
+							// black box, and is an abstraction that I am willing to accept
+							// when comes to how bcrypt module handles its security and authentication
+							// the result is magically formulated by bcrypt to chec whether the password
+							// provided by the user is correct or not
+							bcrypt.compare(req.body.password, doc.password, function(err, result) {
+								if (result === true) {
+									var responseObj = {};
+									responseObj.id = doc.id;
+									res.status(200).send(responseObj);
+								}
+								else res.status(200).send("login-password-error"); // 0 means not a success
+								db.close();
+
+							})
 						}
 					}
 				});
@@ -71,9 +83,9 @@ app.post("/authenticate", function(req, res) {
 									// closes the opened database to make sure data gets saved
 									db.close(); 
 									// this function body is the last thing that gets executed in this funciton body
-									res.status(200).send("1");
+									res.status(200).send("registration-success");
 								} else {
-									res.status(200).send("0");
+									res.status(200).send("registration-failure");
 								}
 							});
 						});

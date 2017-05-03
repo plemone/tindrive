@@ -71,12 +71,12 @@ class LoginRegistration {
 
 	collapse(divId, self) {
 		if (divId == "#login") {
-			$(divId).animate({left: '600px', top: '250px', height: '200px', width: '200'});
+			$(divId).animate({left: "600px", top: "250px", height: "200px", width: "200px"});
 			$(divId).css("z-index", "0"); // z-index specifies the stack order of an element
 										// an element with a higher stack order is always on top the other element
 			$("#l").css("top", "80px").css("right", "0px");								
 		} else {
-			$(divId).animate({left: '800px', top: '250px', height: '200px', width: '200'});
+			$(divId).animate({left: "800px", top: "250px", height: "200px", width: "200px"});
 			$(divId).css("z-index", "0"); // z-index specifies the stack order of an element
 			$("#r").css("top", "80px").css("right", "0px");	
 		}
@@ -111,22 +111,28 @@ class LoginRegistration {
 					type: "POST",
 					data: dataToSend,
 					success: function(data) {
-						if (data === "0") {
+						if (data === "login-name-error") {
 							$("#name").css("border-bottom", "1px solid #ff3333");
-						} else {
-							self.collapse(divId, self);
-
-
-
-
-
-							// MAKE MAJOR CHANGES HERE
-
-
-
-
-
-
+						} else if (data === "login-password-error") {
+							$("#password").css("border-bottom", "1px solid #ff3333");																				
+						} else if (data === "registration-success") {
+							self.collapse(divId, self); // collapse the div which is extended
+						} else if (data === "registration-failure") {
+							$("#name").css("border-bottom", "1px solid #ff3333");
+						} else { // when an object is sent! during login
+							self.collapse(divId, self); // collapse the div which is extended
+							setTimeout(function() { // this set time out allows collapse funciton to finish and waits for it
+								var	parsedObj = JSON.parse(data);
+								$("h2").remove();							
+								$(".movable").animate({height: "0px", width: "0px"});
+								setTimeout(function() { // this setTimeout function waits for the animation of the divs to be completed before the divs can be removed
+									$(".movable").remove();
+									// call the function that generates a div which contains a string here
+									$("body").append("<div id = feedback><h2 id = userId>" + "Id: " + parsedObj.id + "<h2></div>");
+									$("#userId").css("text-shadow", "1px 0 black, 0 0px black, 0px 0 black, 0 1px black");
+									$("#feedback").css("position", "relative").css("width", "100px").css("left", "550px").css("top", "300px");
+								}, 1000);
+							}, 500);
 						}
 					}
 				})
