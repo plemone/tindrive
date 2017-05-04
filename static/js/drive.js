@@ -6,7 +6,6 @@ $(document).ready(function() {
 	main();
 });
 
-
 function main() {
 	var logoutButton = new Logout();
 	var dragDrop = new DropBox();
