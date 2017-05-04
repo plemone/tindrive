@@ -143,10 +143,11 @@ class LoginRegistration {
 										data: requestObj,
 										success: function() {
 
+											// you direct the page not from the server side, but the client
+											// side, in order for you to change the route to redirect a page
+											// you have to send using the client side
 
-
-
-
+											window.location.href = "/" + requestObj.name; // very important makes an automatic get request to the server with the url provided
 										}
 									})
 								}, 1000);

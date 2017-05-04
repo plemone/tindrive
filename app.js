@@ -71,27 +71,30 @@ app.post("/authenticate", function(req, res) {
 				var userDetails = {}; 
 				// always use find one if you are absolutely sure that there is one document you are looking for
 				collection.findOne({"name": req.body.username}, function(err, doc) {
-					if (doc != null && doc.name === req.body.username) {
-						res.status(200).send("0");
-						db.close();
-					} else {
-						bcrypt.genSalt(SALT, function(err, salt) {
-							bcrypt.hash(req.body.password, salt, function(err, hash) {
-								userDetails.password = hash;
-								if (req.body.username != "") {
-									userDetails.id = genObj.generateId(req.body.username);
-									collection.insert(userDetails);
-									// closes the opened database to make sure data gets saved
-									db.close(); 
-									// this function body is the last thing that gets executed in this funciton body
-									res.status(200).send("registration-success");
-								} else {
-									res.status(200).send("registration-failure");
-								}
+					if (err) console.log("Error in finding the user");
+					else {
+						if (doc != null && doc.name === req.body.username) {
+							res.status(200).send("0");
+							db.close();
+						} else {
+							bcrypt.genSalt(SALT, function(err, salt) {
+								bcrypt.hash(req.body.password, salt, function(err, hash) {
+									userDetails.password = hash;
+									if (req.body.username != "") {
+										userDetails.id = genObj.generateId(req.body.username);
+										collection.insert(userDetails);
+										// closes the opened database to make sure data gets saved
+										db.close(); 
+										// this function body is the last thing that gets executed in this funciton body
+										res.status(200).send("registration-success");
+									} else {
+										res.status(200).send("registration-failure");
+									}
+								});
 							});
-						});
-						// asynchronousity allows this to run first
-						userDetails.name = req.body.username;
+							// asynchronousity allows this to run first
+							userDetails.name = req.body.username;
+						}
 					}
 				});
 			}
@@ -106,12 +109,15 @@ app.post("/nameCheck", function(req, res) {
 		else {
 			console.log("Access to TinDrive database successful...");
 			db.collection("Users").findOne({"name": req.body.val}, function(err, doc) {
-				if (doc == null) { // if the name is not found in the data base then green light
-					res.status(200).send("1");
-					db.close();
-				} else { // if it is found in the database then red light
-					res.status(200).send("0");
-					db.close();
+				if (err) console.log("Error in finding the user");
+				else {
+					if (doc == null) { // if the name is not found in the data base then green light
+						res.status(200).send("1");
+						db.close();
+					} else { // if it is found in the database then red light
+						res.status(200).send("0");
+						db.close();
+					}
 				}
 			});
 		}
@@ -125,9 +131,32 @@ app.post("/redirect", function(req, res) {
 			console.log("Access to TinDrive Database successful");
 			// on logout remove the active user
 			db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
-				if (doc == null) 
-					db.collection("ActiveUsers").insert({"name": req.body.name});
-				else console.log("User is already active!");
+				if (err) console.log("Error in finding the name in database");
+				else {
+					if (doc == null) 
+						db.collection("ActiveUsers").insert({"name": req.body.name});
+					res.sendStatus(200);
+				}
+			});
+		}
+	});
+});
+
+// "/:username means that the route is dynamic depending on whatever is being sent!"
+app.get("/:username", function(req, res) {
+	// to obtain the dynamic url aliased by :username we can directly access the url
+	// aliased by this by using the syntax req.params.username
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive Database");
+		else {
+			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+				if (err) console.log("Error in finding the name in database");
+				else {
+					if (doc === null) 
+						res.status(200).render("404");
+					else 
+						res.status(200).render("drive");
+				}
 			});
 		}
 	});
