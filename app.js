@@ -111,13 +111,11 @@ app.post("/nameCheck", function(req, res) {
 			db.collection("Users").findOne({"name": req.body.val}, function(err, doc) {
 				if (err) console.log("Error in finding the user");
 				else {
-					if (doc == null) { // if the name is not found in the data base then green light
+					if (doc == null)  // if the name is not found in the data base then green light
 						res.status(200).send("1");
-						db.close();
-					} else { // if it is found in the database then red light
+					else  // if it is found in the database then red light
 						res.status(200).send("0");
-						db.close();
-					}
+					db.close();
 				}
 			});
 		}
@@ -136,6 +134,7 @@ app.post("/redirect", function(req, res) {
 					if (doc == null) 
 						db.collection("ActiveUsers").insert({"name": req.body.name});
 					res.sendStatus(200);
+					db.close()
 				}
 			});
 		}
@@ -147,7 +146,7 @@ app.get("/:username", function(req, res) {
 	// to obtain the dynamic url aliased by :username we can directly access the url
 	// aliased by this by using the syntax req.params.username
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive Database");
+		if (err) console.log("Failed to connect to TinDrive database");
 		else {
 			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database");
@@ -155,13 +154,25 @@ app.get("/:username", function(req, res) {
 					if (doc === null) 
 						res.status(200).render("404");
 					else 
-						res.status(200).render("drive");
+						res.status(200).render("drive", {name: req.params.username}); // syntax to pass variables to pug using express
+					db.close();
 				}
 			});
 		}
 	});
 });
 
+app.post("/logout", function(req, res) {
+	MongoClient.connect(DB, function(err, db) {
+		console.log("Logged out!");
+		if (err) console.log("Failed to connect to TinDrive database");
+		else {
+			db.collection("ActiveUsers").remove({"name": req.body.name});
+			res.sendStatus(200);
+		}
+	});
+
+})
 
 app.get("*", function(req, res) {
 	res.status(404).render("404");
