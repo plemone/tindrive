@@ -102,7 +102,7 @@ app.post("/authenticate", function(req, res) {
 
 app.post("/nameCheck", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive databse...");
+		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			console.log("Access to TinDrive database successful...");
 			db.collection("Users").findOne({"name": req.body.val}, function(err, doc) {
@@ -113,6 +113,21 @@ app.post("/nameCheck", function(req, res) {
 					res.status(200).send("0");
 					db.close();
 				}
+			});
+		}
+	});
+});
+
+app.post("/redirect", function(req, res) {
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive Database");
+		else {
+			console.log("Access to TinDrive Database successful");
+			// on logout remove the active user
+			db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
+				if (doc == null) 
+					db.collection("ActiveUsers").insert({"name": req.body.name});
+				else console.log("User is already active!");
 			});
 		}
 	});

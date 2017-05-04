@@ -7,7 +7,9 @@ var MongoClient = require("mongodb").MongoClient;
 	The goal is to use a different Database than TinDrive, where it will contain
 	the entire file systems of a user. It will have different collection names
 	depending on the user name, and each collection will have objects containing
-	the entire file system
+	the entire file system.
+
+	The game plan is to have each collection named after the users unique id
 */
 
 // This class will provide a foundation for the REST API
