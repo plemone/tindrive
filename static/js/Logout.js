@@ -1,5 +1,5 @@
 class Logout {
-	init() {
+	create() {
 		$("body").append("<div id = logout><h3 id = l-name>logout</h3></div>");
 		this.generateCSS();
 		this.attachEventHandler();

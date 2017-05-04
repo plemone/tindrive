@@ -3,7 +3,7 @@ class LoginRegistration {
 		this.expanded = false;
 		this.clicks = 0;
 	}
-	createMainDiv() {
+	create() {
 		var self = this;
 		$("body").append("<div class = movable id = login></div>");
 		$("body").append("<div class = movable id = register></div>");

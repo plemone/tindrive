@@ -10,8 +10,8 @@ $(document).ready(function() {
 function main() {
 	var logoutButton = new Logout();
 	var dragDrop = new DropBox();
-	logoutButton.init();
-	dragDrop.init();
+	logoutButton.create();
+	dragDrop.create();
 }
 
 

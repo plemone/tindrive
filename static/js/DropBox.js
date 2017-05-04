@@ -1,7 +1,7 @@
 // pickup here where you left off!
 
 class DropBox {
-	init() {
+	create() {
 		$("body").append("<div id = main-div></div");
 		this.generateCSS();
 	}

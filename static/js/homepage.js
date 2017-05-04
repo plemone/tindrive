@@ -7,6 +7,6 @@ $(document).ready(function() {
 });
 
 function main() {
-	var componentOne = new LoginRegistration();
-	componentOne.createMainDiv();
+	var mainComponent = new LoginRegistration();
+	mainComponent.create();
 }
