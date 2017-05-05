@@ -2,7 +2,7 @@
 class DropBox {
 	create() {
 		$("body").append("<div id = main-div> <div id = dnd ></div> </div");
-		this.generateCSS();\
+		this.generateCSS();
 		this.attachEventHandlers();
 	}
 
@@ -20,7 +20,7 @@ class DropBox {
 		$(d).css("position", "relative");
 		$(d).css("height", "593px");
 		$(d).css("width", "770px");
-		$(d).css("border", "3px solid black");
+		$(d).css("border", "3px solid #262626");
 		$(d).css("border-radius", "2%");
 		$(d).css("background", "white");
 	}
@@ -45,46 +45,76 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 	attachEventHandlers() {
 		var d = "#dnd";
 
-		$(d).on("drag", function(event) {
-			// when something is being dragged
-			event.preventDefault();
-			event.stopPropagation();
-		});
-
 		$(d).on("dragend", function(event) {
 			// when mouse button is realeased
 			event.preventDefault();
 			event.stopPropagation();
 
+			console.log("dragend - Button released");
+
+
 		});
 
 		$(d).on("dragexit", function(event) {
-			// when the element is no longer the drag operation
+			// in or out of the window
 			event.preventDefault();
 			event.stopPropagation();
+
+			console.log("dragexit - The element to be dropped is either in the window or not");
+
 
 		});
 
 		$(d).on("dragover", function(event) {
-			// event when something is being dropped
+			// dragging motion ends
 			event.preventDefault();
 			event.stopPropagation();
+
+			console.log("dragover - Dragging motion is over now");
+
 
 		});
 
 		$(d).on("dragenter", function(event) {
 			// when a valid drop target is reached 
+			// perfect time to make the div highlighted
 			event.preventDefault();
 			event.stopPropagation();
 
 
+			console.log("dragenter - Target acquired!");
+
+			$(d).css("background", "#E6D1E6");
+			$(d).css("border", "3px solid white");
 		});
+
+		$(d).on("dragleave", function(event) {
+			// when a valid drop target is untargeted
+			// perfect time to make the div unhighlighted
+			event.preventDefault();
+			event.stopPropagation();
+
+
+			console.log("dragleave - Out of target!");
+			
+			$(d).css("background", "white");
+			$(d).css("border", "3px solid #262626");			
+
+
+		});		
 
 		$(d).on("drop", function(event) {
 			// dropping the file
+			// background color also needs to be turned to default because this is the last event
+			// fired after all the events
 			event.preventDefault();
 			event.stopPropagation();
 
+			console.log("drop - Event triggered!");
+
+
+			$(d).css("background", "white");
+			$(d).css("border", "3px solid #262626");
 
 		});
 	}
