@@ -50,6 +50,7 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 
 		var d = "#dnd";
 
+		// has no effect on the drag and drop feature
 		$(d).on("dragend", function(event) {
 			// when mouse button is realeased
 			event.preventDefault();
@@ -57,9 +58,9 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 
 			console.log("dragend - Button released");
 
-
 		});
 
+		// has no effect on the drag and drop feature
 		$(d).on("dragexit", function(event) {
 			// in or out of the window
 			event.preventDefault();
@@ -67,16 +68,18 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 
 			console.log("dragexit - The element to be dropped is either in the window or not");
 
-
 		});
 
+		// event which is the main culprit here
 		$(d).on("dragover", function(event) {
 			// dragging motion ends
+			// WHEN THE DRAGGING MOTION ENDS THE FILE GETS AUTOMATICALLY OPENED IN THE BROWSER
+			// WINDOW BY THE BROWSER
+			// TO PREVENT THAT FROM HAPPENING the defaults are prevented!
 			event.preventDefault();
 			event.stopPropagation();
 
 			console.log("dragover - Dragging motion is over now");
-
 
 		});
 

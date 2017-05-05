@@ -21,19 +21,18 @@ app.set("view engine", "pug");
 app.use(express.static(ROOT));
 
 app.post("/:username/upload", function(req, res) {
-
-	// due to the limit set by the body parser module, in order to send data via HTTP
+	// Due to the limit set by the body parser module, in order to send data via HTTP
 	// post request I had to use the req.on data asynchronous function, where data is
-	// accumulated asynchronously and recursively and stored inside a variable
-
+	// accumulated asynchronously and recursively and stored inside a variable.
+	// To avoid body parser from handling the request I bounded the bodyparser middleware
+	// after the request
 	MongoClient.connect(DB, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive database");
 		else {
 			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database");
 				else {
-					if (doc === null)
-						res.sendStatus(404);
+					if (doc === null) res.sendStatus(404);
 					else {
 
 						var bytes = "";
@@ -43,13 +42,20 @@ app.post("/:username/upload", function(req, res) {
 						});
 
 						req.on("end", function() {
-							var requestObj = JSON.parse(bytes);
+							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
-							console.log(requestObj.name);
+							// use the FileSystem module here to directly put it inside
+							// the mongodb for the specific client
+
+							// communication through user ID would be better but lets see
+							// we will get to that later, communication should be only done
+							// if user is active which I did, now just got to piece it together
+
+
+
+
 
 						});
-
-
 					}
 				}
 			});
