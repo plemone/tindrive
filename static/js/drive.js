@@ -7,10 +7,10 @@ $(document).ready(function() {
 });
 
 function main() {
-	var logoutButton = new Logout();
-	var dragDrop = new DropBox();
-	logoutButton.create();
-	dragDrop.create();
+	var logoutComponent = new Logout();
+	var dropBoxComponent = new DropBox();
+	logoutComponent.create();
+	dropBoxComponent.create();
 }
 
 
