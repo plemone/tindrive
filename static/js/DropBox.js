@@ -29,6 +29,9 @@ class DropBox {
 	stopPropagation stops the event from bubbling up the event chain.
 	preventDefault prevents the default action the browser makes on that event.
 
+	Automatic opening of the files needed to be prevented, thats why we prevent the default action
+	of the broswer.
+
 */
 
 /*
@@ -43,6 +46,8 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 */
 
 	attachEventHandlers() {
+		var self = this; // "this" keyword is redefined within each scope and means different from scope to scope
+
 		var d = "#dnd";
 
 		$(d).on("dragend", function(event) {
@@ -107,6 +112,9 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 			// dropping the file
 			// background color also needs to be turned to default because this is the last event
 			// fired after all the events
+			
+			// if defaults are not prevented then the browser will simply open the files
+
 			event.preventDefault();
 			event.stopPropagation();
 
@@ -149,11 +157,22 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 
 			// http://www.javascripture.com/FileReader --> more info
 
-			
-
+			// look into the upload function for the implementation of reading the data as a buffer
+			self.upload(files);
 
 
 		});
+	}
+
+
+	upload(files) {
+		var reader = new FileReader();
+		// call back function, which means it is the last thing to get executed
+		reader.onload = function(event) {
+			var arrayBuffer = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
+			console.log(arrayBuffer)
+		}
+		reader.readAsArrayBuffer(files[0]); // calls the reader.onload function
 	}
 
 
