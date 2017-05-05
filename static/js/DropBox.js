@@ -112,9 +112,46 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 
 			console.log("drop - Event triggered!");
 
-
 			$(d).css("background", "white");
 			$(d).css("border", "3px solid #262626");
+
+			/*
+				jQuery doesn't wrap the native browser event with all its APIs like the File API in this example, 
+				so to get access to those excluded properties and functions from the jQuery event we must use event.
+				originalEvent. Hope that helps someone
+			
+				It is the native event of the browser which is not covered by jquery, originalEvents is a key of jquery event object
+				which contains the browsers original events
+
+			*/
+
+			// event.originalEvent.dataTransfer returns an object which contains detailed information
+			// about the file being dropped
+
+			// https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer --> for more info
+			
+			// returns a list of file objects, usually the list will contain only one item according to my observation
+			var files = event.originalEvent.dataTransfer.files;
+
+			// dataTransfer returns an object with several properties, one of attribute is "items"
+			// which returns a list of DataTransferItem objects!
+
+			// event.originalEvent.dataTransfer.files[0] // also returns a DataTransferItem object
+			// similar to event.originalEvent.dataTransfer.items[0].getAsFile()
+
+			// https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem -- for more info
+
+			console.log(files[0]);
+
+			// next step is to actually read the file
+
+			// refer to this link for more detauls on the file reader object
+
+			// http://www.javascripture.com/FileReader --> more info
+
+			
+
+
 
 		});
 	}
