@@ -19,8 +19,8 @@ const DB = "mongodb://localhost:27017/TinDriveUsers";
 app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json({limit: "50mb", type: "application/json"}));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(function(req, res, next) {
 	console.log(req.method + " request for: " + req.url);
@@ -156,6 +156,37 @@ app.get("/:username", function(req, res) {
 					else 
 						res.status(200).render("drive", {name: req.params.username}); // syntax to pass variables to pug using express
 					db.close();
+				}
+			});
+		}
+	});
+});
+
+app.post("/:username/upload", function(req, res) {
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive database");
+		else {
+			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
+				if (err) console.log("Error in finding the name in database");
+				else {
+					if (doc === null)
+						res.sendStatus(404);
+					else {
+
+
+
+
+
+						console.log(req.body);
+					
+
+						// EXTREME IMPLEMENTATION GONNA HAPPEN HERE!
+
+
+
+
+
+					}
 				}
 			});
 		}
