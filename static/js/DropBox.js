@@ -190,6 +190,7 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 			requestObj.type = file.type;
 			requestObj.contents = txt;
 			// make the ajax request
+			requestObj = JSON.stringify(requestObj);
 			$.ajax({
 				url: u,
 				type: "POST",

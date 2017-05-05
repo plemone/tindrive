@@ -19,7 +19,46 @@ const DB = "mongodb://localhost:27017/TinDriveUsers";
 app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
-app.use(bodyParser.json({limit: "50mb", type: "application/json"}));
+
+app.post("/:username/upload", function(req, res) {
+
+	// due to the limit set by the body parser module, in order to send data via HTTP
+	// post request I had to use the req.on data asynchronous function, where data is
+	// accumulated asynchronously and recursively and stored inside a variable
+
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive database");
+		else {
+			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
+				if (err) console.log("Error in finding the name in database");
+				else {
+					if (doc === null)
+						res.sendStatus(404);
+					else {
+
+						var bytes = "";
+
+						req.on("data", function(chunk) {
+							bytes += chunk;
+						});
+
+						req.on("end", function() {
+							var requestObj = JSON.parse(bytes);
+							
+							console.log(requestObj.name);
+
+						});
+
+
+					}
+				}
+			});
+		}
+	});
+});
+
+
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(function(req, res, next) {
@@ -162,36 +201,7 @@ app.get("/:username", function(req, res) {
 	});
 });
 
-app.post("/:username/upload", function(req, res) {
-	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive database");
-		else {
-			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
-				if (err) console.log("Error in finding the name in database");
-				else {
-					if (doc === null)
-						res.sendStatus(404);
-					else {
 
-
-
-
-
-						console.log(req.body);
-					
-
-						// EXTREME IMPLEMENTATION GONNA HAPPEN HERE!
-
-
-
-
-
-					}
-				}
-			});
-		}
-	});
-});
 
 app.post("/logout", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
