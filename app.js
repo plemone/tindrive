@@ -11,9 +11,11 @@ var app = express(); // an instance of the express server
 var bodyParser = require("body-parser"); // body parser to parse the body of post requests
 var MongoClient = require("mongodb").MongoClient; // database module
 var bcrypt = require("bcrypt"); // password encryption module
+var fs = require("fs"); // used to manipulate the file system
 const ROOT = "./"; // Root directory
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
+const FSPATH = "./src/user-fs/";
 
 // binding middlewares
 app.set("views", "./views");
@@ -135,6 +137,16 @@ app.post("/authenticate", function(req, res) {
 										collection.insert(userDetails);
 										// closes the opened database to make sure data gets saved
 										db.close(); 
+
+										// the file system folder also needs to be created for individual users
+										// each user has their own folder
+
+
+										fs.mkdir(FSPATH + req.body.username, function(err) {
+											if (err) console.log("Error in creating directory");
+											else console.log("Directory called " + req.body.username + " created");
+										});
+
 										// this function body is the last thing that gets executed in this funciton body
 										res.status(200).send("registration-success");
 									} else {
