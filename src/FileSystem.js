@@ -23,27 +23,12 @@ class FileSystem {
 	}
 
 
-	// build nice and proper member functions to add the JSON files representing your files
+	/* build nice and proper member functions to add the JSON files representing your files */
 
 	// the collection itself will be the root folder, inside the root folder you can
 	// insert file objects, or you can insert folder objects which intern will contain more files
 
-	upload(fsObj) {
-		// fsObj can either be a file, or it can be a folder
-
-		if (fsObj.type !== "") {
-			// we are dealing with a file! if it is not an empty string
-			this.uploadFile(fsObj);
-
-		} else {
-
-			// we are dealing with a folder :(
-
-
-		}
-
-	}
-
+	// uploads file objects!
 	uploadFile(fileObj) {
 		var self = this;
 		MongoClient.connect(this.DB, function(err, db) {
@@ -61,10 +46,9 @@ class FileSystem {
 		});
 	}
 
-
+	// creates folder objects and uploads them
 	uploadFolder(folderObj) {
 		// folder objects don't exist so we have to create one ourselves
-
 
 
 

@@ -20,7 +20,7 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
 
-app.post("/:username/upload", function(req, res) {
+app.post("/:username/uploadFiles", function(req, res) {
 	// Due to the limit set by the body parser module, in order to send data via HTTP
 	// post request I had to use the req.on data asynchronous function, where data is
 	// accumulated asynchronously and recursively and stored inside a variable.
@@ -53,12 +53,10 @@ app.post("/:username/upload", function(req, res) {
 							// if it does exists then good nothing to do
 
 							// just uploads the file object whatver it is to the personal database
-							myFileSystem.upload(requestObj);
+							myFileSystem.uploadFile(requestObj);
 
-
-
-
-
+							// nowFileObjects can be uploaded in two scenarios, first when it is uploaded to root
+							// second when it is uploaded to a nested environment!
 
 
 

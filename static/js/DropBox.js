@@ -161,6 +161,10 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 			// look into the upload function for the implementation of reading the data as a buffer
 			
 			// iterates over the list of files and uploads them using ajax requests to the server
+
+			// if it is a folder that is being dragged and droped then it will not work!, as if it is
+			// a folder files will not be an array of files, in my system only files cam be dragged and dropped
+
 			for (var i = 0; i < files.length; ++i) 
 				self.upload(files[i]);
 
@@ -184,7 +188,7 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 		reader.onload = function(event) {
 			var txt = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
 			// p element with the id, "#username" contains the user name
-			var u = "/" + $("#username").text() + "/" + "upload";
+			var u = "/" + $("#username").text() + "/" + "uploadFiles";
 			var requestObj = {}	
 			// fill in the contents of the object with file informations		
 			requestObj.name = file.name;
