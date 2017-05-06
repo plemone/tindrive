@@ -15,6 +15,7 @@ var fs = require("fs"); // used to manipulate the file system
 const ROOT = "./"; // Root directory
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
+const USERFS = "mongodb://localhost:27017/TinDriveFS";
 const FSPATH = "./src/user-fs/";
 
 // binding middlewares
@@ -45,22 +46,20 @@ app.post("/:username/uploadFiles", function(req, res) {
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
-							// use the FileSystem module here to directly put it inside
-							// the mongodb for the specific client
-
-							// to get the dynamic param we use req.params.username
-							var myFileSystem = new FileSystem(req.params.username);
-							
-							// FileSystem object creates the file system if it doesn't exist
-							// if it does exists then good nothing to do
-
-							// just uploads the file object whatver it is to the personal database
-							myFileSystem.uploadFile(requestObj);
-
-							// nowFileObjects can be uploaded in two scenarios, first when it is uploaded to root
-							// second when it is uploaded to a nested environment!
 
 
+
+
+
+
+
+
+
+
+
+
+
+							db.close();
 
 						});
 					}
@@ -134,17 +133,32 @@ app.post("/authenticate", function(req, res) {
 									userDetails.password = hash;
 									if (req.body.username != "") {
 										userDetails.id = genObj.generateId(req.body.username);
-										collection.insert(userDetails);
+
+										collection.insert(userDetails, function(err) {
+											if (err) console.log(err);
+											else console.log("User registered");
+										});
 										// closes the opened database to make sure data gets saved
 										db.close(); 
 
 										// the file system folder also needs to be created for individual users
 										// each user has their own folder
 
-
 										fs.mkdir(FSPATH + req.body.username, function(err) {
 											if (err) console.log("Error in creating directory");
 											else console.log("Directory called " + req.body.username + " created");
+										});
+
+										// file system datastructure to imitate the FS needs to be created as well
+
+										MongoClient.connect(USERFS, function(err, db) {
+											db.collection(req.body.username).insert(new FileSystem(req.body.username, FSPATH), function(err) {
+												if (err) console.log(err);
+												else {
+													console.log("File System database for " + req.body.username + " created");
+													db.close();
+												}
+											});
 										});
 
 										// this function body is the last thing that gets executed in this funciton body
