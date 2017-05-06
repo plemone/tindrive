@@ -4,18 +4,18 @@
 
 'use strict';
 
-var IdGenerator = require("./src/IdGenerator.js")
+var IdGenerator = require("./src/IdGenerator.js"); // unique user id generator
+var FileSystem = require("./src/FileSystem.js"); // unique file system for the user
 var express = require("express"); // importing express module
 var app = express(); // an instance of the express server
 var bodyParser = require("body-parser"); // body parser to parse the body of post requests
 var MongoClient = require("mongodb").MongoClient; // database module
 var bcrypt = require("bcrypt"); // password encryption module
 const ROOT = "./"; // Root directory
-const SALT = 10;
-const DB = "mongodb://localhost:27017/TinDriveUsers";
+const SALT = 10; // salt for the bcrypt password hashing
+const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
 
 // binding middlewares
-
 app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
@@ -27,14 +27,13 @@ app.post("/:username/upload", function(req, res) {
 	// To avoid body parser from handling the request I bounded the bodyparser middleware
 	// after the request
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive database");
+		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database");
 				else {
 					if (doc === null) res.sendStatus(404);
 					else {
-
 						var bytes = "";
 
 						req.on("data", function(chunk) {
@@ -47,9 +46,17 @@ app.post("/:username/upload", function(req, res) {
 							// use the FileSystem module here to directly put it inside
 							// the mongodb for the specific client
 
-							// communication through user ID would be better but lets see
-							// we will get to that later, communication should be only done
-							// if user is active which I did, now just got to piece it together
+							// to get the dynamic param we use req.params.username
+							var myFileSystem = new FileSystem(req.params.username);
+							
+							// FileSystem object creates the file system if it doesn't exist
+							// if it does exists then good nothing to do
+
+							// just uploads the file object whatver it is to the personal database
+							myFileSystem.upload(requestObj);
+
+
+
 
 
 
@@ -169,7 +176,7 @@ app.post("/nameCheck", function(req, res) {
 
 app.post("/redirect", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive Database");
+		if (err) console.log("Failed to connect to TinDrive database");
 		else {
 			console.log("Access to TinDrive Database successful");
 			// on logout remove the active user
