@@ -12,6 +12,9 @@ class FileSystem {
 		// this.self = this; // recursive call, CONTAINS A REFERENCE TO SELF WHICH IN TURN CONTAINS A REFERENCE TO SELF AND SO ON AND ON
 		this.username = username; // the username of the collection in the TinDriveFS
 		this.path = path + username; // the path for which the file system exists
+	
+		// IMPLEMENT
+
 	}
 
 

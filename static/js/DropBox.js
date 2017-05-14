@@ -2,6 +2,7 @@
 class DropBox {
 	create() {
 		$("body").append("<div id = main-div> <div id = dnd ></div> </div");
+		this.fsComponent = new FileSystemLayour();
 		this.generateCSS();
 		this.attachEventHandlers();
 	}
@@ -35,14 +36,14 @@ class DropBox {
 */
 
 /*
-drag - Fired when an element or text selection is being dragged.
-dragend - Fired when a drag operation is being ended (for example, by releasing a mouse button or hitting the escape key). (See Finishing a Drag.)
-dragenter - Fired when a dragged element or text selection enters a valid drop target.
-dragexit - Fired when an element is no longer the drag operation's immediate selection target.
-dragleave - Fired when a dragged element or text selection leaves a valid drop target.
-dragover - Fired when an element or text selection is being dragged over a valid drop target (every few hundred milliseconds).
-dragstart - Fired when the user starts dragging an element or text selection. (See Starting a Drag Operation.)
-drop - Fired when an element or text selection is dropped on a valid drop target. (See Performing a Drop.)
+	drag - Fired when an element or text selection is being dragged.
+	dragend - Fired when a drag operation is being ended (for example, by releasing a mouse button or hitting the escape key). (See Finishing a Drag.)
+	dragenter - Fired when a dragged element or text selection enters a valid drop target.
+	dragexit - Fired when an element is no longer the drag operation's immediate selection target.
+	dragleave - Fired when a dragged element or text selection leaves a valid drop target.
+	dragover - Fired when an element or text selection is being dragged over a valid drop target (every few hundred milliseconds).
+	dragstart - Fired when the user starts dragging an element or text selection. (See Starting a Drag Operation.)
+	drop - Fired when an element or text selection is dropped on a valid drop target. (See Performing a Drop.)
 */
 
 	attachEventHandlers() {
@@ -165,8 +166,13 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 			// if it is a folder that is being dragged and droped then it will not work!, as if it is
 			// a folder files will not be an array of files, in my system only files cam be dragged and dropped
 
-			for (var i = 0; i < files.length; ++i) 
+			for (var i = 0; i < files.length; ++i) {
+				// create file layout
+
+				fsComponent.addFile(file[i].name);
+				
 				self.upload(files[i]);
+			}
 
 		});
 	}
@@ -206,6 +212,5 @@ drop - Fired when an element or text selection is dropped on a valid drop target
 		}
 		reader.readAsText(file); // calls the reader.onload function
 	}
-
 
 }
