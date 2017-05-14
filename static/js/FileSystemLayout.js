@@ -19,7 +19,7 @@ class FileSystemLayout {
 		var file = new FileIcon(filename, this.x, this.y);
 		file.create();
 
-		this.x += file.width; // increase the container x axis permanently
+		//this.x += file.width; // increase the container x axis permanently
 
 	}
 

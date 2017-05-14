@@ -29,6 +29,7 @@ class DropBox {
 		$(d).css("border", "3px solid #262626");
 		$(d).css("border-radius", "2%");
 		$(d).css("background", "white");
+		$(d).css("overflow-y", "auto"); // this allows the y-axis of the div scrollable
 	}
 
 /*

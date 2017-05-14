@@ -42,5 +42,7 @@ class FileIcon {
 		$(id).css("background-image", "url(static/imgs/file-2.png)");
 		$(id).css("background-repeat", "no-repeat");
 		$(id).css("background-size", "contain");
+		$(id).css("float", "left"); // stacks divs up next to each other
+	
 	}
 }
