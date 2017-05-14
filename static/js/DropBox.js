@@ -1,8 +1,13 @@
-// pickup here where you left off!
+'use strict'; // to avoid JavaScript weirdness
+
 class DropBox {
+
+	constructor() {
+		this.fsComponent = new FileSystemLayout();
+	}
+
 	create() {
-		$("body").append("<div id = main-div> <div id = dnd ></div> </div");
-		this.fsComponent = new FileSystemLayour();
+		$("body").append("<div id = main-div> <div id = dnd ></div></div");
 		this.generateCSS();
 		this.attachEventHandlers();
 	}
@@ -169,8 +174,8 @@ class DropBox {
 			for (var i = 0; i < files.length; ++i) {
 				// create file layout
 
-				fsComponent.addFile(file[i].name);
-				
+				self.fsComponent.addFile(files[i].name);
+
 				self.upload(files[i]);
 			}
 

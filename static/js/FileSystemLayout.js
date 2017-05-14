@@ -1,3 +1,4 @@
+'use strict'; // to avoid JavaScript weirdness
 
 // responsible for managing the #dnd div which is basically the drop box zone
 // should contain some sort of data structure which allows it to keep a track
@@ -8,15 +9,18 @@ class FileSystemLayout {
 
 	constructor() {
 		// should have x and y coordinates
-		this.x = 0;
-		this.y = 0;
+		this.x = 3.5;
+		this.y = 3.5;
+
 	}
 
 
 	addFile(filename) {
-		// adds file to the x and y coordinates
-		var file = new File(filename, this.x, this.y);
+		var file = new FileIcon(filename, this.x, this.y);
 		file.create();
+
+		this.x += file.width; // increase the container x axis permanently
+
 	}
 
 }
