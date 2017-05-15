@@ -11,6 +11,7 @@ class FileIcon {
 		this.clickCounter = 1; // needs to be 1 as it only lights up when the number is odd
 							   // so if initially its not odd then clicking it first won't light it
 							   // up, however second click will
+		this.globalCounter = 1;
 	}
 
 	generateId() {
@@ -27,7 +28,7 @@ class FileIcon {
 	}
 
 	create() {
-		$("#dnd").append("<div id = " + "wrapper-" + this.id + "><div id = " + this.id + "></div><p id = " + "p-" + this.id + ">" + this.name + "</p></div>");
+		$("#dnd").append("<div id = " + "wrapper-" + this.id + "><div class = files id = " + this.id + "></div><p id = " + "p-" + this.id + ">" + this.name + "</p></div>");
 		this.generateCSS();
 		this.attachEventHandlers();
 	}
@@ -51,29 +52,57 @@ class FileIcon {
 		$(p).css("position", "relative");
 		$(p).css("bottom", "4%");
 		$(p).css("left", "10%");
-
 	}
 
+
+	// the moment this function gets called the event handler gets attached automatically
+	// no matter what
 	attachEventHandlers() {
-		var self = this;
+		var self = this; // this in each scope is different in javascript
+						// I defied self to be this because I want to refer to the object this when in some nested scope
 		var id = "#" + this.id;
 		// on click the color the highlight color changes 
+		
 		$(id).on("click", function() {
-			if (self.clickCounter % 2 == 0) {
+			console.log("Click!");
+			if (self.clickCounter % 2 === 0) { // turns blue
 				$(id).css("background-image", "url(static/imgs/file-3.png)");
-			} else {
-				$(id).css("background-image", "url(static/imgs/file-4.png)");
+			} else { // turns red
+				$(id).css("background-image", "url(static/imgs/file-4.png)");			
+				self.windowClicks();								
 			}
 			++self.clickCounter;
-			console.log("clicked!");
+
 		});
 
+
 		$(id).on("dblclick", function() {
-			console.log("double-clicked!");
+
+
+
+
+
 		
 		});
 
+	}
 
+	windowClicks() {
+		var self = this;
+		self.globalCounter = 1;		
+		$(window).on("click", function() {
+			++self.globalCounter; // when global counter hits 2 I switch everything back to blue as I kknow
+								  // that atleast one file at the moment must be red
+			if (self.globalCounter !== 2) {
+				$(".files").css("background-image", "url(static/imgs/file-3.png");
+				++self.clickCounter; // this makes the assumption that you clicked on the file once again which means next click should be red
+									// this prevents from clicking ont he file to make it blue again and then clicking on it to make it red
+									// like the default behaviour when once you click, the next click turns it blue
+									// if the window already turns it blue, the div click event handler is still waiting for the click to make things blue
+									// so you have to click it twice, this line prevents it as it makes an invisible click			
+				$(window).off();
+			}
+		});
 	}
 
 }
