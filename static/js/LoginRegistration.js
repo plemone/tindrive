@@ -164,6 +164,7 @@ class LoginRegistration {
 			});
 		}
 	}
+	
 	cssText() {
 		$(".box").css("border-radius", "0%"); // no circular boxes, edgy boxes only
 		$(".box").css("position", "relative"); // movable element

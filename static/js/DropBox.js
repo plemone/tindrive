@@ -8,6 +8,7 @@ class DropBox {
 
 	create() {
 		$("body").append("<div id = main-div> <div id = dnd ></div></div");
+		this.fsComponent.create();
 		this.generateCSS();
 		this.attachEventHandlers();
 	}

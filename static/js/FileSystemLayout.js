@@ -11,63 +11,59 @@ class FileSystemLayout {
 		// should have x and y coordinates
 		this.x = 15;
 		this.y = 7;
+		this.contents = []; // contains a collection of conents being added to the window
+	}
+
+	create() {
+
+
+
 	}
 
 	addFile(filename) {
 		var file = new FileIcon(filename, this.x, this.y);
+		this.contents.push(file); // push the fileIcon to the content array
 		file.create();
+		this.attachFileIconEH(file);
 	}
+
+	// attaches file event handler
+	// the idea is to loop over the contents array and turn on the the file icon provided
+	// and turn off the file icon not provided
+	attachFileIconEH(fileIcon) {
+		var self = this; // this in each scope is different in JavaScript
+
+		// on click the color of the highlight changes
+		$("#" + fileIcon.id).on("click", function () {			
+			for (var i = 0; i < self.contents.length; ++i) {
+
+				if (self.contents[i] === fileIcon && !self.contents[i].selected) {
+					// red
+					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
+					self.contents[i].selected = true;
+				} else {
+					// blue
+					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+					self.contents[i].selected = false;
+				}
+
+			}
+
+		});
+
+	}
+
 
 }
 
-// IMPLEMENT TOMMOROW!
 
 /*
-
-	var self = this; // this in each scope is different in javascript
-					// I defied self to be this because I want to refer to the object this when in some nested scope
-	var id = "#" + this.id;
-	// on click the color the highlight color changes 
-	
-	$(id).on("click", function() {
-		console.log(self.clickCounter);
-		console.log("Click!");
-		if (self.clickCounter % 2 === 0) { // turns blue
-			$(id).css("background-image", "url(static/imgs/file-3.png)");
-			
-		} else { // turns red
-			console.log("local -> " + id);
-			$(id).css("background-image", "url(static/imgs/file-4.png)");		
-			self.windowClicks(id); // global click event handler assigned								
-		}
-		++self.clickCounter;
-
-	});
-
-
-	$(id).on("dblclick", function() {
-
-
-
-
-
-	
-	});
-
-
-*/
-
-/*
-		var self = this;
-		self.globalCounter = 1;		
-		$(window).on("click", function() {
-			console.log("global -> " + id)
-			++self.globalCounter; // when global counter hits 2 I switch everything back to blue as I kknow
-								  // that atleast one file at the moment must be red
-			if (self.globalCounter !== 2) {
-				$(id).css("background-image", "url(static/imgs/file-3.png");
-				$(window).off();
-			}
-		});
+	if (fileIcon.selected) { // blue
+		$(id).css("background-image", "url(static/imgs/file-3.png)");
+		fileIcon.selected = false; // unselects when you click it again
+	} else { // red
+		$(id).css("background-image", "url(static/imgs/file-4.png)");
+		fileIcon.selected = true; // selected is true when you click it
+	}
 
 */

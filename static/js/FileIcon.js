@@ -6,8 +6,9 @@ class FileIcon {
 		this.id = this.generateId();
 		this.x = x; // x axis positioning, div gets drawn using these
 		this.y = y; // y axis positioning, div gets drawn using these
-		this.width = 80;
-		this.height = 60;
+		this.width = 80; // width of the file icon
+		this.height = 60; // height of the file icon
+		this.selected = false;
 	}
 
 	generateId() {
@@ -26,7 +27,6 @@ class FileIcon {
 	create() {
 		$("#dnd").append("<div id = " + "wrapper-" + this.id + "><div class = files id = " + this.id + "></div><p id = " + "p-" + this.id + ">" + this.name + "</p></div>");
 		this.generateCSS();
-		this.attachEventHandlers();
 	}
 
 	generateCSS() {
