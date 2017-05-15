@@ -35,24 +35,24 @@ class FileSystemLayout {
 
 		// on click the color of the highlight changes
 		$("#" + fileIcon.id).on("click", function () {			
+			// each file icon has an event handler which loops through the all the file icons
+			// then checks if the click is on the current fileIcon and if the fileIcon is not
+			// selected then go ahead and select it
+			// else unselect all other fileIcons by making them blue and unselecting it
+			// each iteration will either be the fileIcon clicked or all other fileIcons
 			for (var i = 0; i < self.contents.length; ++i) {
-
 				if (self.contents[i] === fileIcon && !self.contents[i].selected) {
-					// red
+					// red - select
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
 					self.contents[i].selected = true;
 				} else {
-					// blue
+					// blue - unselect
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
 					self.contents[i].selected = false;
 				}
-
 			}
-
 		});
-
 	}
-
 
 }
 
