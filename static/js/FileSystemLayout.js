@@ -9,11 +9,10 @@ class FileSystemLayout {
 
 	constructor() {
 		// should have x and y coordinates
-		this.x = 3.5;
-		this.y = 3.5;
+		this.x = 15;
+		this.y = 7;
 
 	}
-
 
 	addFile(filename) {
 		var file = new FileIcon(filename, this.x, this.y);
