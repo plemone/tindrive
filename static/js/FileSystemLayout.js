@@ -41,6 +41,10 @@ class FileSystemLayout {
 			// else unselect all other fileIcons by making them blue and unselecting it
 			// each iteration will either be the fileIcon clicked or all other fileIcons
 			for (var i = 0; i < self.contents.length; ++i) {
+				// both these expression need to be true in order for the entire entire statement to be true
+				// which makes sense as we want the current element in the array to be the fileIcon we clicked
+				// AND we have to make sure that the element in the array is not selected, because if it is not selected
+				// only then can we select it, we can't select something that is unselected
 				if (self.contents[i] === fileIcon && !self.contents[i].selected) {
 					// red - select
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
