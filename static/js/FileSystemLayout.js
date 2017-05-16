@@ -11,20 +11,21 @@ class FileSystemLayout {
 		// should have x and y coordinates
 		this.x = 15;
 		this.y = 7;
-		this.contents = []; // contains a collection of conents being added to the window
+		this.contents = []; // contains a collection of conents being added to the window can be a fileIcon or FolderIcon
+		this.globalClick = false;
+		this.counter = 0;
 	}
 
 	create() {
-
-
-
+		this.attachGlobalClickEH();
 	}
 
+	// adds a file icon to the DOM
 	addFile(filename) {
 		var file = new FileIcon(filename, this.x, this.y);
+		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
-		file.create();
-		this.attachFileIconEH(file);
+		this.attachFileIconEH(file); // attach the event handler of the file
 	}
 
 	// attaches file event handler
@@ -34,7 +35,7 @@ class FileSystemLayout {
 		var self = this; // this in each scope is different in JavaScript
 
 		// on click the color of the highlight changes
-		$("#" + fileIcon.id).on("click", function () {			
+		$("#" + fileIcon.id).on("click", function () {		
 			// each file icon has an event handler which loops through the all the file icons
 			// then checks if the click is on the current fileIcon and if the fileIcon is not
 			// selected then go ahead and select it
@@ -49,6 +50,9 @@ class FileSystemLayout {
 					// red - select
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
 					self.contents[i].selected = true;
+					self.globalClick = true;
+					self.counter = 0; // prevents an activated global click from deactivating current marked red window
+									 // while switching between two tiles
 				} else {
 					// blue - unselect
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
@@ -58,16 +62,24 @@ class FileSystemLayout {
 		});
 	}
 
-}
+	attachGlobalClickEH() {
+		var self = this;
+		// target the drop zone for clicks only
+		$("#dnd").on("click", function() {
+			if (self.counter > 0) {
+				for (var i = 0; i < self.contents.length; ++i) {
+					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
+					// also needs to turn off the selected boolean which is indicating that it is currently turned on
+					self.contents[i].selected = false;
+				}
+				self.counter = 0;
+				self.globalClick = false;
+			} 		
+			else if (self.globalClick) {
+				++self.counter;
+			} 
+		});
 
-
-/*
-	if (fileIcon.selected) { // blue
-		$(id).css("background-image", "url(static/imgs/file-3.png)");
-		fileIcon.selected = false; // unselects when you click it again
-	} else { // red
-		$(id).css("background-image", "url(static/imgs/file-4.png)");
-		fileIcon.selected = true; // selected is true when you click it
 	}
 
-*/
+}
