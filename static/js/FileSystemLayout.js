@@ -12,8 +12,10 @@ class FileSystemLayout {
 		this.x = 15;
 		this.y = 7;
 		this.contents = []; // contains a collection of conents being added to the window can be a fileIcon or FolderIcon
-		this.globalClick = false;
-		this.counter = 0;
+		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
+								  // then the counter will be incremented
+		this.counter = 0;		 // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
+							     // and turn the color of the file from red to blue
 	}
 
 	create() {
@@ -50,33 +52,38 @@ class FileSystemLayout {
 					// red - select
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
 					self.contents[i].selected = true;
-					self.globalClick = true;
+					self.globalClick = true; // turns on the drop zone event handlers job to do its thing
 					self.counter = 0; // prevents an activated global click from deactivating current marked red window
-									 // while switching between two tiles
+									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+									 // it happens simultaneously! )
 				} else {
 					// blue - unselect
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
-					self.contents[i].selected = false;
+					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
 				}
 			}
 		});
 	}
 
+
+	// attaches a click event handler to the drop zone window, where upon clicking
+	// the dropzone if any item gets selected, it automatically gets deselected
 	attachGlobalClickEH() {
 		var self = this;
 		// target the drop zone for clicks only
 		$("#dnd").on("click", function() {
-			if (self.counter > 0) {
+			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				for (var i = 0; i < self.contents.length; ++i) {
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
 					// also needs to turn off the selected boolean which is indicating that it is currently turned on
-					self.contents[i].selected = false;
+					self.contents[i].selected = false; // unselects by turning the select boolean of each icon false
 				}
 				self.counter = 0;
 				self.globalClick = false;
 			} 		
-			else if (self.globalClick) {
-				++self.counter;
+			else if (self.globalClick) { // this check, checks only if first check is not fulfilled, if globalClick gets turned on
+				++self.counter; // then we simply increment the counter so that if another drop zone click is made we can loop through the
+								// entire contents and unselect them!
 			} 
 		});
 
