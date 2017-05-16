@@ -34,13 +34,21 @@ class FileSystemLayout {
 	}
 
 
+
+	// on keydown push the keycodde 16 to the stack
+	// on keyup if the key is 78 then push it to the stack and then the next
+	// instruction is to check if the first and second index is either 16 and 78 or 78 and 16
+	// then inside the if statement prompt the user, after the prompt in next instruction
+	// simply loop over the array and clear the array
+	// the array will get cleared no matter what key up you make, but remember only the
+	// right combination will trigger the prompt 
 	attachFolderEH() {
 
 		var self = this;
 
-		// when you press the keydown it has to be made sure that key number 16
-		// gets pushed to the stack, also a check is made if the array size is greater than or
-		// equal to 2 then the stack gets emptied
+		// checks if the keycode is 16 which is shift on keydown
+		// also checks if the keycode is 78 which is n on key up
+
 		$(window).on("keydown", function(event) {
 			// 16 for shift button
 			if (event.which === 16) {
