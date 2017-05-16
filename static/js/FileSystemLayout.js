@@ -16,10 +16,13 @@ class FileSystemLayout {
 								  // then the counter will be incremented
 		this.counter = 0;		 // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
 							     // and turn the color of the file from red to blue
+		this.dropZoneId = "#dnd";
+		this.keyStack = [];
 	}
 
 	create() {
 		this.attachGlobalClickEH();
+		this.attachFolderEH();
 	}
 
 	// adds a file icon to the DOM
@@ -29,6 +32,44 @@ class FileSystemLayout {
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachFileIconEH(file); // attach the event handler of the file
 	}
+
+
+	attachFolderEH() {
+
+		var self = this;
+
+		// id to target should be window, as if it is not window JavaScript cannot
+		// target any other properties
+		$(window).on("keydown", function(event) {
+			// first check the event handler makes is whether the key stack is greater than 2 or not
+			// if it is then pop em out
+			if (self.keyStack.length > 2) {
+				console.log("Popping bottles on the ice.... like a blizzard!");
+				// always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
+				for (var i = 0; i < self.keyStack.length; ++i) {
+					self.keyStack.pop();
+				}
+			}
+
+			// 18 for shift button
+			if (event.which === 16) {
+				self.keyStack.push(16);
+				console.log(self.keyStack);
+			}
+
+			if (event.which === 78) {
+				self.keyStack.push(78);
+				console.log(self.keyStack);
+				
+			}
+
+
+		});
+
+
+
+	}
+
 
 	// attaches file event handler
 	// the idea is to loop over the contents array and turn on the the file icon provided
@@ -71,7 +112,7 @@ class FileSystemLayout {
 	attachGlobalClickEH() {
 		var self = this;
 		// target the drop zone for clicks only
-		$("#dnd").on("click", function() {
+		$(this.dropZoneId).on("click", function() {
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				for (var i = 0; i < self.contents.length; ++i) {
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
