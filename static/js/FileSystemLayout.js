@@ -38,33 +38,48 @@ class FileSystemLayout {
 
 		var self = this;
 
-		// id to target should be window, as if it is not window JavaScript cannot
-		// target any other properties
+		// when you press the keydown it has to be made sure that key number 16
+		// gets pushed to the stack, also a check is made if the array size is greater than or
+		// equal to 2 then the stack gets emptied
 		$(window).on("keydown", function(event) {
-			// first check the event handler makes is whether the key stack is greater than 2 or not
-			// if it is then pop em out
-			if (self.keyStack.length > 2) {
-				console.log("Popping bottles on the ice.... like a blizzard!");
-				// always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
-				for (var i = 0; i < self.keyStack.length; ++i) {
-					self.keyStack.pop();
-				}
-			}
-
-			// 18 for shift button
+			// 16 for shift button
 			if (event.which === 16) {
 				self.keyStack.push(16);
-				console.log(self.keyStack);
 			}
-
-			if (event.which === 78) {
-				self.keyStack.push(78);
-				console.log(self.keyStack);
-				
-			}
-
 
 		});
+
+		// when a key is released we need to make sure that it is the n key, therefore
+		// on release we push key number 78 to the stack of keys
+		// after it gets pushed we immedietly check if the combo 16 and 78 is the first and second index
+		// or 78 and 16 is the first and second index then we ask the prompt
+		$(window).on("keyup", function(event) {
+			if (event.which === 78) {
+				self.keyStack.push(78);
+			}
+			// if the first index of the stack of keys is 78 and the second index of the stack of keys is 16 we know we have pressed shift and n consequetively
+			// this might look confusing as we might want 78 first and then 16, but in our case, its a keyup, which means
+			// key 16 will get released first, and as it gets released it becomes the first index
+			// and then 78 gets released therefore n gets released first and then 78
+			// same thing might happen the opposite way where you may release the shift key first and then the n key, which is also valid
+			if (self.keyStack[0] === 16 && self.keyStack[1] === 78 || self.keyStack[0] == 78 && self.keyStack[1] === 16) {
+				var folderName = prompt("Please enter the folder name");
+			}
+
+			// always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
+			// for loop will not work while popping because self.keyStack.length is checked everytime you pop
+
+			// for example you have length of 2, if you go over the loop and pop once your i becomes 1
+			// now the self.keyStack.length is also checked and it turns out to be 1 now, and i = 1 and i < 1 is false therefore
+			// loop is broken out and we don't end up with all elements being popped
+
+			var keyStackSize = self.keyStack.length;
+			for (var i = 0; i < keyStackSize; ++i) {
+				self.keyStack.pop();
+			}
+
+
+		})
 
 
 
