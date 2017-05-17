@@ -1,8 +1,8 @@
 'use strict';
 
-// FileIcon inherits Icon 
+// FileIcon class inherits from Icon class 
 class FileIcon extends Icon {
-	
+
 	constructor(filename, x, y) {
 		// base class initializer syntax/super constructor
 		super(filename, x, y);

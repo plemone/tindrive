@@ -112,7 +112,6 @@ app.post("/authenticate", function(req, res) {
 								}
 								else res.status(200).send("login-password-error"); // 0 means not a success
 								db.close();
-
 							})
 						}
 					}

@@ -16,8 +16,12 @@ class FileSystemLayout {
 								  // then the counter will be incremented
 		this.counter = 0;		 // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
 							     // and turn the color of the file from red to blue
-		this.dropZoneId = "#dnd";
-		this.keyStack = [];
+		this.dropZoneId = "#dnd"; // main focus variable
+		this.keyStack = []; // a stack of event keys for creating a new folder
+		this.cwd = "."; // one of the most important data members of the class, keeps track of
+					   // the current working directory, suppose you are in several nested folders, it will contain the
+					   // the paths that you took to get there, so that once you make an upload the file which gets uploaded will contain
+					   // the path name
 	}
 
 	create() {
@@ -39,9 +43,8 @@ class FileSystemLayout {
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachIconEH(file); // attach the event handler of the file
-
-		// make ajax request to the server 
-
+		// makes asynchronous request to the server to upload the file
+		this.upload(file);
 	}
 
 	// the data is being manipulated as a string and will be sent to the server using a string
@@ -56,6 +59,7 @@ class FileSystemLayout {
 		Object to interpret the raw buffer as needed. 
 	*/
 	upload(file) { // requests the server to upload the file
+		var self = this;
 		var reader = new FileReader();
 		// call back function, which means it is the last thing to get executed
 		reader.onload = function(event) {
@@ -69,6 +73,7 @@ class FileSystemLayout {
 			requestObj.size = file.size;
 			requestObj.type = file.type;
 			requestObj.contents = txt;
+			requestObj.path = self.cwd;
 			// make the ajax request
 			requestObj = JSON.stringify(requestObj);
 			$.ajax({

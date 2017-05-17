@@ -1,5 +1,6 @@
 'use strict';
 
+// abstract Icon class which gets inherited by FileIcon class and FolderIcon class
 class Icon {
 
 	constructor(filename, x, y) {
