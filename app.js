@@ -53,6 +53,8 @@ app.post("/:username/uploadFiles", function(req, res) {
 
 
 
+							// call the file system manager and add the file to the file system
+							// with the correct path
 
 
 
@@ -231,6 +233,38 @@ app.get("/:username", function(req, res) {
 					else 
 						res.status(200).render("drive", {name: req.params.username}); // syntax to pass variables to pug using express
 					db.close();
+				}
+			});
+		}
+	});
+});
+
+// the instructions to create a folder is being sent from the client side
+// "/:username means that the route is dynamic depending on whatever is being sent!"
+app.post("/:username/uploadFolders", function(req, res) {
+	// to obtain the dynamic url's variable aliased by :username we can directly access it
+	// using req.params.username
+
+	// searches the Mongodb TinDrive database in the active users collection for the username that is
+	// contained in the part of the url
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.low("Failed to connect to TinDrive database");
+		else {
+			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+				if (err) console.log("Error in finding the name in database");
+				else {
+					if (doc === null) res.status(200).render("404");
+					else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
+
+
+						// call the fils ystem manager object and add the folder to the correct
+						// path of the file system for the user!
+
+
+
+						res.sendStatus(200);
+						db.close();
+					}
 				}
 			});
 		}

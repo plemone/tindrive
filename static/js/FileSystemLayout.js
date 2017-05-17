@@ -18,7 +18,7 @@ class FileSystemLayout {
 							     // and turn the color of the file from red to blue
 		this.dropZoneId = "#dnd"; // main focus variable
 		this.keyStack = []; // a stack of event keys for creating a new folder
-		this.cwd = "."; // one of the most important data members of the class, keeps track of
+		this.cwd = "./"; // one of the most important data members of the class, keeps track of
 					   // the current working directory, suppose you are in several nested folders, it will contain the
 					   // the paths that you took to get there, so that once you make an upload the file which gets uploaded will contain
 					   // the path name
@@ -44,7 +44,7 @@ class FileSystemLayout {
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachIconEH(file); // attach the event handler of the file
 		// makes asynchronous request to the server to upload the file
-		this.upload(file);
+		this.uploadFile(fObj);
 	}
 
 	// the data is being manipulated as a string and will be sent to the server using a string
@@ -58,7 +58,7 @@ class FileSystemLayout {
 		ArrayBuffers cannot be read from or written to directly, but can be passed to a typed array or DataView 
 		Object to interpret the raw buffer as needed. 
 	*/
-	upload(file) { // requests the server to upload the file
+	uploadFile(file) { // requests the server to upload the file
 		var self = this;
 		var reader = new FileReader();
 		// call back function, which means it is the last thing to get executed
@@ -99,6 +99,21 @@ class FileSystemLayout {
 		this.contents.push(folder);
 		this.attachIconEH(folder);
 
+		var folderObj = {};
+		folderObj.name = folderName;
+		folderObj.path = this.cwd;
+		this.uploadFolder(folderObj);
+
+	}
+
+	// check documentation of the uploadFile method, it follow similar structure
+	// except now we are uploading a folder instead of a file
+	uploadFolder(folderObj) {
+		$.ajax({
+			url: "/" + $("#username").text() + "/" + "uploadFolders",
+			type: "POST",
+			data: folderObj
+		})
 	}
 
 
