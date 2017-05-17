@@ -20,10 +20,16 @@ class FileSystem {
 	/* build nice and proper member functions to add the JSON files representing your files */
 
 
-	// creates a file with the file object provided with the specific path given, if folder in the path doesn't exist
-	// then creates the folder, if it exists the cds into the folder and creates the file, also updates the FSTree
-	upload() {
+	// folders must be created first before file can be inserted
+	uploadFile() {
 	
+
+	}
+
+	// folders created
+	uploadFolder() {
+
+
 
 	}
 
