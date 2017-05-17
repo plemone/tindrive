@@ -3,7 +3,6 @@
 class Icon {
 
 	constructor(filename, x, y) {
-		
 		// this disallows the construction of Icon objects, that means
 		// Icon class is abstract!
 		if (this.constructor === Icon) {
@@ -14,10 +13,17 @@ class Icon {
 		this.x = x; // x axis positioning, div gets drawn using these
 		this.y = y; // y axis positioning, div gets drawn using these
 		this.id = this.generateId();				
-		this.width = 80; // width of the file icon
+		this.width = 75; // width of the file icon
 		this.height = 60; // height of the file icon
 		this.selected = false;
+		this.background = "";
+		this.dropZoneId = "#dnd";
 	}
+
+	create() {
+		$(this.dropZoneId).append("<div id = " + "wrapper-" + this.id + "><div class = icon id = " + this.id + "></div><p id = " + "p-" + this.id + ">" + this.name + "</p></div>");
+		this.generateCSS();
+	}	
 
 	generateId() {
 		// adds file to the x and y coordinates
@@ -31,5 +37,26 @@ class Icon {
 		}
 		return id;
 	}
+
+	generateCSS() {
+		var id = "#" + this.id;
+		var wrapper = "#wrapper-" + this.id; 
+		var p = "#p-" + this.id;
+		$(id).css("position", "relative");
+		$(id).css("left", this.x.toString());
+		$(id).css("top", this.y.toString());
+		$(id).css("width", this.width.toString()); // width of the icon
+		$(id).css("height",	this.height.toString()); // height of the icon
+		$(id).css("background-image", this.background);
+		$(id).css("background-repeat", "no-repeat");
+		$(id).css("background-size", "contain");
+		$(wrapper).css("float", "left"); // stacks divs up next to each other
+		$(wrapper).css("width", (this.width + 25).toString()); // width of the wrapper
+		$(wrapper).css("height", (this.height + 25).toString()); // width of the height
+		$(wrapper).css("text-align", "center"); // aligns all the contained text withing the div to be centered
+		$(p).css("font-size", "80%"); // the font size of the paragraph containing the file name
+		$(p).css("word-wrap", "break-word"); // breaks long lined words
+	}
+
 
 }

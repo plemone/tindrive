@@ -30,9 +30,16 @@ class FileSystemLayout {
 		var file = new FileIcon(filename, this.x, this.y);
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
-		this.attachFileIconEH(file); // attach the event handler of the file
+		this.attachIconEH(file); // attach the event handler of the file
 	}
 
+	addFolder(folderName) {
+		var folder = new FolderIcon(folderName, this.x, this.y);
+		folder.create();
+		this.contents.push(folder);
+		this.attachIconEH(folder);
+
+	}
 
 
 	// on keydown push the keycodde 16 to the stack
@@ -72,6 +79,7 @@ class FileSystemLayout {
 			// same thing might happen the opposite way where you may release the shift key first and then the n key, which is also valid
 			if (self.keyStack[0] === 16 && self.keyStack[1] === 78 || self.keyStack[0] == 78 && self.keyStack[1] === 16) {
 				var folderName = prompt("Please enter the folder name");
+				self.addFolder(folderName);
 			}
 
 			// always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
@@ -97,9 +105,8 @@ class FileSystemLayout {
 	// attaches file event handler
 	// the idea is to loop over the contents array and turn on the the file icon provided
 	// and turn off the file icon not provided
-	attachFileIconEH(fileIcon) {
+	attachIconEH(fileIcon) {
 		var self = this; // this in each scope is different in JavaScript
-
 		// on click the color of the highlight changes
 		$("#" + fileIcon.id).on("click", function () {		
 			// each file icon has an event handler which loops through the all the file icons
@@ -114,16 +121,25 @@ class FileSystemLayout {
 				// only then can we select it, we can't select something that is unselected
 				if (self.contents[i] === fileIcon && !self.contents[i].selected) {
 					// red - select
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
+					if (self.contents[i].constructor === FileIcon) {
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
+					} else { // else it is a folder icon
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder-2.png)")
+					}
 					self.contents[i].selected = true;
 					self.globalClick = true; // turns on the drop zone event handlers job to do its thing
 					self.counter = 0; // prevents an activated global click from deactivating current marked red window
 									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 									 // it happens simultaneously! )
 				} else {
-					// blue - unselect
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
+						// blue - unselect
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+					} else { // else it is a folder icon
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");	
+					}
 					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
+					
 				}
 			}
 		});
@@ -138,9 +154,14 @@ class FileSystemLayout {
 		$(this.dropZoneId).on("click", function() {
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				for (var i = 0; i < self.contents.length; ++i) {
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
-					// also needs to turn off the selected boolean which is indicating that it is currently turned on
-					self.contents[i].selected = false; // unselects by turning the select boolean of each icon false
+					// checks if the object type if of FileIcon
+					if (self.contents[i].constructor === FileIcon) {
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
+						// also needs to turn off the selected boolean which is indicating that it is currently turned on			
+					} else { // else it is a folder icon
+						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
+					}
+					self.contents[i].selected = false; // unselects by turning the select boolean of each icon false	
 				}
 				self.counter = 0;
 				self.globalClick = false;
