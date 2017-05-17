@@ -26,20 +26,60 @@ class FileSystemLayout {
 	}
 
 	// adds a file icon to the DOM
-	addFile(filename) {
+	addFile(fObj) {
 		// a check to see if file with a similar name exists or not
 		for (var i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i].name === filename) {
+			if (this.contents[i].name === fObj.name) {
 				alert("File with that name already exists!");
 				return;
 			}
 		}
 
-		var file = new FileIcon(filename, this.x, this.y);
+		var file = new FileIcon(fObj.name, this.x, this.y);
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachIconEH(file); // attach the event handler of the file
+
+		// make ajax request to the server 
+
 	}
+
+	// the data is being manipulated as a string and will be sent to the server using a string
+	// the data can also be sent to the server using an ArrayBuffer object but I chose string for simplicity
+	// as different languages all have strings in common but not the JavaScript object ArrayBuffer
+	// http://stackoverflow.com/questions/31581254/how-to-write-a-file-from-an-arraybuffer-in-js
+	// link above shows how to write to a file using an array buffer
+
+	/*
+		Represents a raw buffer of binary data, which is used to store data for the different typed arrays. 
+		ArrayBuffers cannot be read from or written to directly, but can be passed to a typed array or DataView 
+		Object to interpret the raw buffer as needed. 
+	*/
+	upload(file) { // requests the server to upload the file
+		var reader = new FileReader();
+		// call back function, which means it is the last thing to get executed
+		reader.onload = function(event) {
+			var txt = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
+			// p element with the id, "#username" contains the user name
+			var u = "/" + $("#username").text() + "/" + "uploadFiles";
+			var requestObj = {}	
+			// fill in the contents of the object with file informations		
+			requestObj.name = file.name;
+			requestObj.lastModified = file.lastModified;
+			requestObj.size = file.size;
+			requestObj.type = file.type;
+			requestObj.contents = txt;
+			// make the ajax request
+			requestObj = JSON.stringify(requestObj);
+			$.ajax({
+				url: u,
+				type: "POST",
+				data: requestObj
+			})
+		}
+		reader.readAsText(file); // calls the reader.onload function
+	}
+
 
 	addFolder(folderName) {
 		// a check to see if folder with a similar name exists or not

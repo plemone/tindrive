@@ -26,7 +26,7 @@ class DropBox {
 		$(id).css("border-radius", "2%");
 		$(d).css("position", "relative");
 		$(d).css("height", "593px");
-		$(d).css("width", "770px");
+		$(d).css("width", "820px");
 		$(d).css("border", "3px solid #262626");
 		$(d).css("border-radius", "2%");
 		$(d).css("background", "white");
@@ -176,48 +176,12 @@ class DropBox {
 			for (var i = 0; i < files.length; ++i) {
 				// create file layout
 
-				self.fsComponent.addFile(files[i].name);
+				// adds the file to the server and to the UI
+				self.fsComponent.addFile(files[i]);
 
-				self.upload(files[i]);
 			}
 
 		});
-	}
-
-	// the data is being manipulated as a string and will be sent to the server using a string
-	// the data can also be sent to the server using an ArrayBuffer object but I chose string for simplicity
-	// as different languages all have strings in common but not the JavaScript object ArrayBuffer
-	// http://stackoverflow.com/questions/31581254/how-to-write-a-file-from-an-arraybuffer-in-js
-	// link above shows how to write to a file using an array buffer
-
-	/*
-		Represents a raw buffer of binary data, which is used to store data for the different typed arrays. 
-		ArrayBuffers cannot be read from or written to directly, but can be passed to a typed array or DataView 
-		Object to interpret the raw buffer as needed. 
-	*/
-	upload(file) {
-		var reader = new FileReader();
-		// call back function, which means it is the last thing to get executed
-		reader.onload = function(event) {
-			var txt = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
-			// p element with the id, "#username" contains the user name
-			var u = "/" + $("#username").text() + "/" + "uploadFiles";
-			var requestObj = {}	
-			// fill in the contents of the object with file informations		
-			requestObj.name = file.name;
-			requestObj.lastModified = file.lastModified;
-			requestObj.size = file.size;
-			requestObj.type = file.type;
-			requestObj.contents = txt;
-			// make the ajax request
-			requestObj = JSON.stringify(requestObj);
-			$.ajax({
-				url: u,
-				type: "POST",
-				data: requestObj
-			})
-		}
-		reader.readAsText(file); // calls the reader.onload function
 	}
 
 }
