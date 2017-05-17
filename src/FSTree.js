@@ -3,7 +3,7 @@
 // literelly mimics the file system, except that it only contains file information
 // rather then the actual file contents
 
-var FileInfo = require("./File.js");
+var FileInfo = require("./FileInfo.js");
 
 class FSTree {
 	// basic idea is to have nested single key value pair where a key is a string
@@ -15,10 +15,49 @@ class FSTree {
 
 	// inserts a file object to the tree structure
 	insertFile(fileObj) {
-
-
+		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2));
+		cwd.push(fileObj);
 
 	}
+	// cwd is the current folder, path are the more folders you
+	// need to traverse
+	traverse(cwd, path) {
+		// if path is an empty string we are done! no more folders to traverse
+		if (path === "") {
+			return cwd;
+		}
+
+		var nextFolder = ""; // will be containing the folder to cd in 
+		var index = 0; // index to traverse the path string
+
+		while (path[index] !== "/") {
+			nextFolder += path[index++];
+		}
+
+
+		// now check to see if the folder exists or not, if it doesn't then
+		// create it and move on, if it does then cd into it
+
+		for (var i = 0; i < cwd.length; ++i) {
+			// this if statement checks if the folder already exists or not
+			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
+				// cd into the folder if it already exists and then proceed in the next recursive call
+				return this.traverse(cwd[i][nextFolder], path.slice(++index));
+			}
+		}
+
+		// then make another folder object and push it onto the the current folder
+		var obj = {}
+		obj[nextFolder] = []
+
+		cwd.push(obj);
+		// slice(index) slice literelly slices of a string array from and including the current index
+		// and make a recursive call which cds you into the newly pushed folder
+		return this.traverse(cwd[cwd.length - 1][nextFolder], path.slice(++index));
+
+	}
+
+
 
 	// creates a folder partition in the file structure
 	insertFolder(folderName) {
@@ -61,6 +100,16 @@ class FSTree {
 // main to test the tree implementation
 function main() {
 
+	var tree = new FSTree();
+
+	var file = {};
+	file.path = "./blah/" // dot will be included remove later
+
+	tree.insertFile(file);
+	console.log(tree.root);
+	file.path = "./blah/moreblahs/";
+	tree.insertFile(file);
+	console.log(tree.root);
 
 
 }
