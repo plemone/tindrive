@@ -3,6 +3,7 @@
 'use strict'; // to avoid unpredictable nature of javascript
 
 var fs = require("fs"); // used to manipulate the file system
+var FSTree = require("./FSTree.js"); // dot slash is very important when importing files created by self
 
 // This class will provide a foundation for the REST API
 
@@ -12,32 +13,33 @@ class FileSystem {
 		// this.self = this; // recursive call, CONTAINS A REFERENCE TO SELF WHICH IN TURN CONTAINS A REFERENCE TO SELF AND SO ON AND ON
 		this.username = username; // the username of the collection in the TinDriveFS
 		this.path = path + username; // the path for which the file system exists
-	
-		// IMPLEMENT
-
+		this.tree = FSTree(); // contains a composition relationship with the FSTree which is a collection class holding file system informations
 	}
 
 
 	/* build nice and proper member functions to add the JSON files representing your files */
 
 
-
-	// uploads file objects!
-	uploadFile(fileObj) {
+	// creates a file with the file object provided with the specific path given, if folder in the path doesn't exist
+	// then creates the folder, if it exists the cds into the folder and creates the file, also updates the FSTree
+	upload() {
 	
 
+	}
+
+
+	// removes a file with a specific path given from the file system also updates the FSTree
+	removeFile() {
 
 
 	}
 
-	// creates folder objects and uploads them
-	uploadFolder(folderObj) {
-		// folder objects don't exist so we have to create one ourselves
-
-
+	// removes all files in a specific folder from the file system also updates the FSTree
+	removeFolder() {
 
 
 	}
+
 
 
 }
