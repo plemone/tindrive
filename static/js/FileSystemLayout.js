@@ -27,6 +27,14 @@ class FileSystemLayout {
 
 	// adds a file icon to the DOM
 	addFile(filename) {
+		// a check to see if file with a similar name exists or not
+		for (var i = 0; i < this.contents.length; ++i) {
+			if (this.contents[i].name === filename) {
+				alert("File with that name already exists!");
+				return;
+			}
+		}
+
 		var file = new FileIcon(filename, this.x, this.y);
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
@@ -34,6 +42,13 @@ class FileSystemLayout {
 	}
 
 	addFolder(folderName) {
+		// a check to see if folder with a similar name exists or not
+		for (var i = 0; i < this.contents.length; ++i) {
+			if (this.contents[i].name === folderName) {
+				alert("Folder with that name already exists!");
+				return;
+			}
+		}
 		var folder = new FolderIcon(folderName, this.x, this.y);
 		folder.create();
 		this.contents.push(folder);
@@ -96,11 +111,7 @@ class FileSystemLayout {
 
 
 		})
-
-
-
 	}
-
 
 	// attaches file event handler
 	// the idea is to loop over the contents array and turn on the the file icon provided
