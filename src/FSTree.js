@@ -64,13 +64,12 @@ class FSTree {
 
 	}
 
-
-
 	// creates a folder partition in the file structure
-	insertFolder(folderName) {
-
-
-
+	insertFolder(folderObj) {
+		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2));
+		var folder = {};
+		folder[folderObj.name] = [];
+		cwd.push(folder);
 	}
 
 	// removes a file object from the tree
@@ -80,7 +79,7 @@ class FSTree {
 	}
 
 	// removes all the file objects contained within a folder scope
-	removeFolder(folderName) {
+	removeFolder(folderObj) {
 
 
 
@@ -116,6 +115,13 @@ function main() {
 	console.log(tree.root);
 	file.path = "./blah/moreblahs/";
 	tree.insertFile(file);
+	console.log(tree.root);
+	var folder = {}
+	folder.name = "archive";
+	folder.path = "./asdxc/ooo/"
+
+	tree.insertFolder(folder);
+
 	console.log(tree.root);
 
 
