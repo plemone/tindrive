@@ -30,14 +30,17 @@ class FSTree {
 		var nextFolder = ""; // will be containing the folder to cd in 
 		var index = 0; // index to traverse the path string
 
+		// we traverse till we hit the first forward slash ("/")
 		while (path[index] !== "/") {
-			nextFolder += path[index++];
+			nextFolder += path[index++]; // and as we traverse the string we keep adding each letter to the nextFolder which helps us successfully add letters of the folder name
 		}
-
 
 		// now check to see if the folder exists or not, if it doesn't then
 		// create it and move on, if it does then cd into it
 
+		// now we loop through the array in search for the folder, it may be there it may not
+		// suppose it is there then we cd into it, and by cd into I mean recursively call the function
+		// but this time passing in the value of the cwd key
 		for (var i = 0; i < cwd.length; ++i) {
 			// this if statement checks if the folder already exists or not
 			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
@@ -46,12 +49,16 @@ class FSTree {
 			}
 		}
 
+		// if the for loop part was crossed it means that we have not found the folder
+		// in the current directory/folder
+
 		// then make another folder object and push it onto the the current folder
 		var obj = {}
 		obj[nextFolder] = []
-
 		cwd.push(obj);
+
 		// slice(index) slice literelly slices of a string array from and including the current index
+		
 		// and make a recursive call which cds you into the newly pushed folder
 		return this.traverse(cwd[cwd.length - 1][nextFolder], path.slice(++index));
 
