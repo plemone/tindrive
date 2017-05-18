@@ -27,6 +27,7 @@ class FSTree {
 	traverse(cwd, path, createFolder) {
 		// NOTE** - cwd is a reference pointer to the specific array inside the nested object
 		//          in the data structure, modifying cwd will modify the specific parts of the FSTree directly
+		//          reassigning cwd will change the pointer of cwd to point to something else!
 
 		// if path is an empty string we are done! no more folders to traverse
 		if (path === "") {
@@ -60,8 +61,8 @@ class FSTree {
 
 		// then make another folder object and push it onto the the current folder
 		if (createFolder) {
-			var obj = {}
-			obj[nextFolder] = []
+			var obj = {};
+			obj[nextFolder] = [];
 			cwd.push(obj);
 
 			// slice(index) slice literelly slices of a string array from and including the current index
@@ -84,6 +85,7 @@ class FSTree {
 
 	// removes a file object from the tree
 	removeFile(fileObj) {
+		// similar to insertFile method where we simply return the array where we are going to insert
 		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), false);
 
 		// checks to see if cwd exists and is not false
@@ -95,7 +97,7 @@ class FSTree {
 					// slice and splice are identical in a sense where both of them return an
 					// array of the elements targeted, except splice modifies the original array, when
 					// the method is invoked and slice does not
-					cwd = cwd.splice(i, 1);
+					cwd.splice(i, 1);
 					return true;
 				}
 
@@ -111,9 +113,29 @@ class FSTree {
 
 	// removes all the file objects contained within a folder scope
 	removeFolder(folderObj) {
+		// similar to insertFile method where we simply return the array where we are going to insert
+		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), false);
+		// if cwd doesn't return false 
+		if (cwd) {
+			for (var i = 0; i < cwd.length; ++i) {
+				// NOTE** - the folders are not objects in the FSTree, only files are objects in FSTree and
+				// files are contained in an array which is a value of a single key in each dictionary.
+				// The dictionary itself in a sense can be treated as a folder, as it contains only one element
+				// and the first key of the dictionary is the name of the folder
 
+				// Object.keys(cwd[i]) returns an array of all the keys of a dictionary in Javascript
+				// since each folder has only one key/value pair, the first index of the array will be the key
+				// which is the name of our folder!
+				if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === folderObj.name) {
+					// similarly we splice again, when we find the folder
+					cwd.splice(i, 1);
+					return true;
+				}
+			}
+		}
 
-
+		// else we simply return cwd which is false if we have reached this stage at this function
+		return cwd;
 	}
 
 	// finds the given file query
@@ -272,6 +294,9 @@ function main() {
 
 	tree.lsR();
 
+	tree.removeFolder(folder);
+
+	tree.lsR();
 
 }
 
