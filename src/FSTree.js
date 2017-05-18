@@ -4,6 +4,8 @@
 // rather then the actual file contents
 
 var FileInfo = require("./FileInfo.js");
+var values = require("object.values");
+
 
 class FSTree {
 	// basic idea is to have nested single key value pair where a key is a string
@@ -93,37 +95,85 @@ class FSTree {
 
 	}
 
-	// lists the contents of the entire file system
-	ls() {
+	// list the files or folders of the current working directory
+	lsL() {
 
 
 
 	}
 
+	// lists the contents of the entire file system
+	lsR() {
+		// pass in the empty string to recurseToString where you keep shoving everything in
+		var outStr = this.recurseToString("", this.root["ROOT"], "", 0);
+		console.log(outStr);
+	}
+
+
+
+	// we use cwd to traverse by recursively calling the function
+	// in a for loop as we traverse the folder contents, if a content is
+	// a folder we use recursion to cd into that folder
+	recurseToString(outStr, cwd, spaces, iter) {
+		if (iter !== 0) {
+			for (var i = 0; i < 4; ++i) {
+				spaces += " ";
+			}
+		}
+
+		// base case hits when folder is empty
+		if (cwd.length === 0) {
+			return outStr;
+		}
+
+		// now starting from the current folder recursively traverse everything
+		for (var i = 0; i < cwd.length; ++i) {
+			if (cwd[i].constructor !== FileInfo) {
+				// syntax to get the key of an object, 0th index/first index because the object has only one key and Object.keys() returns an array of keys in an object
+				// simple trick is to get the key from the object, and since we only have key value pair, we get the first index of the array
+				// then simply using the key query the object like this object[key], this returns the value
+				// you don't need to do outStr += name, because we want to replace the orginal outStr
+				// with the newly added outStr, we don't want to add whatever was before with the new one
+				// this keeps adding duplicates on top of each other
+				outStr += spaces + "Folder: " + Object.keys(cwd[i]) + "\n";					  // increment the iter so that we increment the space everytime we cd into a folder to have a nice format
+																							 //  iter variable needs to be there because we need to make sure that the first folder should not have any spaces
+																							 //  but as we cd into more and more folders the spaces increase as we are going deeper and deeper
+				outStr = this.recurseToString(outStr, cwd[i][Object.keys(cwd[i])[0]], spaces, ++iter);
+			} else {
+				outStr += spaces + "--> File: " + cwd[i].filename + "\n";
+			}
+		}
+
+		return outStr;
+	}
+
 
 }
+
+// this.filename = n;
+// this.lastModified = lM;
+// this.size = s;
+// this.type = t;
+// this.path = p;
 
 // main to test the tree implementation
 function main() {
 
 	var tree = new FSTree();
 
-	var file = {};
-	file.path = "./blah/" // dot will be included remove later
+	var file = new FileInfo("file1", "", "", "", "./blah/");
+	tree.insertFile(file);
 
-	tree.insertFile(file);
-	console.log(tree.root);
-	file.path = "./blah/moreblahs/";
-	tree.insertFile(file);
-	console.log(tree.root);
+	var file2 = new FileInfo("file2", "", "", "", "./blah/moreblahs/");
+	tree.insertFile(file2);
+
 	var folder = {}
 	folder.name = "archive";
 	folder.path = "./asdxc/ooo/"
 
 	tree.insertFolder(folder);
 
-	console.log(tree.root);
-
+	tree.lsR();
 
 }
 

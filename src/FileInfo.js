@@ -8,7 +8,7 @@ class FileInfo {
 		this.lastModified = lM;
 		this.size = s;
 		this.type = t;
-		this.path = p
+		this.path = p;
 	}
 }
 
