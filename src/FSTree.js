@@ -96,16 +96,34 @@ class FSTree {
 	}
 
 	// list the files or folders of the current working directory
-	lsL() {
+	lsL(cwd) {
+		var contents = [];
 
+		for (var i = 0; i < cwd.length; ++i) {
 
+			var content = {};
 
+			if (cwd[i].constructor === FileInfo) {
+				content.name = cwd[i].filename;
+				content.type = "file";
+			} else {
+				// name of the content if it is not a FileInfo object is simply the key of the first dictionary key/value pair
+				content.name = Object.keys(cwd[i])[0];
+				content.type = "folder";
+			}
+			contents.push(content);
+		}
+
+		return contents;
+		
 	}
+
+
 
 	// lists the contents of the entire file system
 	lsR() {
 		// pass in the empty string to recurseToString where you keep shoving everything in
-		var outStr = this.recurseToString("", this.root["ROOT"], "", 0);
+		var outStr = this.rToString("", this.root["ROOT"], "", 0);
 		console.log(outStr);
 	}
 
@@ -114,7 +132,7 @@ class FSTree {
 	// we use cwd to traverse by recursively calling the function
 	// in a for loop as we traverse the folder contents, if a content is
 	// a folder we use recursion to cd into that folder
-	recurseToString(outStr, cwd, spaces, iter) {
+	rToString(outStr, cwd, spaces, iter) {
 		if (iter !== 0) {
 			for (var i = 0; i < 4; ++i) {
 				spaces += " ";
@@ -138,7 +156,7 @@ class FSTree {
 				outStr += spaces + "Folder: " + Object.keys(cwd[i]) + "\n";					  // increment the iter so that we increment the space everytime we cd into a folder to have a nice format
 																							 //  iter variable needs to be there because we need to make sure that the first folder should not have any spaces
 																							 //  but as we cd into more and more folders the spaces increase as we are going deeper and deeper
-				outStr = this.recurseToString(outStr, cwd[i][Object.keys(cwd[i])[0]], spaces, ++iter);
+				outStr = this.rToString(outStr, cwd[i][Object.keys(cwd[i])[0]], spaces, ++iter);
 			} else {
 				outStr += spaces + "--> File: " + cwd[i].filename + "\n";
 			}
@@ -149,12 +167,6 @@ class FSTree {
 
 
 }
-
-// this.filename = n;
-// this.lastModified = lM;
-// this.size = s;
-// this.type = t;
-// this.path = p;
 
 // main to test the tree implementation
 function main() {
@@ -175,6 +187,7 @@ function main() {
 
 	tree.lsR();
 
+	console.log(tree.lsL(tree.root["ROOT"]));
 }
 
 if (!module.parent) {
