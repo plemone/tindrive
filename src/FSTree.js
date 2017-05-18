@@ -192,9 +192,9 @@ class FSTree {
 	}
 
 	// list the files or folders of the current working directory
-	lsL(cwd) {
+	lsL(path) {
+		var cwd = this.traverse(this.root["ROOT"], path, false);
 		var contents = [];
-
 		// simply loop over and put the contents of the folder in an array
 		// if it is a file then type is file, else it is a folder string
 		// the contents get returned as a string which can be send to the client
@@ -264,7 +264,6 @@ class FSTree {
 		return outStr;
 	}
 
-
 }
 
 function test() {
@@ -276,9 +275,9 @@ function test() {
 	var file2 = new FileInfo("file2", "", "", "", "./blah/moreblahs/");
 	tree.insertFile(file2);
 
-	var folder = {}
+	var folder = {};
 	folder.name = "archive";
-	folder.path = "./asdxc/ooo/"
+	folder.path = "./asdxc/ooo/";
 
 	tree.insertFolder(folder);
 
@@ -297,10 +296,9 @@ function test() {
 	tree.lsR();
 }
 
-
 // main to test the tree implementation
 function main() {
-	test():
+	test();
 }
 
 if (!module.parent) {

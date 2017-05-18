@@ -29,10 +29,10 @@ app.post("/:username/uploadFiles", function(req, res) {
 	// accumulated asynchronously and recursively and stored inside a variable.
 	// To avoid body parser from handling the request I bounded the bodyparser middleware
 	// after the request
-	MongoClient.connect(DB, function(err, db) {
+	MongoClient.connect(USERFS, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
-			db.collection("Users").findOne({"name": req.params.username}, function(err, doc) {
+			db.collection(req.params.username).findOne({"username": req.params.username}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database");
 				else {
 					if (doc === null) res.sendStatus(404);
@@ -46,8 +46,6 @@ app.post("/:username/uploadFiles", function(req, res) {
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
-
-
 
 							// IMPLEMENT LATER
 
@@ -141,17 +139,13 @@ app.post("/authenticate", function(req, res) {
 										});
 										// closes the opened database to make sure data gets saved
 										db.close(); 
-
 										// the file system folder also needs to be created for individual users
 										// each user has their own folder
-
 										fs.mkdir(FSPATH + req.body.username, function(err) {
 											if (err) console.log("Error in creating directory");
 											else console.log("Directory called " + req.body.username + " created");
 										});
-
 										// file system datastructure to imitate the FS needs to be created as well
-
 										MongoClient.connect(USERFS, function(err, db) {
 											db.collection(req.body.username).insert(new FileSystem(req.body.username, FSPATH), function(err) {
 												if (err) console.log(err);
@@ -161,7 +155,6 @@ app.post("/authenticate", function(req, res) {
 												}
 											});
 										});
-
 										// this function body is the last thing that gets executed in this funciton body
 										res.status(200).send("registration-success");
 									} else {
@@ -272,7 +265,6 @@ app.post("/:username/uploadFolders", function(req, res) {
 });
 
 
-
 app.post("/logout", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
 		console.log("Logged out!");
@@ -282,7 +274,6 @@ app.post("/logout", function(req, res) {
 			res.sendStatus(200);
 		}
 	});
-
 })
 
 app.get("*", function(req, res) {
