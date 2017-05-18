@@ -17,13 +17,17 @@ class FSTree {
 
 	// inserts a file object to the tree structure
 	insertFile(fileObj) {
-		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2));
+		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
 		cwd.push(fileObj);
 
 	}
 	// cwd is the current folder, path are the more folders you
-	// need to traverse
-	traverse(cwd, path) {
+	// need to traverse, createFolder is a boolean which when turned on, will
+	// create folders in a path, if they don't exist
+	traverse(cwd, path, createFolder) {
+		// NOTE** - cwd is a reference pointer to the specific array inside the nested object
+		//          in the data structure, modifying cwd will modify the specific parts of the FSTree directly
+
 		// if path is an empty string we are done! no more folders to traverse
 		if (path === "") {
 			return cwd;
@@ -47,7 +51,7 @@ class FSTree {
 			// this if statement checks if the folder already exists or not
 			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
 				// cd into the folder if it already exists and then proceed in the next recursive call
-				return this.traverse(cwd[i][nextFolder], path.slice(++index));
+				return this.traverse(cwd[i][nextFolder], path.slice(++index), true);
 			}
 		}
 
@@ -55,20 +59,24 @@ class FSTree {
 		// in the current directory/folder
 
 		// then make another folder object and push it onto the the current folder
-		var obj = {}
-		obj[nextFolder] = []
-		cwd.push(obj);
+		if (createFolder) {
+			var obj = {}
+			obj[nextFolder] = []
+			cwd.push(obj);
 
-		// slice(index) slice literelly slices of a string array from and including the current index
-		
-		// and make a recursive call which cds you into the newly pushed folder
-		return this.traverse(cwd[cwd.length - 1][nextFolder], path.slice(++index));
+			// slice(index) slice literelly slices of a string array from and including the current index
+			
+			// and make a recursive call which cds you into the newly pushed folder
+			return this.traverse(cwd[cwd.length - 1][nextFolder], path.slice(++index), true);
+		}
+
+		return false;
 
 	}
 
 	// creates a folder partition in the file structure
 	insertFolder(folderObj) {
-		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2));
+		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
 		var folder = {};
 		folder[folderObj.name] = [];
 		cwd.push(folder);
@@ -76,7 +84,28 @@ class FSTree {
 
 	// removes a file object from the tree
 	removeFile(fileObj) {
+		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), false);
 
+		// checks to see if cwd exists and is not false
+		if (cwd) {
+			for (var i = 0; i < cwd.length; ++i) {
+				// if the element is of type FileInfo, only delete the file
+				if (cwd[i].constructor === FileInfo && cwd[i].filename === fileObj.filename) {
+
+					// slice and splice are identical in a sense where both of them return an
+					// array of the elements targeted, except splice modifies the original array, when
+					// the method is invoked and slice does not
+					cwd = cwd.splice(i, 1);
+					return true;
+				}
+
+			}
+
+		}
+
+		// if all fails then cwd will be false because traverse would return false
+		// and traverse return value gets stored in as cwd
+		return cwd;
 
 	}
 
@@ -238,6 +267,10 @@ function main() {
 	var file3 = new FileInfo("file3", "", "", "", "./blah/asdasd/");
 
 	console.log(tree.query(file3));
+
+	tree.removeFile(file2);
+
+	tree.lsR();
 
 
 }

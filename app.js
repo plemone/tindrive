@@ -203,7 +203,7 @@ app.post("/redirect", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive database");
 		else {
-			console.log("Access to TinDrive Database successful");
+			console.log("Access to TinDrive Database successful...");
 			// on logout remove the active user
 			db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database");
