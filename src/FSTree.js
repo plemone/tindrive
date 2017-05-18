@@ -267,9 +267,7 @@ class FSTree {
 
 }
 
-// main to test the tree implementation
-function main() {
-
+function test() {
 	var tree = new FSTree();
 
 	var file = new FileInfo("file1", "", "", "", "./blah/");
@@ -297,7 +295,12 @@ function main() {
 	tree.removeFolder(folder);
 
 	tree.lsR();
+}
 
+
+// main to test the tree implementation
+function main() {
+	test():
 }
 
 if (!module.parent) {
