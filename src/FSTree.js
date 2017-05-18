@@ -89,9 +89,54 @@ class FSTree {
 
 	// finds the given file query
 	query(fileObj) {
+		// search should begin from the root therefore cwd = this.root["ROOT"]
+		// also always remember to slice the initial path that you use to call the queryHelper
+		// as it contains "./" by default and we need to get rid of that
+		return this.queryHelper(fileObj.filename, this.root["ROOT"], fileObj.path.slice(2));
+	}
+
+	queryHelper(name, cwd, path) {
+		// base case, that means we are out of path to traverse and have successfully landed
+		// in our path, now lets loop through the array of folder contents if we find out file
+		// then boom good job! return true, else return false
+		if (path === "") {
+			for (var i = 0; i < cwd.length; ++i) {
+				// we have to make sure the object in the contents is a file before trying
+				// to access it
+				if (cwd[i].constructor === FileInfo && cwd[i].filename === name) {
+					return true;
+				}
+			}
+
+			// if we got out of the for loop it simply means we couldn't find the file
+			// in the current directory
+			return false;
+
+		}
+
+		var nextFolder = "";
+		var index = 0;
+
+		// while we don't hit the backslash extract the letters and put them in the nextFolder variable
+		// this variable will be used to cd into the next folder our destination sets!
+		while (path[index] != "/") {
+			nextFolder += path[index++];
+		}
 
 
+		// now we cd into the folder by looping in the contents inside the folder we are in
+		// if we find it then recursively call yourself changing the current directory and the new path!
+		// else we simply return false!
 
+		for (var i = 0; i < cwd.length; ++i) {
+			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
+																// ++ because we don't want to include the "/", slice includes the number you slice with
+				return this.queryHelper(name, cwd[i][nextFolder], path.slice(++index));
+			}
+
+		}
+
+		return false;
 
 	}
 
@@ -190,7 +235,11 @@ function main() {
 
 	tree.lsR();
 
-	console.log(tree.lsL(tree.root["ROOT"]));
+	var file3 = new FileInfo("file3", "", "", "", "./blah/asdasd/");
+
+	console.log(tree.query(file3));
+
+
 }
 
 if (!module.parent) {
