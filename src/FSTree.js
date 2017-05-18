@@ -99,10 +99,13 @@ class FSTree {
 	lsL(cwd) {
 		var contents = [];
 
+		// simply loop over and put the contents of the folder in an array
+		// if it is a file then type is file, else it is a folder string
+		// the contents get returned as a string which can be send to the client
+		// side to populate the icons on start up or everytime a folder is clicked
+		// which is essentially cding into the folder!
 		for (var i = 0; i < cwd.length; ++i) {
-
 			var content = {};
-
 			if (cwd[i].constructor === FileInfo) {
 				content.name = cwd[i].filename;
 				content.type = "file";
