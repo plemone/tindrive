@@ -12,10 +12,10 @@ var bodyParser = require("body-parser"); // body parser to parse the body of pos
 var MongoClient = require("mongodb").MongoClient; // database module
 var bcrypt = require("bcrypt"); // password encryption module
 var fs = require("fs"); // used to manipulate the file system
+var Database = require("./src/Database.js");
 const ROOT = "./"; // Root directory
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
-const USERFS = "mongodb://localhost:27017/TinDriveFS";
 const FSPATH = "./src/user-fs/";
 
 // binding middlewares
@@ -46,23 +46,12 @@ app.post("/:username/uploadFiles", function(req, res) {
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
-							var updateTree = doc.tree;
+							
+							// implement							
 
 
 
 
-
-
-
-
-
-
-							// attributes added to an object without the $set will
-							// make the object have only that attribute and throw away
-							// all the rest, therefore we use $set to add or update new attributes
-							// in the object, if the attribute doesn't using $set still creates it
-							// update the object with the newly updated FSTree
-							db.collection(req.params.username).update({"_id": doc._id}, {"$set": {"tree": updateTree}});
 							db.close();
 
 						});
@@ -149,16 +138,10 @@ app.post("/authenticate", function(req, res) {
 											if (err) console.log("Error in creating directory...");
 											else console.log("Directory called " + req.body.username + " created");
 										});
-										// file system datastructure to imitate the FS needs to be created as well
-										MongoClient.connect(USERFS, function(err, db) {
-											db.collection(req.body.username).insert(new FileSystem(req.body.username, FSPATH), function(err) {
-												if (err) console.log(err);
-												else {
-													console.log("File System database for " + req.body.username + " created");
-													db.close();
-												}
-											});
-										});
+
+										// added to the static database of users
+										database.add(new FileSystem(req.body.username), FSPATH);
+
 										// this function body is the last thing that gets executed in this funciton body
 										res.status(200).send("registration-success");
 									} else {
@@ -254,7 +237,7 @@ app.post("/:username/uploadFolders", function(req, res) {
 					else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
 
 
-						// call the fils ystem manager object and add the folder to the correct
+						// call the file system manager object and add the folder to the correct
 						// path of the file system for the user!
 
 
@@ -287,3 +270,13 @@ app.get("*", function(req, res) {
 app.listen(3000, function() {
 	console.log("Server is listening on port 3000...");
 })
+
+// this is the first thing that runs when the script is executed from the terminal
+if (!module.parent) {
+
+	// generate the database for every single user registered in the system
+
+	var database = new Database();
+	database.generate();
+
+}

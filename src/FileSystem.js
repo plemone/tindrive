@@ -22,7 +22,7 @@ class FileSystem {
 
 	// folders must be created first before file can be inserted
 	uploadFile() {
-	
+
 
 	}
 
@@ -45,8 +45,6 @@ class FileSystem {
 
 
 	}
-
-
 
 }
 
