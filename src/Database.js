@@ -49,6 +49,7 @@ class Database {
 
 	// recursively adds all the contents of the folder to the fileSystem
 	traverse(fsObj, path) {
+		var self = this;
 		fs.readdir(path, function(err, files) {
 			if (err) console.log("Error in reading the contents of the directory...");
 			else {
@@ -63,8 +64,12 @@ class Database {
 					
 					} else {
 						console.log("cding...");
-						return this.traverse(fsObj, path + files[i] + "/"); 
-
+						// we shouldn't return this as we need to finish
+						// the current loop to take care of the rest of the files or folders
+						// in the current folder, and not just be done when we find the first
+						// folder in the loop
+						// visualize the recursion in your head, or draw it out if you get confused, check old notebook
+						self.traverse(fsObj, path + files[i] + "/"); 
 					}
 
 				}
