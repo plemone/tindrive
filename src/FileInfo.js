@@ -4,7 +4,7 @@
 // blue print for a file info object
 class FileInfo {
 	constructor(n, lM, s, t, p) {
-		this.filename = n;
+		this.name = n;
 		this.lastModified = lM;
 		this.size = s;
 		this.type = t;

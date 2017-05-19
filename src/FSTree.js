@@ -5,7 +5,6 @@
 
 var FileInfo = require("./FileInfo.js");
 var values = require("object.values");
-var mime = require("mime");
 
 
 class FSTree {
@@ -93,7 +92,7 @@ class FSTree {
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
 				// if the element is of type FileInfo, only delete the file
-				if (cwd[i].constructor === FileInfo && cwd[i].filename === fileObj.filename) {
+				if (cwd[i].constructor === FileInfo && cwd[i].name === fileObj.name) {
 
 					// slice and splice are identical in a sense where both of them return an
 					// array of the elements targeted, except splice modifies the original array, when
@@ -144,7 +143,7 @@ class FSTree {
 		// search should begin from the root therefore cwd = this.root["ROOT"]
 		// also always remember to slice the initial path that you use to call the queryHelper
 		// as it contains "./" by default and we need to get rid of that
-		return this.queryHelper(fileObj.filename, this.root["ROOT"], fileObj.path.slice(2));
+		return this.queryHelper(fileObj.name, this.root["ROOT"], fileObj.path.slice(2));
 	}
 
 	queryHelper(name, cwd, path) {
@@ -155,7 +154,7 @@ class FSTree {
 			for (var i = 0; i < cwd.length; ++i) {
 				// we have to make sure the object in the contents is a file before trying
 				// to access it
-				if (cwd[i].constructor === FileInfo && cwd[i].filename === name) {
+				if (cwd[i].constructor === FileInfo && cwd[i].name === name) {
 					return true;
 				}
 			}
@@ -204,7 +203,7 @@ class FSTree {
 		for (var i = 0; i < cwd.length; ++i) {
 			var content = {};
 			if (cwd[i].constructor === FileInfo) {
-				content.name = cwd[i].filename;
+				content.name = cwd[i].name;
 				content.type = "file";
 			} else {
 				// name of the content if it is not a FileInfo object is simply the key of the first dictionary key/value pair
@@ -258,7 +257,7 @@ class FSTree {
 																							 //  but as we cd into more and more folders the spaces increase as we are going deeper and deeper
 				outStr = this.rToString(outStr, cwd[i][Object.keys(cwd[i])[0]], spaces, ++iter);
 			} else {
-				outStr += spaces + "--> File: " + cwd[i].filename + "\n";
+				outStr += spaces + "--> File: " + cwd[i].name + "\n";
 			}
 		}
 

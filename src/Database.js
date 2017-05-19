@@ -2,6 +2,8 @@
 
 var fs = require("fs");
 var FileSystem = require("./FileSystem.js");
+var FileInfo = require("./FileInfo.js");
+var mime = require("mime");
 
 // will contain a collection of all the individual users file syste,
 // it is more like a Facade class, and it follows structural design pattern
@@ -47,36 +49,56 @@ class Database {
 		// specific user
 	}
 
-	// recursively adds all the contents of the folder to the fileSystem
+	// recursively adds all the contents of all the nested folders to the fileSystem
 	traverse(fsObj, path) {
+		console.log("cding... " + path);
 		var self = this;
-		fs.readdir(path, function(err, files) {
-			if (err) console.log("Error in reading the contents of the directory...");
-			else {
 
-				for (var i = 0; i < files.length; ++i) {
+		// NOTE** - readder HAS to be synchronouse, because if it is asynchronous event in a loop
+		// it will it will maintain its asynchronous property, which is it will always be the last
+		// thing to be executed, even if it is nested away in another function!
+		var files = fs.readdirSync(path);
 
-					var stats = fs.statSync(path + files[i]);
+		for (var i = 0; i < files.length; ++i) {
 
-					if (stats.isFile()) {
+			var stats = fs.statSync(path + files[i]);
 
-						console.log(files[i]);
-					
-					} else {
-						console.log("cding...");
-						// we shouldn't return this as we need to finish
-						// the current loop to take care of the rest of the files or folders
-						// in the current folder, and not just be done when we find the first
-						// folder in the loop
-						// visualize the recursion in your head, or draw it out if you get confused, check old notebook
-						self.traverse(fsObj, path + files[i] + "/"); 
+			if (stats.isFile()) {
+				// Required information
+				// this.name = n;
+				// this.lastModified = lM;
+				// this.size = s;
+				// this.type = t;
+				// this.path = p;
+				// stats contain the following properties for a file
+				/*
+					{ dev: 2049
+					, ino: 305352
+					, mode: 16877
+					, nlink: 12
+					, uid: 1000
+					, gid: 1000
+					, rdev: 0
+					, size: 4096
+					, blksize: 4096
+					, blocks: 8
+					, atime: '2009-06-29T11:11:55Z'
+					, mtime: '2009-06-29T11:11:40Z'
+					, ctime: '2009-06-29T11:11:40Z' 
 					}
 
-				}
-
+				*/
+				var file = new FileInfo(files[i], stats.mtime, stats.size, mime.lookup(files[i]), path);
+				fsObj.tree.insertFile(file);
+			} else {
+				// we shouldn't return this as we need to finish
+				// the current loop to take care of the rest of the files or folders
+				// in the current folder, and not just be done when we find the first
+				// folder in the loop
+				// visualize the recursion in your head, or draw it out if you get confused, check old notebook
+				self.traverse(fsObj, path + files[i] + "/"); 
 			}
-		});
-
+		}
 	}
 
 }
