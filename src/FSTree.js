@@ -218,8 +218,8 @@ class FSTree {
 	}
 
 
-
 	// lists the contents of the entire file system
+	// this is mostly for debugging purposes only
 	lsR() {
 		// pass in the empty string to recurseToString where you keep shoving everything in
 		var outStr = this.rToString("", this.root["ROOT"], "", 0);

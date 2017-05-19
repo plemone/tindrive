@@ -29,10 +29,12 @@ app.post("/:username/uploadFiles", function(req, res) {
 	// accumulated asynchronously and recursively and stored inside a variable.
 	// To avoid body parser from handling the request I bounded the bodyparser middleware
 	// after the request
-	MongoClient.connect(USERFS, function(err, db) {
+
+	// check for the username provided is found in the collection of active users in the database
+	MongoClient.connect(DB, function(err, db) {
 		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
-			db.collection(req.params.username).findOne({"username": req.params.username}, function(err, doc) {
+			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database...");
 				else {
 					if (doc === null) res.sendStatus(404);
@@ -45,12 +47,12 @@ app.post("/:username/uploadFiles", function(req, res) {
 
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
-							
-							
-							// implement							
+			
+							// retrieve the user' file system
+							var userFS = database.retrieve(req.params.username);
 
-
-
+							// file uploaded and saved to file system
+							userFS.uploadFile(requestObj);
 
 							db.close();
 
@@ -236,11 +238,8 @@ app.post("/:username/uploadFolders", function(req, res) {
 					if (doc === null) res.status(200).render("404");
 					else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
 
-
 						// call the file system manager object and add the folder to the correct
 						// path of the file system for the user!
-
-
 
 						res.sendStatus(200);
 						db.close();

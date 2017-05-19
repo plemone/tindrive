@@ -5,6 +5,13 @@ var FileSystem = require("./FileSystem.js");
 var FileInfo = require("./FileInfo.js");
 var mime = require("mime");
 
+// This database self generates automatically everytime the server is launched!
+
+// also the benefit of this is when the client side user interface which is the browser
+// asks for a specific file environment to mimic we can simply use this database to look up
+// and retrieve the information as needed!
+
+
 // will contain a collection of all the individual users file syste,
 // it is more like a Facade class, and it follows structural design pattern
 class Database {
@@ -24,8 +31,8 @@ class Database {
 	retrieve(username) {
 		// search for the user's file system by querying with the user name
 		for (var i = 0; i < this.collection.length; ++i) {
-			if (collection[i].username === username) {
-				return collection[i]; // upon finding return the object
+			if (this.collection[i].username === username) {
+				return this.collection[i]; // upon finding return the object
 			}
 		}
 		return false; // if user is not found return false simply, easier to error check
@@ -40,7 +47,7 @@ class Database {
 		fs.readdir(this.root, function(err, files) {
 			if (err) console.log("Error in reading contents of the directory...");
 			else {
-				for (var i = 0; i < files.length; ++i) 
+				for (var i = 0; i < files.length; ++i) { 
 					// delegates responsibilities to the generateHelper function
 					var fileSystem = new FileSystem(files[i], self.root); // creates each users file system
 					self.traverse(fileSystem, fileSystem.path);

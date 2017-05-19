@@ -4,6 +4,7 @@
 
 var fs = require("fs"); // used to manipulate the file system
 var FSTree = require("./FSTree.js"); // dot slash is very important when importing files created by self
+var FileInfo = require("./FileInfo.js");
 
 // This class will provide a foundation for the REST API
 
@@ -21,8 +22,15 @@ class FileSystem {
 
 
 	// folders must be created first before file can be inserted
-	uploadFile() {
+	uploadFile(fileObj) {
+		fs.writeFile(this.path + fileObj.name, fileObj.contents, function(err) {
+			if (err) console.log("Error in writing file to operating system's file system...");
+			else console.log("File successfully saved..."); 
+		});
 
+		// add to the tree
+		var file = new FileInfo(fileObj.name, fileObj.lastModified, fileObj.size, fileObj.type, fileObj.path);
+		this.tree.insertFile(file);
 
 	}
 
@@ -46,6 +54,12 @@ class FileSystem {
 
 	}
 
+	// returns the ls -l array of the directory of the file system
+	getDirectoryEnvironment(path) {
+		return tree.lsL(path);
+	}
+
 }
 
 module.exports = FileSystem; // exporting the class for other files to import
+
