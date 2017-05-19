@@ -14,16 +14,21 @@ class Database {
 		this.root = "./src/user-fs/";
 	}
 
-	// adds a collection to user database upon registration
-	add(fileSystem) {
-
-
+	// adds a collection to user database upon a fresh registration
+	add(username) {
+		fileSystem = new FileSystem(req.body.username, this.root);
+		this.collection.push(fileSystem);
 	}
 
-	// retrieves a user's file system information upon registration
-	retrieve() {
-
-
+	// retrieves a user's file system when quried with the username
+	retrieve(username) {
+		// search for the user's file system by querying with the user name
+		for (var i = 0; i < this.collection.length; ++i) {
+			if (collection[i].username === username) {
+				return collection[i]; // upon finding return the object
+			}
+		}
+		return false; // if user is not found return false simply, easier to error check
 	}
 
 	// loop over all the contents of user-fs folder and populate the trees in 
@@ -35,7 +40,7 @@ class Database {
 		fs.readdir(this.root, function(err, files) {
 			if (err) console.log("Error in reading contents of the directory...");
 			else {
-				for (var i = 0; i < files.length; ++i) {
+				for (var i = 0; i < files.length; ++i) 
 					// delegates responsibilities to the generateHelper function
 					var fileSystem = new FileSystem(files[i], self.root); // creates each users file system
 					self.traverse(fileSystem, fileSystem.path);

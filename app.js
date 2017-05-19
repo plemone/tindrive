@@ -140,7 +140,7 @@ app.post("/authenticate", function(req, res) {
 										});
 
 										// added to the static database of users
-										database.add(new FileSystem(req.body.username), FSPATH);
+										database.add(req.param.username);
 
 										// this function body is the last thing that gets executed in this funciton body
 										res.status(200).send("registration-success");
