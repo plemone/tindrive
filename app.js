@@ -33,7 +33,7 @@ app.post("/:username/uploadFiles", function(req, res) {
 		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			db.collection(req.params.username).findOne({"username": req.params.username}, function(err, doc) {
-				if (err) console.log("Error in finding the name in database");
+				if (err) console.log("Error in finding the name in database...");
 				else {
 					if (doc === null) res.sendStatus(404);
 					else {
@@ -46,14 +46,21 @@ app.post("/:username/uploadFiles", function(req, res) {
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
+							var updateTree = doc.tree;
+
+
+
+
+
+
+
+
+
+
 							// attributes added to an object without the $set will
 							// make the object have only that attribute and throw away
 							// all the rest, therefore we use $set to add or update new attributes
 							// in the object, if the attribute doesn't using $set still creates it
-
-							var updateTree = doc.tree;
-
-
 							// update the object with the newly updated FSTree
 							db.collection(req.params.username).update({"_id": doc._id}, {"$set": {"tree": updateTree}});
 							db.close();
@@ -118,7 +125,7 @@ app.post("/authenticate", function(req, res) {
 				var userDetails = {}; 
 				// always use find one if you are absolutely sure that there is one document you are looking for
 				collection.findOne({"name": req.body.username}, function(err, doc) {
-					if (err) console.log("Error in finding the user");
+					if (err) console.log("Error in finding the user...");
 					else {
 						if (doc != null && doc.name === req.body.username) {
 							res.status(200).send("0");
@@ -139,7 +146,7 @@ app.post("/authenticate", function(req, res) {
 										// the file system folder also needs to be created for individual users
 										// each user has their own folder
 										fs.mkdir(FSPATH + req.body.username, function(err) {
-											if (err) console.log("Error in creating directory");
+											if (err) console.log("Error in creating directory...");
 											else console.log("Directory called " + req.body.username + " created");
 										});
 										// file system datastructure to imitate the FS needs to be created as well
@@ -191,12 +198,12 @@ app.post("/nameCheck", function(req, res) {
 
 app.post("/redirect", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive database");
+		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			console.log("Access to TinDrive Database successful...");
 			// on logout remove the active user
 			db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
-				if (err) console.log("Error in finding the name in database");
+				if (err) console.log("Error in finding the name in database...");
 				else {
 					if (doc == null) 
 						db.collection("ActiveUsers").insert({"name": req.body.name});
@@ -213,10 +220,10 @@ app.get("/:username", function(req, res) {
 	// to obtain the dynamic url aliased by :username we can directly access the url
 	// aliased by this by using the syntax req.params.username
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive database");
+		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-				if (err) console.log("Error in finding the name in database");
+				if (err) console.log("Error in finding the name in database...");
 				else {
 					if (doc === null) 
 						res.status(200).render("404");
@@ -238,10 +245,10 @@ app.post("/:username/uploadFolders", function(req, res) {
 	// searches the Mongodb TinDrive database in the active users collection for the username that is
 	// contained in the part of the url
 	MongoClient.connect(DB, function(err, db) {
-		if (err) console.low("Failed to connect to TinDrive database");
+		if (err) console.low("Failed to connect to TinDrive database...");
 		else {
 			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-				if (err) console.log("Error in finding the name in database");
+				if (err) console.log("Error in finding the name in database...");
 				else {
 					if (doc === null) res.status(200).render("404");
 					else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
@@ -265,7 +272,7 @@ app.post("/:username/uploadFolders", function(req, res) {
 app.post("/logout", function(req, res) {
 	MongoClient.connect(DB, function(err, db) {
 		console.log("Logged out!");
-		if (err) console.log("Failed to connect to TinDrive database");
+		if (err) console.log("Failed to connect to TinDrive database...");
 		else {
 			db.collection("ActiveUsers").remove({"name": req.body.name});
 			res.sendStatus(200);
