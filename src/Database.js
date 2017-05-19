@@ -31,10 +31,14 @@ class Database {
 		// reads the contents in a directory and returns an array of all the conents
 		// of the directory
 		fs.readdir(this.root, function(err, files) {
-			for (var i = 0; i < files.length; ++i) {
-				// delegates responsibilities to the generateHelper function
-				var fileSystem = new FileSystem(files[i], self.root + files[i]); // creates each users file system
-				self.generateHelper(fileSystem);
+			if (err) console.log("Error in reading contents of the directory...");
+			else {
+				for (var i = 0; i < files.length; ++i) {
+					// delegates responsibilities to the generateHelper function
+					var fileSystem = new FileSystem(files[i], self.root); // creates each users file system
+					self.traverse(fileSystem, fileSystem.path);
+					self.collection.push(fileSystem);
+				}
 			}
 		});
 
@@ -43,11 +47,30 @@ class Database {
 		// specific user
 	}
 
-	// takes in the user's folder and calls a funciton that recursively traverses
-	// and adds to the users tree
-	generateHelper(fsObj) {
+	// recursively adds all the contents of the folder to the fileSystem
+	traverse(fsObj, path) {
+		fs.readdir(path, function(err, files) {
+			if (err) console.log("Error in reading the contents of the directory...");
+			else {
 
+				for (var i = 0; i < files.length; ++i) {
 
+					var stats = fs.statSync(path + files[i]);
+
+					if (stats.isFile()) {
+
+						console.log(files[i]);
+					
+					} else {
+						console.log("cding...");
+						return this.traverse(fsObj, path + files[i] + "/"); 
+
+					}
+
+				}
+
+			}
+		});
 
 	}
 

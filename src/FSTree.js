@@ -5,6 +5,7 @@
 
 var FileInfo = require("./FileInfo.js");
 var values = require("object.values");
+var mime = require("mime");
 
 
 class FSTree {
