@@ -67,7 +67,8 @@ class LoginRegistration {
 		$("input").remove();
 		$("#close-icon").remove(); // the close icon should be also responsible for deleting itself and should be inside the body
 								   // of the close event handler
-		self.expanded = false;								   
+		self.expanded = false;
+		self.clicks = 0;						   
 	}
 	createTextFields(divId) {
 		$(divId).append("<div><input class = box id = name type = text placeholder = '              username'></input><div>");

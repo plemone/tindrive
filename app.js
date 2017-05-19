@@ -46,19 +46,16 @@ app.post("/:username/uploadFiles", function(req, res) {
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
 							
+							// attributes added to an object without the $set will
+							// make the object have only that attribute and throw away
+							// all the rest, therefore we use $set to add or update new attributes
+							// in the object, if the attribute doesn't using $set still creates it
 
-							// IMPLEMENT LATER
-
-
-
-							// call the file system manager and add the file to the file system
-							// with the correct path
-
+							var updateTree = doc.tree;
 
 
-
-
-
+							// update the object with the newly updated FSTree
+							db.collection(req.params.username).update({"_id": doc._id}, {"$set": {"tree": updateTree}});
 							db.close();
 
 						});
