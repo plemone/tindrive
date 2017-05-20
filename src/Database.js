@@ -18,7 +18,9 @@ class Database {
 
 	constructor() {
 		this.collection = [];
-		this.root = "./src/user-fs/";
+		this.root = "./src/user-fs/"; // the full path is necessary for the built in fs module
+									 // to do its work, and that's why we don't just start from the
+									 // username's folder as home
 	}
 
 	// adds a collection to user database upon a fresh registration

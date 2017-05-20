@@ -23,26 +23,6 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
 
-// check mongodb if the active user is pressed, if they are from the database (facade class)
-// grab the users file system, ls it using the path sent to you through the route and then
-// send the array back by putting it inside a json object
-app.get("/:username/init", function(req, res) {
-
-	// Checking ActiveUsers is important as even REST APIS need to momentarily
-	// login the users, a user that isn't logged in CANNOT make a request
-	MongoClient.connect(DB, function(err, db) {
-		if (err) console.log("Failed to connect to TinDrive database...");
-		else {
-			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-
-			});
-		}
-	});
-
-
-});
-
-
 app.post("/:username/uploadFiles", function(req, res) {
 	// Due to the limit set by the body parser module, in order to send data via HTTP
 	// post request I had to use the req.on data asynchronous function, where data is
@@ -244,6 +224,37 @@ app.get("/:username", function(req, res) {
 		}
 	});
 });
+
+
+// check mongodb if the active user is pressed, if they are from the database (facade class)
+// grab the users file system, ls it using the path sent to you through the route and then
+// send the array back by putting it inside a json object
+app.post("/:username/init", function(req, res) {
+
+	// Checking ActiveUsers is important as even REST APIS need to momentarily
+	// login the users, a user that isn't logged in CANNOT make a request
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive database...");
+		else {
+			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+				if (err) console.log("Error in finding the user");
+				else {
+					// retrieve the file system of the user from the facade class
+					var userFS = database.retrieve(req.params.username);
+				
+					var ls = userFS.tree.lsL(req.body.path);
+
+					var responseObj = {};
+
+					responseObj.ls = ls;
+
+					res.status(200).send(responseObj);
+				}
+			});
+		}
+	});
+});
+
 
 // the instructions to create a folder is being sent from the client side
 // "/:username means that the route is dynamic depending on whatever is being sent!"

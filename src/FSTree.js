@@ -193,7 +193,7 @@ class FSTree {
 
 	// list the files or folders of the current working directory
 	lsL(path) {
-		var cwd = this.traverse(this.root["ROOT"], path, false);
+		var cwd = this.traverse(this.root["ROOT"], path.slice(2), false);
 		var contents = [];
 		// simply loop over and put the contents of the folder in an array
 		// if it is a file then type is file, else it is a folder string
@@ -294,6 +294,8 @@ function test() {
 	tree.removeFolder(folder);
 
 	tree.lsR();
+
+	console.log(tree.lsL("./"));
 }
 
 // main to test the tree implementation

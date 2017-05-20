@@ -9,7 +9,7 @@ var FileInfo = require("./FileInfo.js");
 // This class will provide a foundation for the REST API
 
 class FileSystem {
-	constructor(	username, path) {
+	constructor(username, path) {
 		// NEVER DO THIS
 		// this.self = this; // recursive call, CONTAINS A REFERENCE TO SELF WHICH IN TURN CONTAINS A REFERENCE TO SELF AND SO ON AND ON
 		this.username = username; // the username of the collection in the TinDriveFS

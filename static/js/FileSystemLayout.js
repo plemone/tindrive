@@ -18,7 +18,8 @@ class FileSystemLayout {
 							     // and turn the color of the file from red to blue
 		this.dropZoneId = "#dnd"; // main focus variable
 		this.keyStack = []; // a stack of event keys for creating a new folder
-		this.cwd = "./"; // one of the most important data members of the class, keeps track of
+		// the cwd needs to match the cwd of the server, as you are looking up the cwd for the server
+		this.cwd = "./src/user-fs/" + $("#username").text() + "/"; // one of the most important data members of the class, keeps track of
 					   // the current working directory, suppose you are in several nested folders, it will contain the
 					   // the paths that you took to get there, so that once you make an upload the file which gets uploaded will contain
 					   // the path name
@@ -32,11 +33,20 @@ class FileSystemLayout {
 		// on creation of the file system layout we must make an ajax request to get the list
 		// of files there is initially on the root folder, so that we can display the users
 
+		var requestObj = {}
+		requestObj.path = this.cwd;
+
 		$.ajax({
 			url: self.route + "init",
-			type: "GET",
+			type: "POST",
+			data: requestObj,
 			success: function(data) {
-				console.log("Gotem!");
+
+				for (var i = 0; i < data.ls.length; ++i) {
+					console.log(data.ls[i]);
+				}
+
+
 			}
 		})
 		
