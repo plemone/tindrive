@@ -33,7 +33,17 @@ class Icon {
 		// both these expression need to be true for the entire while loop to be true
 		// either of these expression being false will result the entire while loop to be false
 		while (this.name[i] !== "." && i !== this.name.length) {
-			id += this.name[i];
+			// now if this.name[i] contains a space its a problem for jquery to target
+			// the dom element with id's which contain spaces in them, to fix that we simply
+			// have to replace the spaces with a "-"
+			// so if an id was "i am an id" it will change to "i-am-an-id"
+			// since the id is saved inside each object accessing each object's id to attach
+			// the event handler on creation will do the trick
+			if (this.name[i] === " ") {
+				id += "-";
+			} else {
+				id += this.name[i];
+			}
 			++i;
 		}
 		return id;
