@@ -47,7 +47,7 @@ app.post("/:username/uploadFiles", function(req, res) {
 
 						req.on("end", function() {
 							var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
-			
+
 							// retrieve the user' file system
 							var userFS = database.retrieve(req.params.username);
 

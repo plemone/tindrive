@@ -1,3 +1,14 @@
+
+
+
+/*
+
+	Issue no.1: problems with names and spaces!
+
+
+*/
+
+
 'use strict'; // to avoid JavaScript weirdness
 
 // responsible for managing the #dnd div which is basically the drop box zone
@@ -63,7 +74,12 @@ class FileSystemLayout {
 		var reader = new FileReader();
 		// call back function, which means it is the last thing to get executed
 		reader.onload = function(event) {
-			var txt = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
+			var data = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
+		
+			// convert the data to base64
+
+			var base64 = data.split(",")[1];
+
 			// p element with the id, "#username" contains the user name
 			var u = "/" + $("#username").text() + "/" + "uploadFiles";
 			var requestObj = {}	
@@ -72,8 +88,9 @@ class FileSystemLayout {
 			requestObj.lastModified = file.lastModified;
 			requestObj.size = file.size;
 			requestObj.type = file.type;
-			requestObj.contents = txt;
+			requestObj.contents = base64;
 			requestObj.path = self.cwd;
+		
 			// make the ajax request
 			requestObj = JSON.stringify(requestObj);
 			$.ajax({
@@ -82,7 +99,7 @@ class FileSystemLayout {
 				data: requestObj
 			})
 		}
-		reader.readAsText(file); // calls the reader.onload function
+		reader.readAsDataURL(file); // calls the reader.onload function
 	}
 
 
