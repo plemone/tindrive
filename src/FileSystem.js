@@ -24,6 +24,15 @@ class FileSystem {
 	// folders must be created first before file can be inserted
 	uploadFile(fileObj) {
 
+		// We need to create a buffer from the base64 encoded file that we have in the
+		// response object's content key's value.
+
+		// to prevent bytes from being screwed up when transfering over networks, you encode
+		// the bytes by representing it into characters, same 64 characters are used to encode
+		// the byte hence the name base64 and this ensures that the data is uncorrupted in the
+		// end of the day
+
+		// this says that convert a base64 string to a byte buffer	
 		var buffer = new Buffer(fileObj.contents, "base64");
 
 		// writes the data to file system

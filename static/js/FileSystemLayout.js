@@ -75,10 +75,24 @@ class FileSystemLayout {
 		// call back function, which means it is the last thing to get executed
 		reader.onload = function(event) {
 			var data = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
-		
-			// convert the data to base64
+			
+			// when you console.log data it will appear to look like something like this
+			// data:application/msword;base64,0M8R4KGxGuEAAAAAAAAAAAAAAAAA........
+			// obviously it depends from file to file, but you will get the file type and then
+			// comma the actual data, now to extract the data you split and make it into an array
+			// by the comma, and now you have the type of data and the contents of the data in an 
+			// JavaScript array containing two elements.
+			// We don't really care about the first index so we take the second indext and now we 
+			// have our array of contents to be stored in the server side!
 
+			// readAsDataUrl automatically converts it to base64 we just need to extract the actual
+			// part from the gigantic string
+
+			// convert the data to base64
 			var base64 = data.split(",")[1];
+
+
+			console.log(base64);
 
 			// p element with the id, "#username" contains the user name
 			var u = "/" + $("#username").text() + "/" + "uploadFiles";
