@@ -40,12 +40,34 @@ class Icon {
 			// since the id is saved inside each object accessing each object's id to attach
 			// the event handler on creation will do the trick
 			if (this.name[i] === " ") {
-				id += "-";
+				// absolutely random id is generated to avoid conflicts with similar named ids
+				// needs to be rounded to ceiling as well as jquery doesn't like decimal values as ids
+				var rand = (Math.ceil((Math.random() * Math.random() * Math.random() * 100)).toString() + Math.ceil((Math.random() * Math.random() * Math.random() * 100)).toString());
+				id += rand;
 			} else {
 				id += this.name[i];
 			}
 			++i;
 		}
+
+		// alright now one last bit of check needs to be made, we can have a file with the same file name
+		// but different extension and it is valid, so right now our ids can be duplicate as same file names
+		// can have the same extension, so we just need to add the extension letters such as pdf, txt to our id to make it work
+
+		++i; // as we want to avoid the dot so we skip over its index
+		// if we have a file with no extension then it will generate an infinite loop
+		// because something greater than something will never be equal to it, so we need to check for
+		// while i smaller length as we also want to stop when i reaches length and not include the length index
+		// as indexes start from 0
+
+		// using <= instead of < would mean that you want to loop until <= stops being true which is
+		// either less than qual to this.name.length or it is === this.name.length, so it will stop being
+		// true only when it is greater than this.name.length, which ends up including the length th index
+		// which is index out of bounds!
+		while (i < this.name.length) {
+			id += this.name[i++];	
+		}
+
 		return id;
 	}
 

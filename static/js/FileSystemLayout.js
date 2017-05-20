@@ -91,9 +91,6 @@ class FileSystemLayout {
 			// convert the data to base64
 			var base64 = data.split(",")[1];
 
-
-			console.log(base64);
-
 			// p element with the id, "#username" contains the user name
 			var u = "/" + $("#username").text() + "/" + "uploadFiles";
 			var requestObj = {}	

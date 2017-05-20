@@ -40,7 +40,7 @@ app.post("/:username/uploadFiles", function(req, res) {
 					if (doc === null) res.sendStatus(404);
 					else {
 						var bytes = "";
-
+						// bytes being send in as chunks that get stored inside the bytes variable asynchronously
 						req.on("data", function(chunk) {
 							bytes += chunk;
 						});
