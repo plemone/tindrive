@@ -1,14 +1,3 @@
-
-
-
-/*
-
-	Issue no.1: problems with names and spaces!
-
-
-*/
-
-
 'use strict'; // to avoid JavaScript weirdness
 
 // responsible for managing the #dnd div which is basically the drop box zone
@@ -33,9 +22,25 @@ class FileSystemLayout {
 					   // the current working directory, suppose you are in several nested folders, it will contain the
 					   // the paths that you took to get there, so that once you make an upload the file which gets uploaded will contain
 					   // the path name
+		// default route options, strings get added on top of this depending on
+		// the situation to make ajax requests
+		this.route = "/" + $("#username").text() + "/";
 	}
 
 	create() {
+		var self = this;
+		// on creation of the file system layout we must make an ajax request to get the list
+		// of files there is initially on the root folder, so that we can display the users
+
+		$.ajax({
+			url: self.route + "init",
+			type: "GET",
+			success: function(data) {
+				console.log("Gotem!");
+			}
+		})
+		
+
 		this.attachGlobalClickEH();
 		this.attachFolderEH();
 	}
@@ -137,8 +142,9 @@ class FileSystemLayout {
 	// check documentation of the uploadFile method, it follow similar structure
 	// except now we are uploading a folder instead of a file
 	uploadFolder(folderObj) {
+		var self = this;
 		$.ajax({
-			url: "/" + $("#username").text() + "/" + "uploadFolders",
+			url:  self.route + "uploadFolders",
 			type: "POST",
 			data: folderObj
 		})

@@ -23,6 +23,26 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static(ROOT));
 
+// check mongodb if the active user is pressed, if they are from the database (facade class)
+// grab the users file system, ls it using the path sent to you through the route and then
+// send the array back by putting it inside a json object
+app.get("/:username/init", function(req, res) {
+
+	// Checking ActiveUsers is important as even REST APIS need to momentarily
+	// login the users, a user that isn't logged in CANNOT make a request
+	MongoClient.connect(DB, function(err, db) {
+		if (err) console.log("Failed to connect to TinDrive database...");
+		else {
+			db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+
+			});
+		}
+	});
+
+
+});
+
+
 app.post("/:username/uploadFiles", function(req, res) {
 	// Due to the limit set by the body parser module, in order to send data via HTTP
 	// post request I had to use the req.on data asynchronous function, where data is
@@ -190,8 +210,12 @@ app.post("/redirect", function(req, res) {
 			db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
 				if (err) console.log("Error in finding the name in database...");
 				else {
-					if (doc == null) 
+					if (doc == null)  {
+						// The user currently logged in gets added to the collection
+						// of active users, any ongoing interation while the user is logged on
+						// needs to be checked with mongodbs collection of active users first.
 						db.collection("ActiveUsers").insert({"name": req.body.name});
+					}
 					res.sendStatus(200);
 					db.close()
 				}
