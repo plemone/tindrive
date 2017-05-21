@@ -18,11 +18,7 @@ class FileSystemLayout {
 							     // and turn the color of the file from red to blue
 		this.dropZoneId = "#dnd"; // main focus variable
 		this.keyStack = []; // a stack of event keys for creating a new folder
-		// the cwd needs to match the cwd of the server, as you are looking up the cwd for the server
-		this.cwd = "./src/user-fs/" + $("#username").text() + "/"; // one of the most important data members of the class, keeps track of
-					   // the current working directory, suppose you are in several nested folders, it will contain the
-					   // the paths that you took to get there, so that once you make an upload the file which gets uploaded will contain
-					   // the path name
+		this.path = new Path();
 		// default route options, strings get added on top of this depending on
 		// the situation to make ajax requests
 		this.route = "/" + $("#username").text() + "/";
@@ -40,7 +36,7 @@ class FileSystemLayout {
 		// of files there is initially on the root folder, so that we can display the users
 
 		var requestObj = {}
-		requestObj.path = this.cwd;
+		requestObj.path = this.path.get;
 
 		$.ajax({
 			url: self.route + "init",
@@ -124,7 +120,7 @@ class FileSystemLayout {
 			requestObj.size = file.size;
 			requestObj.type = file.type;
 			requestObj.contents = base64;
-			requestObj.path = self.cwd;
+			requestObj.path = self.path.get;
 		
 			// make the ajax request
 			requestObj = JSON.stringify(requestObj);
@@ -152,7 +148,7 @@ class FileSystemLayout {
 
 		var folderObj = {};
 		folderObj.name = folderName;
-		folderObj.path = this.cwd;
+		folderObj.path = this.path.get;
 	}
 
 
@@ -169,7 +165,7 @@ class FileSystemLayout {
 		folderObj.name = folderName;
 		// must follow the convention of ending with a backslash, it is very crucial as the
 		// server follows the conention of the path string always ending with "/"
-		folderObj.path = this.cwd + folderName + "/";
+		folderObj.path = this.path.get + folderName + "/";
 		$.ajax({
 			url:  self.route + "uploadFolders",
 			type: "POST",

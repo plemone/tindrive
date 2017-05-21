@@ -5,15 +5,16 @@
 module.exports = function() { // just a lambda
 	'use strict';
 
+	/* Routing dependencies */
+	var express = require("express"); // importing express module
+	var bodyParser = require("body-parser"); // body parser to parse the body of post requests
 	var DriveController = require("./DriveController.js"); // import the controller of the app
+	
 	const CONTROLLER = new DriveController();
 	const ROOT = "./"; // Root directory
 
-	/* Routing dependencies */
-	var express = require("express"); // importing express module
+	/* Express object created */
 	var app = express(); // an instance of the express server
-	var bodyParser = require("body-parser"); // body parser to parse the body of post requests
-
 
 	/* Middleware bindings */
 	app.set("views", "./views");
