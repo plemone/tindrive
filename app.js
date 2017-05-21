@@ -16,7 +16,7 @@ var Database = require("./src/Database.js");
 const ROOT = "./"; // Root directory
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
-const FSPATH = "./src/user-fs/";
+const FSPATH = "./src/user-fs/"; // the main path where the file system is stored
 
 // binding middlewares
 app.set("views", "./views");
@@ -241,13 +241,13 @@ app.post("/:username/init", function(req, res) {
 				else {
 					// retrieve the file system of the user from the facade class
 					var userFS = database.retrieve(req.params.username);
-				
+					// retrieve the array from the tree encapsulated inside the users file system
 					var ls = userFS.tree.lsL(req.body.path);
-
+					// create the response object
 					var responseObj = {};
-
+					// encapsulate the directory contents array inside the response object
 					responseObj.ls = ls;
-
+					// send the response objet
 					res.status(200).send(responseObj);
 				}
 			});

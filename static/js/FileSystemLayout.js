@@ -29,6 +29,12 @@ class FileSystemLayout {
 	}
 
 	create() {
+		this.generateInitialFS();
+		this.attachGlobalClickEH();
+		this.attachFolderEH();
+	}
+
+	generateInitialFS() {
 		var self = this;
 		// on creation of the file system layout we must make an ajax request to get the list
 		// of files there is initially on the root folder, so that we can display the users
@@ -41,22 +47,21 @@ class FileSystemLayout {
 			type: "POST",
 			data: requestObj,
 			success: function(data) {
-
 				for (var i = 0; i < data.ls.length; ++i) {
-					console.log(data.ls[i]);
+					if (data.ls[i].type === "file") {
+						// if the content is a file then add file to DOM
+						self.addFileToDOM(data.ls[i]);
+					} else {
+						// if the content is a folder then add the folder to DOM
+						self.addFolderToDOM(data.ls[i]);
+					}
 				}
-
 
 			}
 		})
-		
-
-		this.attachGlobalClickEH();
-		this.attachFolderEH();
 	}
 
-	// adds a file icon to the DOM
-	addFile(fObj) {
+	addFileToDOM(fObj) {
 		// a check to see if file with a similar name exists or not
 		for (var i = 0; i < this.contents.length; ++i) {
 			if (this.contents[i].name === fObj.name) {
@@ -69,6 +74,11 @@ class FileSystemLayout {
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachIconEH(file); // attach the event handler of the file
+	}
+
+	// adds a file icon to the DOM
+	addFile(fObj) {
+		this.addFileToDOM();
 		// makes asynchronous request to the server to upload the file
 		this.uploadFile(fObj);
 	}
@@ -128,8 +138,7 @@ class FileSystemLayout {
 		reader.readAsDataURL(file); // calls the reader.onload function
 	}
 
-
-	addFolder(folderName) {
+	addFolderToDOM(fObj) {
 		// a check to see if folder with a similar name exists or not
 		for (var i = 0; i < this.contents.length; ++i) {
 			if (this.contents[i].name === folderName) {
@@ -145,8 +154,12 @@ class FileSystemLayout {
 		var folderObj = {};
 		folderObj.name = folderName;
 		folderObj.path = this.cwd;
-		this.uploadFolder(folderObj);
+	}
 
+
+	addFolder(folderName) {
+		this.addFolderToDOM();
+		this.uploadFolder(folderObj);
 	}
 
 	// check documentation of the uploadFile method, it follow similar structure
@@ -169,9 +182,7 @@ class FileSystemLayout {
 	// the array will get cleared no matter what key up you make, but remember only the
 	// right combination will trigger the prompt 
 	attachFolderEH() {
-
 		var self = this;
-
 		// checks if the keycode is 16 which is shift on keydown
 		// also checks if the keycode is 78 which is n on key up
 
