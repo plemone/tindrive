@@ -77,10 +77,10 @@ class FSTree {
 
 	// creates a folder partition in the file structure
 	insertFolder(folderObj) {
+		// traversing the file system will automatically create the path as the flag is set to true
+		// so adding it again would make no sense, path string contains the details of the folders that
+		// are being added, so when the flag is set to true, we automatically create the path
 		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
-		var folder = {};
-		folder[folderObj.name] = [];
-		cwd.push(folder);
 	}
 
 	// removes a file object from the tree

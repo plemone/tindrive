@@ -297,6 +297,7 @@ class FileSystemLayout {
 				var requestObj = {};
 
 				requestObj.path = self.path.get;
+				requestObj.cwd = self.path.cwd;
 
 				$.ajax({
 					url: self.route + "folderDblClick",
