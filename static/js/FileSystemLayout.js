@@ -233,10 +233,30 @@ class FileSystemLayout {
 	// the idea is to loop over the contents array and turn on the the file icon provided
 	// and turn off the file icon not provided
 	attachIconEH(icon) {
+		this.singleClick(icon);
+		this.doubleClick(icon);
+	}
+
+	doubleClick(icon) {
+		/* Double click on the icon, deals with only folder icons */
+		// a check is made to make sure this behaviour is not generated for Icons that are not
+		// folder icons, double clicks should only work folder icons for now
+		if (icon.constructor !== FileIcon) {
+			$("#" + icon.id).on("dblclick", function() {
+			
+				console.log("Double trouble!");
+				console.log(icon.name);
+
+			});
+		}
+
+	}
+
+
+
+	singleClick(icon) {
 		var self = this; // this in each scope is different in JavaScript
-
 		/* Single click on the icon, deals with both file icons and folder icons */
-
 		// on click the color of the highlight changes
 		$("#" + icon.id).on("click", function () {		
 			// each file icon has an event handler which loops through the all the file icons
@@ -273,22 +293,6 @@ class FileSystemLayout {
 				}
 			}
 		});
-
-		/* Double click on the icon, deals with only folder icons */
-
-		// a check is made to make sure this behaviour is not generated for Icons that are not
-		// folder icons, double clicks should only work folder icons for now
-		if (icon.constructor !== FileIcon) {
-			$("#" + icon.id).on("dblclick", function() {
-			
-
-
-				console.log("Double trouble!");
-
-			});
-		}
-
-
 	}
 
 
