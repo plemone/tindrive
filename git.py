@@ -2,9 +2,9 @@ import os
 import optparse
 
 def git_commit(details):
+	details = "'" + details + "'"
 	os.system("sudo git add .")
 	os.system("sudo git commit -m %s" %(details))
-	print(details)
 	os.system("sudo git push")
 
 def main():
