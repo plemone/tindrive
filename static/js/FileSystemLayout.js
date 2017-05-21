@@ -79,7 +79,7 @@ class FileSystemLayout {
 
 	// adds a file icon to the DOM
 	addFile(fObj) {
-		this.addFileToDOM();
+		this.addFileToDOM(fObj);
 		// makes asynchronous request to the server to upload the file
 		this.uploadFile(fObj);
 	}
@@ -165,8 +165,11 @@ class FileSystemLayout {
 
 	// check documentation of the uploadFile method, it follow similar structure
 	// except now we are uploading a folder instead of a file
-	uploadFolder(folderObj) {
+	uploadFolder(folderName) {
 		var self = this;
+		var folderObj = {};
+		folderObj.name = folderName;
+		folderObj.path = this.cwd + folderName;
 		$.ajax({
 			url:  self.route + "uploadFolders",
 			type: "POST",

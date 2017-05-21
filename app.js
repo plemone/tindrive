@@ -272,29 +272,18 @@ app.post("/:username/uploadFolders", function(req, res) {
 				else {
 					if (doc === null) res.status(200).render("404");
 					else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
+						// make the folder with the specific path provided through the request object which 
+						// represents a folder						
 
-						// call the file system manager object and add the folder to the correct
-						// path of the file system for the user!
+						// retrieve the file system of the user from the facade class
+						var userFS = database.retrieve(req.params.username);
 
+						// delegate the responsibilities to the userFS
+						userFS.uploadFolder(req.body);
 
-
-						/* ADD FOLDERS */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						res.sendStatus(200);
+						res.sendStatus(200);						
 						db.close();
+						
 					}
 				}
 			});

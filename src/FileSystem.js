@@ -48,9 +48,20 @@ class FileSystem {
 	}
 
 	// folders created
-	uploadFolder() {
+	uploadFolder(folderObj) {
+		var self = this;
+		fs.mkdir(folderObj.path, function(err) {
+			if (err) console.log("Error in creating the folder requested...");
+			else {
+				// folder creation successful
+				console.log("Folder named " + folderObj.name + " successfully created...");
 
-
+				// insert to the the tree of the user's file system
+				self.tree.insertFolder(folderObj);
+				
+				// all done :)
+			}
+		});
 
 	}
 
