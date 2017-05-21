@@ -12,7 +12,7 @@
 class Path {
 	constructor() {
 		// keeps track of the path, folders gets added on to this
-		this.get = "./src/user-fs/" + $("#username").text() + "/";
+		this.get = "./src/user-fs/" + "blah" + "/";
 		// contains the current directory that the user is currently in
 		this.cwd = "";
 		// everytime you visit a folder it will get added in this array, it will
@@ -22,19 +22,21 @@ class Path {
 	}
 
 	extend(extension) {
-
-		
-
+		// change cwd to the new folder extension
+		this.cwd = extension;
+		// add to the array of folder visits
+		this.visits.push(extension + "/");
+		// extend the path string
+		this.get += extension + "/";
 	}
 
 	shorten() {
-
 		// takes the last index of the visits array and uses the string
 		// to reduce this.get which is our path string also changes cwd and pops visits as well!
 
 		var folder = this.visits[this.visits.length - 1]; // grabs last index
 
-		var folderLength = this.folder.length;
+		var folderLength = folder.length;
 
 		var pathLength = this.get.length;
 
@@ -44,10 +46,58 @@ class Path {
 		var reduction = pathLength - folderLength;
 
 		// splices the string and retains words from 0 to reduction
-		this.get.splice(0, reduction);
+		this.get = this.get.slice(0, reduction);
 
+		// as we are switching back to our old directory we need to pop the visits array
 		this.visits.pop();
+
+		// if the visit array is empty, then just our current working directory is just an empty string
+		// as we are in the root folder
+		console.log(this.visits);
+		if (this.visits.length === 0) {
+			this.cwd = "";
+		} else { 
+			// else we get the last index of the visits array as the current folder
+			// then we eliminate the trailing "/" and change the this.cwd which is the current folder
+			// we also need to change the current working directory!
+			var currentFolder = this.visits[this.visits.length - 1];
+			this.cwd = currentFolder.slice(0, currentFolder.length - 1);
+		}
 
 	}
 
+}
+// $("#username").text()
+
+function main() {
+	var path = new Path();
+
+	console.log("Test - 1");
+
+	path.extend("folda");
+
+	console.log(path.get);
+	console.log(path.cwd);
+	console.log(path.visits);
+
+	console.log("Test - 2");
+
+	path.extend("yoda");
+
+	console.log(path.get);
+	console.log(path.cwd);
+	console.log(path.visits);
+
+	console.log("Test - 3");
+
+	path.shorten();
+
+	console.log(path.get);
+	console.log(path.cwd);
+	console.log(path.visits);
+
+}
+
+if (!module.parent) {
+	main();
 }
