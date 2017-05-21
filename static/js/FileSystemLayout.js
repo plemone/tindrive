@@ -297,25 +297,37 @@ class FileSystemLayout {
 				var requestObj = {};
 
 				requestObj.path = self.path.get;
-				requestObj.cwd = self.path.cwd;
 
 				$.ajax({
 					url: self.route + "folderDblClick",
 					type: "POST",
 					data: requestObj,
 					success: function(data) {
-
-						console.log("success!");
-
+						self.populateDropZone(data.ls);
 					}
 				})
-
-
 			});
 		}
-
 	}
 
+	// removes all the contents currently available in the dropzone and populate the contents
+	// which are currently there
+	populateDropZone(ls) {
+
+		// needs to be stored in a variable because in a for loop the length
+		// gets calculated each time, and we don't want that, we want to pop for a fix number
+		// of times, the value of i gets messed up as i does become greater than this.contents.size()
+		// at one point even the the elements have not been popped off
+		var size = this.contents.length;
+
+		for (var i = 0; i < size; ++i) {
+			// killing two birds with one exression, pop returns the element that is being removed
+			// from the array
+			$("#wrapper-" + this.contents.pop().id).remove();
+		}
+
+
+	}
 
 
 	// attaches a click event handler to the drop zone window, where upon clicking

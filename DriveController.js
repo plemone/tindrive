@@ -301,12 +301,14 @@ class DriveController {
 						// retrieve the list of contents in a particular directory
 						var ls = userFS.tree.lsL(req.body.path);
 
-						console.log(req.body.path);
-						console.log(ls);
+						// encapsulate the diretory contents in a response object
+						var responseObj = {};
+						responseObj.ls = ls;
 
-						res.sendStatus(200);
+						// send the responseObject back
+						res.status(200).send(responseObj);
+
 						db.close();
-
 					}
 				});
 			}

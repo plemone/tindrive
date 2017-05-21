@@ -87,7 +87,6 @@ class FSTree {
 	removeFile(fileObj) {
 		// similar to insertFile method where we simply return the array where we are going to insert
 		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), false);
-
 		// checks to see if cwd exists and is not false
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
@@ -100,11 +99,8 @@ class FSTree {
 					cwd.splice(i, 1);
 					return true;
 				}
-
 			}
-
 		}
-
 		// if all fails then cwd will be false because traverse would return false
 		// and traverse return value gets stored in as cwd
 		return cwd;
@@ -133,7 +129,6 @@ class FSTree {
 				}
 			}
 		}
-
 		// else we simply return cwd which is false if we have reached this stage at this function
 		return cwd;
 	}
@@ -158,11 +153,9 @@ class FSTree {
 					return true;
 				}
 			}
-
 			// if we got out of the for loop it simply means we couldn't find the file
 			// in the current directory
 			return false;
-
 		}
 
 		var nextFolder = "";
@@ -184,11 +177,9 @@ class FSTree {
 																// ++ because we don't want to include the "/", slice includes the number you slice with
 				return this.queryHelper(name, cwd[i][nextFolder], path.slice(++index));
 			}
-
 		}
 
 		return false;
-
 	}
 
 	// list the files or folders of the current working directory
@@ -214,7 +205,6 @@ class FSTree {
 		}
 
 		return contents;
-		
 	}
 
 
