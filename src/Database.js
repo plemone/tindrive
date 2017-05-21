@@ -77,7 +77,11 @@ class Database {
 		// an empty folder, empty folders are still important for users using the device
 		// they can make a folder and keep it without putting things inside, and therefore
 		// the empty folders should still be added and generated as well!
-		if (files.length === 0) {
+		// container folder will be undefined at start, if and only if we are at root
+		// and the folder is empty, or whenever the has no files to start in the root folder
+		// and this traverse function will be called containerFolder will be uninitialized as nothing
+		// is passed inside the containerFolder when this function is invoked, hence it is undefined
+		if (files.length === 0 && containerFolder !== undefined) {
 			var folderObj = {};
 			folderObj.name = containerFolder;
 			folderObj.path = path;
