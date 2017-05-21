@@ -23,13 +23,31 @@ class Path {
 
 	extend(extension) {
 
+		
 
 	}
 
 	shorten() {
 
+		// takes the last index of the visits array and uses the string
+		// to reduce this.get which is our path string also changes cwd and pops visits as well!
 
+		var folder = this.visits[this.visits.length - 1]; // grabs last index
+
+		var folderLength = this.folder.length;
+
+		var pathLength = this.get.length;
+
+		// reduction is the index till which we want our this.get index to be
+		// for example if you have a word like ilovepizza - size of 10 contains 0-9 indexes
+		// and you just want to keep ilove then simply use word.splice(0, 5) which is 9 - 4 = 5
+		var reduction = pathLength - folderLength;
+
+		// splices the string and retains words from 0 to reduction
+		this.get.splice(0, reduction);
+
+		this.visits.pop();
 
 	}
-	
+
 }
