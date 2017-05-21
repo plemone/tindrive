@@ -153,6 +153,7 @@ class DriveController {
 			}
 		});		
 	}
+	// renders a new page depending on the name of the user hence the route
 	// "/:username means that the route is dynamic depending on whatever is being sent!"
 	username(req, res) {
 		// to obtain the dynamic url aliased by :username we can directly access the url
