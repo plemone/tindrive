@@ -48,7 +48,6 @@ class FileSystemLayout {
 			data: requestObj,
 			success: function(data) {
 				for (var i = 0; i < data.ls.length; ++i) {
-					console.log(data.ls[i]);
 					if (data.ls[i].type === "file") {
 						// if the content is a file then add file to DOM
 						self.addFileToDOM(data.ls[i]);
@@ -57,7 +56,6 @@ class FileSystemLayout {
 						self.addFolderToDOM(data.ls[i].name);
 					}
 				}
-
 			}
 		})
 	}
@@ -179,7 +177,6 @@ class FileSystemLayout {
 		})
 	}
 
-
 	// on keydown push the keycodde 16 to the stack
 	// on keyup if the key is 78 then push it to the stack and then the next
 	// instruction is to check if the first and second index is either 16 and 78 or 78 and 16
@@ -230,28 +227,33 @@ class FileSystemLayout {
 				self.keyStack.pop();
 			}
 
-
 		})
+	
+
+
 	}
 
 	// attaches file event handler
 	// the idea is to loop over the contents array and turn on the the file icon provided
 	// and turn off the file icon not provided
-	attachIconEH(fileIcon) {
+	attachIconEH(icon) {
 		var self = this; // this in each scope is different in JavaScript
+
+		/* Single click on the icon, deals with both file icons and folder icons */
+
 		// on click the color of the highlight changes
-		$("#" + fileIcon.id).on("click", function () {		
+		$("#" + icon.id).on("click", function () {		
 			// each file icon has an event handler which loops through the all the file icons
-			// then checks if the click is on the current fileIcon and if the fileIcon is not
+			// then checks if the click is on the current icon and if the icon is not
 			// selected then go ahead and select it
-			// else unselect all other fileIcons by making them blue and unselecting it
-			// each iteration will either be the fileIcon clicked or all other fileIcons
+			// else unselect all other icons by making them blue and unselecting it
+			// each iteration will either be the fileIcon clicked or all other icons
 			for (var i = 0; i < self.contents.length; ++i) {
 				// both these expression need to be true in order for the entire entire statement to be true
-				// which makes sense as we want the current element in the array to be the fileIcon we clicked
+				// which makes sense as we want the current element in the array to be the icon we clicked
 				// AND we have to make sure that the element in the array is not selected, because if it is not selected
 				// only then can we select it, we can't select something that is unselected
-				if (self.contents[i] === fileIcon && !self.contents[i].selected) {
+				if (self.contents[i] === icon && !self.contents[i].selected) {
 					// red - select
 					if (self.contents[i].constructor === FileIcon) {
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
@@ -275,6 +277,22 @@ class FileSystemLayout {
 				}
 			}
 		});
+
+		/* Double click on the icon, deals with only folder icons */
+
+		// a check is made to make sure this behaviour is not generated for Icons that are not
+		// folder icons, double clicks should only work folder icons for now
+		if (icon.constructor !== FileIcon) {
+			$("#" + icon.id).on("dblclick", function() {
+			
+
+
+				console.log("Double trouble!");
+
+			});
+		}
+
+
 	}
 
 
