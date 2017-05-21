@@ -276,6 +276,23 @@ app.post("/:username/uploadFolders", function(req, res) {
 						// call the file system manager object and add the folder to the correct
 						// path of the file system for the user!
 
+
+
+						/* ADD FOLDERS */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						res.sendStatus(200);
 						db.close();
 					}
