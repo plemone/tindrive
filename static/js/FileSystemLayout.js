@@ -48,12 +48,13 @@ class FileSystemLayout {
 			data: requestObj,
 			success: function(data) {
 				for (var i = 0; i < data.ls.length; ++i) {
+					console.log(data.ls[i]);
 					if (data.ls[i].type === "file") {
 						// if the content is a file then add file to DOM
 						self.addFileToDOM(data.ls[i]);
 					} else {
 						// if the content is a folder then add the folder to DOM
-						self.addFolderToDOM(data.ls[i]);
+						self.addFolderToDOM(data.ls[i].name);
 					}
 				}
 
@@ -138,7 +139,7 @@ class FileSystemLayout {
 		reader.readAsDataURL(file); // calls the reader.onload function
 	}
 
-	addFolderToDOM(fObj) {
+	addFolderToDOM(folderName) {
 		// a check to see if folder with a similar name exists or not
 		for (var i = 0; i < this.contents.length; ++i) {
 			if (this.contents[i].name === folderName) {
@@ -158,8 +159,8 @@ class FileSystemLayout {
 
 
 	addFolder(folderName) {
-		this.addFolderToDOM();
-		this.uploadFolder(folderObj);
+		this.addFolderToDOM(folderName);
+		this.uploadFolder(folderName);
 	}
 
 	// check documentation of the uploadFile method, it follow similar structure

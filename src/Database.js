@@ -64,7 +64,7 @@ class Database {
 	}
 
 	// recursively adds all the contents of all the nested folders to the fileSystem
-	traverse(fsObj, path) {
+	traverse(fsObj, path, containerFolder) {
 		console.log("cding... " + path);
 		var self = this;
 
@@ -72,6 +72,17 @@ class Database {
 		// it will it will maintain its asynchronous property, which is it will always be the last
 		// thing to be executed, even if it is nested away in another function!
 		var files = fs.readdirSync(path);
+
+		// this will only happen if we have a folder with contents inside, also known as
+		// an empty folder, empty folders are still important for users using the device
+		// they can make a folder and keep it without putting things inside, and therefore
+		// the empty folders should still be added and generated as well!
+		if (files.length === 0) {
+			var folderObj = {};
+			folderObj.name = containerFolder;
+			folderObj.path = path;
+			fsObj.tree.insertFolder(folderObj);
+		}
 
 		for (var i = 0; i < files.length; ++i) {
 
@@ -105,12 +116,18 @@ class Database {
 				var file = new FileInfo(files[i], stats.mtime, stats.size, mime.lookup(files[i]), path);
 				fsObj.tree.insertFile(file);
 			} else {
+				// sometimes if a directory is simply empty the folder will never get added
+				// to the list, so it is important to make sure that the empty folder should
+				// be accounted for as well
+
+
 				// we shouldn't return this as we need to finish
 				// the current loop to take care of the rest of the files or folders
 				// in the current folder, and not just be done when we find the first
 				// folder in the loop
 				// visualize the recursion in your head, or draw it out if you get confused, check old notebook
-				self.traverse(fsObj, path + files[i] + "/"); 
+				// files[i] should be a folder in this case
+				self.traverse(fsObj, path + files[i] + "/", files[i]); // files[i] is the name of the folder that we are about to cd in 
 			}
 		}
 	}
