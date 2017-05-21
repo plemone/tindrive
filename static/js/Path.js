@@ -12,7 +12,7 @@
 class Path {
 	constructor() {
 		// keeps track of the path, folders gets added on to this
-		this.get = "./src/user-fs/" + "blah" + "/";
+		this.get = "./src/user-fs/" + $("#username").text() + "/";
 		// contains the current directory that the user is currently in
 		this.cwd = "";
 		// everytime you visit a folder it will get added in this array, it will
@@ -66,38 +66,4 @@ class Path {
 
 	}
 
-}
-// $("#username").text()
-
-function main() {
-	var path = new Path();
-
-	console.log("Test - 1");
-
-	path.extend("folda");
-
-	console.log(path.get);
-	console.log(path.cwd);
-	console.log(path.visits);
-
-	console.log("Test - 2");
-
-	path.extend("yoda");
-
-	console.log(path.get);
-	console.log(path.cwd);
-	console.log(path.visits);
-
-	console.log("Test - 3");
-
-	path.shorten();
-
-	console.log(path.get);
-	console.log(path.cwd);
-	console.log(path.visits);
-
-}
-
-if (!module.parent) {
-	main();
 }
