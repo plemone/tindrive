@@ -237,23 +237,6 @@ class FileSystemLayout {
 		this.doubleClick(icon);
 	}
 
-	doubleClick(icon) {
-		/* Double click on the icon, deals with only folder icons */
-		// a check is made to make sure this behaviour is not generated for Icons that are not
-		// folder icons, double clicks should only work folder icons for now
-		if (icon.constructor !== FileIcon) {
-			$("#" + icon.id).on("dblclick", function() {
-			
-				console.log("Double trouble!");
-				console.log(icon.name);
-
-			});
-		}
-
-	}
-
-
-
 	singleClick(icon) {
 		var self = this; // this in each scope is different in JavaScript
 		/* Single click on the icon, deals with both file icons and folder icons */
@@ -294,6 +277,44 @@ class FileSystemLayout {
 			}
 		});
 	}
+
+	doubleClick(icon) {
+		var self = this;
+		/* Double click on the icon, deals with only folder icons */
+		// a check is made to make sure this behaviour is not generated for Icons that are not
+		// folder icons, double clicks should only work folder icons for now
+		if (icon.constructor !== FileIcon) {
+			$("#" + icon.id).on("dblclick", function() {
+	
+				// the path needs to be extended as we are now visiting a new folder
+				self.path.extend(icon.name);
+	
+				// now we need to remove all the current contents from the drop zone
+				// and get the conents inside the folder that we just double clicked
+
+				// make request object which encapsulates the path for the server to query
+
+				var requestObj = {};
+
+				requestObj.path = self.path.get;
+
+				$.ajax({
+					url: self.route + "folderDblClick",
+					type: "POST",
+					data: requestObj,
+					success: function(data) {
+
+						console.log("success!");
+
+					}
+				})
+
+
+			});
+		}
+
+	}
+
 
 
 	// attaches a click event handler to the drop zone window, where upon clicking

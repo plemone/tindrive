@@ -256,7 +256,7 @@ class DriveController {
 		// searches the Mongodb TinDrive database in the active users collection for the username that is
 		// contained in the part of the url
 		MongoClient.connect(DB, function(err, db) {
-			if (err) console.low("Failed to connect to TinDrive database...");
+			if (err) console.log("Failed to connect to TinDrive database...");
 			else {
 				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
 					if (err) console.log("Error in finding the name in database...");
@@ -280,6 +280,38 @@ class DriveController {
 			}
 		});		
 	}
+
+	folderDblClick(req, res) {
+		var self = this; // this keyword is different for each function scope, so we make a variable point to this within
+						// the current function scope's this
+
+		// Mongodb needs to be checked for the current client that is trying to communicate
+		// with the db has gone through the authentication process or not
+
+		MongoClient.connect(DB, function(err, db) {
+			if (err) console.log("Failed to connect to TinDrive database...");
+			else {
+				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+					if (err) console.log("Error in finding the name in database...");
+					else {
+
+						// retrieve the userFS using the facade class
+						var userFS = self.database.retrieve(req.params.username);
+
+						// retrieve the list of contents in a particular directory
+
+
+
+						res.sendStatus(200);
+						db.close();
+
+					}
+				});
+			}
+		});
+
+	}
+
 
 	logout(req, res) {
 		MongoClient.connect(DB, function(err, db) {
