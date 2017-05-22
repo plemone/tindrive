@@ -201,8 +201,24 @@ class FileSystemLayout {
 
 			// we want to check for another thing besides the keycode 16, hence it is a second check
 			if (event.which === 8) {
+				// shorten the path and back up a folder
+				self.path.shorten();
 
-				console.log("Back it up bro");
+				// encapulate the path string in a request object
+				var requestObj = {};
+				requestObj.path = self.path.get;
+
+				// send the path request to the server to get back a folder contents for the specific path
+				$.ajax({
+					url: self.route + "back",
+					type: "POST",
+					data: requestObj,
+					success: function(data) {
+						// on success extract the array of contents from the data and
+						// populate the drop zone with new contents
+						self.populateDropZone(data.ls);
+					}
+				})
 
 			}
 

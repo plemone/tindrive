@@ -281,6 +281,7 @@ class DriveController {
 		});		
 	}
 
+	// when doubleclick is made on the client side on a folder
 	folderDblClick(req, res) {
 		var self = this; // this keyword is different for each function scope, so we make a variable point to this within
 						// the current function scope's this
@@ -308,11 +309,46 @@ class DriveController {
 						// send the responseObject back
 						res.status(200).send(responseObj);
 
+						// most importantly close the connection opened with the database
 						db.close();
 					}
 				});
 			}
 		});
+	}
+
+	// when the back space is pressed on the client side
+	back(req, res) {
+		var self = this; // the keyword this is varies between scopes, we make a variable which points to the this within the scope so that it can be used within nested scope inside the function
+
+		// TinDrive's ActiveUsers collection needs to be checked for the user who is trying to communicate
+		// with the server, if the user is not in the Active connection we refuse to give information back
+		// only through legit authentication can the user access information
+		MongoClient.connect(DB, function(err, db) {
+			if (err) console.log("Failed to connect to TinDrive database...");
+			else {
+				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
+					if (err) console.log("Error in finding the name in database");
+					else {
+						// retrieve the user's file system using the facade class-- database
+						var userFS = self.database.retrieve(req.params.username);
+
+						// retrieve the list of contents in a particular directory
+						var ls = userFS.tree.lsL(req.body.path);
+
+						// encapsulates the directory contents in a response object
+						var responseObj = {};
+						responseObj.ls = ls;
+
+						// send the response object black
+						res.status(200).send(responseObj);
+
+						// most importantly close the connection opened with the database
+						db.close();
+					}
+				});
+			}
+		});	
 
 	}
 
