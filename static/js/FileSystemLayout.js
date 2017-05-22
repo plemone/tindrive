@@ -200,6 +200,7 @@ class FileSystemLayout {
 
 			self.backSpace(event, self);
 			self.arrowKeyNav(event, self);
+			self.returnKey(event, self);
 
 		});
 
@@ -233,6 +234,37 @@ class FileSystemLayout {
 		})
 	}
 
+	// return key event handler for the window
+	returnKey(event, self) {
+		// return key code is 13
+		if (event.which === 13 && self.selected) { // both these expression need to be true for the entire statement to be evaluated to true
+			// return key does essentially what double click event handler does
+			// so if we can use similar instructions that doubleClick uses
+		
+			// the path needs to be extended as we are now visiting a new folder
+			self.path.extend(self.selected.name);
+
+			// now we need to remove all the current contents from the drop zone
+			// and get the conents inside the folder that we just double clicked
+
+			// make request object which encapsulates the path for the server to query
+
+			var requestObj = {};
+
+			requestObj.path = self.path.get;
+
+			$.ajax({
+				url: self.route + "expandDir", // same route as doubleClick
+				type: "POST",
+				data: requestObj,
+				success: function(data) {
+					self.populateDropZone(data.ls);
+				}
+			})
+		}
+	}
+
+	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
 		// up keycode -> 38
 		// down keycode -> 40
@@ -465,7 +497,7 @@ class FileSystemLayout {
 									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 									 // it happens simultaneously! )
 					self.indexSelected = i + 1; // set the indexSelected to current index
-					self.selected = self.content[i];
+					self.selected = self.contents[i];
 				} else { // blue - unselected
 					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
@@ -499,7 +531,7 @@ class FileSystemLayout {
 				requestObj.path = self.path.get;
 
 				$.ajax({
-					url: self.route + "folderDblClick",
+					url: self.route + "expandDir",
 					type: "POST",
 					data: requestObj,
 					success: function(data) {

@@ -50,7 +50,7 @@ module.exports = function() { // just a lambda
 
 	app.post("/:username/uploadFolders", function(req, res) { CONTROLLER.uploadFolders(req, res); });
 
-	app.post("/:username/folderDblClick", function(req, res) { CONTROLLER.folderDblClick(req, res); });
+	app.post("/:username/expandDir", function(req, res) { CONTROLLER.expandDir(req, res); });
 
 	app.post("/:username/back", function(req, res) {CONTROLLER.back(req, res); });
 

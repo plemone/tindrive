@@ -282,7 +282,7 @@ class DriveController {
 	}
 
 	// when doubleclick is made on the client side on a folder
-	folderDblClick(req, res) {
+	expandDir(req, res) {
 		var self = this; // this keyword is different for each function scope, so we make a variable point to this within
 						// the current function scope's this
 
