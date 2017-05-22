@@ -4,8 +4,6 @@
 // rather then the actual file contents
 
 var FileInfo = require("./FileInfo.js");
-var values = require("object.values");
-
 
 class FSTree {
 	// basic idea is to have nested single key value pair where a key is a string

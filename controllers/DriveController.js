@@ -1,17 +1,17 @@
 'use strict' // to make JavaScript less forgiving
 
 /* Dependencies */
-var IdGenerator = require("./src/IdGenerator.js"); // unique user id generator
-var FileSystem = require("./src/FileSystem.js"); // unique file system for the user
-var bcrypt = require("bcrypt"); // password encryption module
-var MongoClient = require("mongodb").MongoClient; // database module
-var fs = require("fs"); // used to manipulate the file system
-var Database = require("./src/Database.js");
+var IdGenerator = require("./../helpers/IdGenerator.js"); // unique user id generator ./../ means cd out of the current folder
+var FileSystem = require("./../helpers/FileSystem.js"); // unique file system for the user ./../ means cd out of the current folder
+var bcrypt = require("bcrypt"); // password encryption module 
+var MongoClient = require("mongodb").MongoClient; // database module 
+var fs = require("fs"); // used to manipulate the file system 
+var Database = require("./../helpers/Database.js"); // ./../ means cd out of the current folder
 
 /* Constants */
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
-const FSPATH = "./src/user-fs/"; // the main path where the file system is stored
+const FSPATH = "./../filesystems/user-fs/"; // the main path where the file system is stored ./../ means cd out of the current folder
 
 class DriveController {
 	
