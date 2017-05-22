@@ -200,7 +200,9 @@ class FileSystemLayout {
 			// previous working directory by shorting the path and sending an ajax request
 
 			// we want to check for another thing besides the keycode 16, hence it is a second check
-			if (event.which === 8) {
+			// if path.get === "./src/user-fs/" + $("#username").text() + "/", then we are at the root directory
+			// and we cannot go back further then that!
+			if (event.which === 8 && self.path.get !== "./src/user-fs/" + $("#username").text() + "/") {
 				// shorten the path and back up a folder
 				self.path.shorten();
 

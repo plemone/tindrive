@@ -53,7 +53,6 @@ class Path {
 
 		// if the visit array is empty, then just our current working directory is just an empty string
 		// as we are in the root folder
-		console.log(this.visits);
 		if (this.visits.length === 0) {
 			this.cwd = "";
 		} else { 
