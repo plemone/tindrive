@@ -16,6 +16,7 @@ class FileSystemLayout {
 		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
 								// if left is pressed index reduces by -1, if right is pressed index increases by +1
 								// using math we then calculate the y axis for up and down keys
+		this.selected = null; // will contain the DOM element currently selected
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
 								  // then the counter will be incremented
@@ -238,30 +239,33 @@ class FileSystemLayout {
 
 		// first lets handle the right and left buttons
 
+
+
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			console.log("left");
+			
+
+
+
+
+
+
+
+
 
 		} else if (event.which === 39) { // right
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			console.log("right");
-
 			// before we do anything we need to check if the we are at the first index in the array
 			// if we are chances are we have cycled through the files once and have reached this point
 			// so we need to turn the length - 1 index icon blue before we can proceed
 			if (self.indexSelected === 0) {
 				if (self.contents[self.contents.length - 1].constructor === FileIcon) {
-
 					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(static/imgs/file-3.png)");
-
 				} else {
-
 					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(static/imgs/folder.png)")
-
 				}			
 			}
-
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
 			if (self.contents[self.indexSelected].constructor === FileIcon) {
@@ -269,7 +273,6 @@ class FileSystemLayout {
 			} else {
 				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/folder-2.png)");
 			}
-
 			// we need to turn all contents in the previous index of the context array to blue
 			// before we can turn the new content red, also we need to make sure we don't go to a
 			// negative index so we check for if the index is 0 before we do so, if the index is 0 then we
@@ -281,7 +284,6 @@ class FileSystemLayout {
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
 				}
 			}
-
 			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
 			// we need to make sure that we don't exceed the length of the array contents
 			// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
@@ -290,18 +292,30 @@ class FileSystemLayout {
 			} else {
 				self.indexSelected = 0;
 			}
-
-
 		} else if (event.which === 38) { // up
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			
-			console.log("up");
+		
+
+
+
+
+
 
 		} else if (event.which === 40) { // down
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			console.log("down");
+		
+
+
+
+
+
+
+
+
+
 
 		}
+
 	}
 
 	// back space event handler
@@ -368,7 +382,7 @@ class FileSystemLayout {
 					self.counter = 0; // prevents an activated global click from deactivating current marked red window
 									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 									 // it happens simultaneously! )
-					self.indexSelected = i; // set the indexSelected to current index
+					self.indexSelected = i + 1; // set the indexSelected to current index
 				} else { // blue - unselected
 					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
@@ -376,7 +390,6 @@ class FileSystemLayout {
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");	
 					}
 					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
-					self.indexSelected = 0; // reset the index
 				}
 			}
 		});
@@ -460,6 +473,7 @@ class FileSystemLayout {
 				}
 				self.counter = 0;
 				self.globalClick = false;
+				self.indexSelected = 0;
 			} 		
 			else if (self.globalClick) { // this check, checks only if first check is not fulfilled, if globalClick gets turned on
 				++self.counter; // then we simply increment the counter so that if another drop zone click is made we can loop through the
