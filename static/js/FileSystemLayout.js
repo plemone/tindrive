@@ -266,28 +266,36 @@ class FileSystemLayout {
 
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
-		// up keycode -> 38
-		// down keycode -> 40
-		// left keycode -> 37
-		// right keycode -> 39
-
-		// first lets handle the right and left buttons
-
 
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
-			// so basically, everytime you press the right key you increment the index++, so 
-			// when you are going back you will still turn the very next icon red even though you 
-			// pressed left, to prevent that we decrement once from the current index to make sure
-			// we are on the right track
-			// we are forward by 1 index which we need to deduct in order to go in the reverse 
-			// direction
-			if (self.arrowKeySelected === "right") { // if you are at the 0th index also it means you were going right and you stumbled upon the last element in the array, then you reset it to 0 and hence 0 -= 2 will give you -2 which is index out of bounds
-				if (self.indexSelected !== 1 && self.indexSelected !== 0) { // if you are at index 1 it means in the previous key press you were at index 0, which means you have a momentum going right hence you have 1 index as you did ++index
-					self.indexSelected -= 2;
-				} else { // in that case if you want to move left now you have to go length - 1, as thats your new destination
+			/*
+				When the momentum is right we increment in advance the position, we are going to take. This
+				causes a few problems, if we want to go left, we have already incremented the index by + 1.
+				
+				We start at 2 lets say and we go highlight 2 and the next iteration we highlight 3, so we do 2 + 3 in advance.
+				0 1 2 3 4 5 6
+
+				But then in the next iteration we press the left key! This is a problem, now we actually need to go back from 3
+				to 1, so we do 3 - 2. NOTE** - This is why we use 2.
+
+				There are two special cases. Lets say we started fresh and started going right, our initial position is 0 and
+				we increment by 1 for the next iteration as we are thinking in advance. But this time instead again we go left.
+				And we run into a problem as 0 - 2 is -2 from if we follow our algorithm. So what we do instead is when we encounter
+				0 we decrease our index will be the length of the array - 1.
+
+				Now if we are at 2 our index will be length of the array - 2!
+
+			*/
+
+			if (self.arrowKeySelected === "right") { 
+				if (self.indexSelected !== 1 && self.indexSelected !== 0) { 
+					self.indexSelected -= 2; 
+				} else if (self.indexSelected === 0) {					
 					self.indexSelected = self.contents.length - 2;
+				} else { 
+					self.indexSelected = self.contents.length - 1;
 				}
 			} 
 
@@ -296,12 +304,14 @@ class FileSystemLayout {
 			
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
 			
-			// observer what happens when we right arrow key, now for the left arrow key we clear up
-			// red selected index, which would be the next index rather than the previous index
-			
-			// before we do anything we need to check if the we are at the length - 1 index in the array
-			// if we are chances are we have cycled through the files once and have reached this point
-			// so we need to turn the first index icon blue before we can proceed
+			/*
+
+				Another approach for us to take would be turning all the icons blue which come after us!
+				But if we are at the begining and we are about to cycle back to the end we need to clean up the
+				first index!
+
+			*/
+
 			if (self.indexSelected === self.contents.length - 1) {
 				if (self.contents[0].constructor === FileIcon) {
 					$("#" + self.contents[0].id).css("background-image", "url(static/imgs/file-3.png)");
@@ -325,7 +335,7 @@ class FileSystemLayout {
 							 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 							 // it happens simultaneously! )	
 		
-			// we need to turn all contents next of us to blue
+			// we need to turn all contents next of us to blue as mentioned above
 			for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
 				if (self.contents[i].constructor === FileIcon) { // dealing with file
 					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
@@ -343,15 +353,22 @@ class FileSystemLayout {
 
 		} else if (event.which === 39) { // right
 
-			// so basically, everytime you press the left key you decrement the index--, so 
-			// when you are going forward you are actually behind by 1 number when you should be 1
-			// indexes ahead normally when following the correct way
+			/*
+				Similar algorithm to what left key follows, except this is exact opposite. So basically, when you are
+				at index length - 2 you are actually at lenth - 3, and instead you should be at 0th index, as you are about
+				to click right, but momentum is left, so you have to add +2!, but adding plus 2 ends up making us at an index
+				which is out of bounds, so we circulate the array and end up at index 0. Now similarly if we are at index
+				length - 1, we are actually at length - 2, and we should be at index 1.
 
-			if (self.arrowKeySelected === "left") {
-				if (self.indexSelected !== self.contents.length - 2) {
+			*/
+
+			if (self.arrowKeySelected === "left") { // last move was left
+				if (self.indexSelected !== self.contents.length - 2 && self.indexSelected !== self.contents.length - 1) {
 					self.indexSelected += 2;
+				} else if (self.indexSelected === self.contents.length - 2) {
+					self.indexSelected = 0;
 				} else { // when index is 0 we don't want index out of bounds now
-					self.indexSelected = 1; // why 1 and not 2? , because 2 would mean that we are counting the length as an index as well, our last index is length - 1 and then it resets to 0
+					self.indexSelected = 1; 				
 				}
 			} 
 		
@@ -405,31 +422,7 @@ class FileSystemLayout {
 				self.indexSelected = 0;
 			}
 
-		} else if (event.which === 38) { // up
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-		
-
-
-			// an idea would be to loop over and get the y coordinate from the contents array of the
-			// objects
-
-
-
-		} else if (event.which === 40) { // down
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-		
-
-
-
-
-
-
-
-
-
-
-		}
-
+		} 
 	}
 
 	// back space event handler
