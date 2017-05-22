@@ -46,7 +46,7 @@ class FileSystemLayout {
 				for (var i = 0; i < data.ls.length; ++i) {
 					if (data.ls[i].type === "file") {
 						// if the content is a file then add file to DOM
-						self.addFileToDOM(data.ls[i]);
+						self.addFileToDOM(data.ls[i].name);
 					} else {
 						// if the content is a folder then add the folder to DOM
 						self.addFolderToDOM(data.ls[i].name);
@@ -56,16 +56,16 @@ class FileSystemLayout {
 		})
 	}
 
-	addFileToDOM(fObj) {
+	addFileToDOM(fileName) {
 		// a check to see if file with a similar name exists or not
 		for (var i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i].name === fObj.name) {
+			if (this.contents[i].name === fileName) {
 				alert("File with that name already exists!");
 				return;
 			}
 		}
 
-		var file = new FileIcon(fObj.name, this.x, this.y);
+		var file = new FileIcon(fileName, this.x, this.y);
 		file.create(); // create the file icon components
 		this.contents.push(file); // push the fileIcon to the content array
 		this.attachIconEH(file); // attach the event handler of the file
@@ -73,7 +73,7 @@ class FileSystemLayout {
 
 	// adds a file icon to the DOM
 	addFile(fObj) {
-		this.addFileToDOM(fObj);
+		this.addFileToDOM(fObj.name);
 		// makes asynchronous request to the server to upload the file
 		this.uploadFile(fObj);
 	}
@@ -326,6 +326,13 @@ class FileSystemLayout {
 			$("#wrapper-" + this.contents.pop().id).remove();
 		}
 
+		for (var i = 0; i < ls.length; ++i) {
+			if (ls[i].type === "file") { // if element at ith index in list of contents happen to be a file then add file objec to DOM
+				this.addFileToDOM(ls[i].name);
+			} else { // if element at ith index in the list of contents happen to be a folder the add the folder to DOM
+				this.addFolderToDOM(ls[i].name);
+			}
+		}
 
 	}
 
