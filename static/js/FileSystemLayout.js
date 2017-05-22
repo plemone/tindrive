@@ -12,6 +12,11 @@ class FileSystemLayout {
 		this.x = 15;
 		this.y = 7;
 		this.contents = []; // contains a collection of conents being added to the window can be a fileIcon or FolderIcon
+		
+		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
+								// if left is pressed index reduces by -1, if right is pressed index increases by +1
+								// using math we then calculate the y axis for up and down keys
+
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
 								  // then the counter will be incremented
 		this.counter = 0;		 // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
@@ -231,7 +236,9 @@ class FileSystemLayout {
 		// left keycode -> 37
 		// right keycode -> 39
 
+		// first lets handle the right and left indexes
 
+		
 
 
 
@@ -291,8 +298,7 @@ class FileSystemLayout {
 				// which makes sense as we want the current element in the array to be the icon we clicked
 				// AND we have to make sure that the element in the array is not selected, because if it is not selected
 				// only then can we select it, we can't select something that is unselected
-				if (self.contents[i] === icon && !self.contents[i].selected) {
-					// red - select
+				if (self.contents[i] === icon && !self.contents[i].selected) { // red - selected
 					if (self.contents[i].constructor === FileIcon) {
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
 					} else { // else it is a folder icon
@@ -303,15 +309,15 @@ class FileSystemLayout {
 					self.counter = 0; // prevents an activated global click from deactivating current marked red window
 									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 									 // it happens simultaneously! )
-				} else {
+					self.indexSelected = i; // set the indexSelected to current index
+				} else { // blue - unselected
 					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
-						// blue - unselect
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
 					} else { // else it is a folder icon
 						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");	
 					}
 					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
-					
+					self.indexSelected = 0; // reset the index
 				}
 			}
 		});
