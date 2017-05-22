@@ -270,19 +270,26 @@ class FileSystemLayout {
 				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/folder-2.png)");
 			}
 
-			// we need to turn the content in the previous index of the context array to blue
+			// we need to turn all contents in the previous index of the context array to blue
 			// before we can turn the new content red, also we need to make sure we don't go to a
 			// negative index so we check for if the index is 0 before we do so, if the index is 0 then we
 			// don't have to turn anything blue 
-			if (self.indexSelected !== 0) { // turn icons blue
-				if (self.contents[self.indexSelected - 1].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[self.indexSelected - 1].id).css("background-image", "url(static/imgs/file-3.png)");
+			for (var i = self.indexSelected - 1; i > -1; --i) {
+				if (self.contents[i].constructor === FileIcon) { // dealing with file
+					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
 				} else { // dealing with folder
-					$("#" + self.contents[self.indexSelected - 1].id).css("background-image", "url(static/imgs/folder.png)");
+					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
 				}
 			}
 
-
+			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
+			// we need to make sure that we don't exceed the length of the array contents
+			// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
+			if (self.indexSelected !== self.contents.length - 1) { // we want to increment till we hit the length - 1 index or the last index, once we do, it is assumed we have already turned that icon red, so just reset the counter
+				++self.indexSelected;
+			} else {
+				self.indexSelected = 0;
+			}
 
 
 		} else if (event.which === 38) { // up
@@ -294,14 +301,6 @@ class FileSystemLayout {
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
 			console.log("down");
 
-		}
-		// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
-		// we need to make sure that we don't exceed the length of the array contents
-		// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
-		if (self.indexSelected !== self.contents.length - 1) { // we want to increment till we hit the length - 1 index or the last index, once we do, it is assumed we have already turned that icon red, so just reset the counter
-			++self.indexSelected;
-		} else {
-			self.indexSelected = 0;
 		}
 	}
 
