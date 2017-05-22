@@ -34,7 +34,6 @@ class FileSystemLayout {
 		var self = this;
 		// on creation of the file system layout we must make an ajax request to get the list
 		// of files there is initially on the root folder, so that we can display the users
-
 		var requestObj = {}
 		requestObj.path = this.path.get;
 
@@ -95,7 +94,7 @@ class FileSystemLayout {
 		// call back function, which means it is the last thing to get executed
 		reader.onload = function(event) {
 			var data = reader.result; // returns the result of the callback, on ready state 4 of the reader async function
-			
+
 			// when you console.log data it will appear to look like something like this
 			// data:application/msword;base64,0M8R4KGxGuEAAAAAAAAAAAAAAAAA........
 			// obviously it depends from file to file, but you will get the file type and then
@@ -191,39 +190,8 @@ class FileSystemLayout {
 				self.keyStack.push(16);
 			}
 
-			/* 
-				BACKSPACE EVENT HANDLER
-
-			*/
-
-			// event that handles backspace, which is basically when you hit backspace you go back to the
-			// previous working directory by shorting the path and sending an ajax request
-
-			// we want to check for another thing besides the keycode 16, hence it is a second check
-			// if path.get === "./src/user-fs/" + $("#username").text() + "/", then we are at the root directory
-			// and we cannot go back further then that!
-			if (event.which === 8 && self.path.get !== "./src/user-fs/" + $("#username").text() + "/") {
-				// shorten the path and back up a folder
-				self.path.shorten();
-
-				// encapulate the path string in a request object
-				var requestObj = {};
-				requestObj.path = self.path.get;
-
-				// send the path request to the server to get back a folder contents for the specific path
-				$.ajax({
-					url: self.route + "back",
-					type: "POST",
-					data: requestObj,
-					success: function(data) {
-						// on success extract the array of contents from the data and
-						// populate the drop zone with new contents
-						self.populateDropZone(data.ls);
-					}
-				})
-
-			}
-
+			self.backSpace(event, self);
+			self.arrowKeyNav(event, self);
 
 		});
 
@@ -255,8 +223,49 @@ class FileSystemLayout {
 				self.keyStack.pop();
 			}
 		})
+	}
+
+	arrowKeyNav(event, self) {
+		// up keycode -> 38
+		// down keycode -> 40
+		// left keycode -> 37
+		// right keycode -> 39
 
 
+
+
+
+
+	}
+
+	// back space event handler
+	backSpace(event, self) {
+		// event that handles backspace, which is basically when you hit backspace you go back to the
+		// previous working directory by shorting the path and sending an ajax request
+
+		// we want to check for another thing besides the keycode 16, hence it is a second check
+		// if path.get === "./src/user-fs/" + $("#username").text() + "/", then we are at the root directory
+		// and we cannot go back further then that!
+		if (event.which === 8 && self.path.get !== "./src/user-fs/" + $("#username").text() + "/") {
+			// shorten the path and back up a folder
+			self.path.shorten();
+
+			// encapulate the path string in a request object
+			var requestObj = {};
+			requestObj.path = self.path.get;
+
+			// send the path request to the server to get back a folder contents for the specific path
+			$.ajax({
+				url: self.route + "back",
+				type: "POST",
+				data: requestObj,
+				success: function(data) {
+					// on success extract the array of contents from the data and
+					// populate the drop zone with new contents
+					self.populateDropZone(data.ls);
+				}
+			})
+		}
 	}
 
 	// attaches file event handler
@@ -344,7 +353,6 @@ class FileSystemLayout {
 	// removes all the contents currently available in the dropzone and populate the contents
 	// which are currently there
 	populateDropZone(ls) {
-
 		// needs to be stored in a variable because in a for loop the length
 		// gets calculated each time, and we don't want that, we want to pop for a fix number
 		// of times, the value of i gets messed up as i does become greater than this.contents.size()
