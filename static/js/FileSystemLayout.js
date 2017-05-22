@@ -279,16 +279,15 @@ class FileSystemLayout {
 
 			// so basically, everytime you press the right key you increment the index++, so 
 			// when you are going back you will still turn the very next icon red even though you 
-			// pressed left, to prevent that we decrement twice from the current index to make sure
+			// pressed left, to prevent that we decrement once from the current index to make sure
 			// we are on the right track
-			// we are forward by 2 index which we need to deduct in order to go in the reverse 
+			// we are forward by 1 index which we need to deduct in order to go in the reverse 
 			// direction
-
-			if (self.arrowKeySelected === "right") {
-				if (self.indexSelected !== 0) {
+			if (self.arrowKeySelected === "right") { // if you are at the 0th index also it means you were going right and you stumbled upon the last element in the array, then you reset it to 0 and hence 0 -= 2 will give you -2 which is index out of bounds
+				if (self.indexSelected !== 1 && self.indexSelected !== 0) { // if you are at index 1 it means in the previous key press you were at index 0, which means you have a momentum going right hence you have 1 index as you did ++index
 					self.indexSelected -= 2;
-				} else { // when index is 0 we don't want index out of bounds now
-					self.indexSelected = self.contents.length - 1 - 2;
+				} else { // in that case if you want to move left now you have to go length - 1, as thats your new destination
+					self.indexSelected = self.contents.length - 2;
 				}
 			} 
 
@@ -345,14 +344,14 @@ class FileSystemLayout {
 		} else if (event.which === 39) { // right
 
 			// so basically, everytime you press the left key you decrement the index--, so 
-			// when you are going forward you are actually behind by 1 number when you should be 2
+			// when you are going forward you are actually behind by 1 number when you should be 1
 			// indexes ahead normally when following the correct way
 
 			if (self.arrowKeySelected === "left") {
-				if (self.indexSelected !== self.contents.length - 1) {
+				if (self.indexSelected !== self.contents.length - 2) {
 					self.indexSelected += 2;
 				} else { // when index is 0 we don't want index out of bounds now
-					self.indexSelected = 2;
+					self.indexSelected = 1; // why 1 and not 2? , because 2 would mean that we are counting the length as an index as well, our last index is length - 1 and then it resets to 0
 				}
 			} 
 		
@@ -411,7 +410,8 @@ class FileSystemLayout {
 		
 
 
-
+			// an idea would be to loop over and get the y coordinate from the contents array of the
+			// objects
 
 
 
