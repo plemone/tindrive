@@ -27,7 +27,7 @@ class FileSystemLayout {
 	create() {
 		this.generateInitialFS();
 		this.attachGlobalClickEH();
-		this.attachFolderEH();
+		this.attachWindowEH();
 	}
 
 	generateInitialFS() {
@@ -180,7 +180,7 @@ class FileSystemLayout {
 	// simply loop over the array and clear the array
 	// the array will get cleared no matter what key up you make, but remember only the
 	// right combination will trigger the prompt 
-	attachFolderEH() {
+	attachWindowEH() {
 		var self = this;
 		// checks if the keycode is 16 which is shift on keydown
 		// also checks if the keycode is 78 which is n on key up
@@ -190,6 +190,22 @@ class FileSystemLayout {
 			if (event.which === 16) {
 				self.keyStack.push(16);
 			}
+
+			/* 
+				BACKSPACE EVENT HANDLER
+
+			*/
+
+			// event that handles backspace, which is basically when you hit backspace you go back to the
+			// previous working directory by shorting the path and sending an ajax request
+
+			// we want to check for another thing besides the keycode 16, hence it is a second check
+			if (event.which === 8) {
+
+				console.log("Back it up bro");
+
+			}
+
 
 		});
 
@@ -210,21 +226,17 @@ class FileSystemLayout {
 				var folderName = prompt("Please enter the folder name");
 				self.addFolder(folderName);
 			}
-
 			// always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
 			// for loop will not work while popping because self.keyStack.length is checked everytime you pop
 
 			// for example you have length of 2, if you go over the loop and pop once your i becomes 1
 			// now the self.keyStack.length is also checked and it turns out to be 1 now, and i = 1 and i < 1 is false therefore
 			// loop is broken out and we don't end up with all elements being popped
-
 			var keyStackSize = self.keyStack.length;
 			for (var i = 0; i < keyStackSize; ++i) {
 				self.keyStack.pop();
 			}
-
 		})
-	
 
 
 	}
@@ -309,6 +321,7 @@ class FileSystemLayout {
 			});
 		}
 	}
+
 
 	// removes all the contents currently available in the dropzone and populate the contents
 	// which are currently there
