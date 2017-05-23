@@ -8,12 +8,22 @@ var MongoClient = require("mongodb").MongoClient; // database module
 var fs = require("fs"); // used to manipulate the file system 
 var Database = require("./../helpers/Database.js"); // ./../ means cd out of the current folder
 
-var ActiveUsers = require("./../models/ActiveUsers.js");
+var ActiveUsers = require("./../models/ActiveUsers.js"); // ActiveUsers model imported
+var Users = require("./../models/Users.js"); // Users model imported
 
 /* Constants */
 const SALT = 10; // salt for the bcrypt password hashing
-const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
-const FSPATH = "./../filesystems/user-fs/"; // the main path where the file system is stored ./../ means cd out of the current folder
+const FSPATH = "./filesystems/user-fs/"; 
+
+/*
+	
+	NOTE** - there is no ./../ in path variables because it is only required when requiring a module from the directory,
+			 since everything gets assembled by the file called app.js, everything is in relative to the
+			 path that app.js exists in, therefore you don't need to cd out of the folder, only when require specific
+			 modules you need to cd out, as requiring a module happens when you are relative to the path that the file
+			 that is requiring the module is located at						
+
+*/
 
 class DriveController {
 	
@@ -22,6 +32,7 @@ class DriveController {
 		this.database = new Database();
 		this.database.generate();
 		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUser elel
+		this.modelU = new Users();
 	}
 
 	intro() {
@@ -33,86 +44,64 @@ class DriveController {
 	}
 
 	authenticate(req, res) {
+		var self = this; // this keyword is different within different scopes
 		var genObj = new IdGenerator();
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				console.log("Access to TinDrive database successful...");
-				var collection = db.collection("Users");
-				if (req.body.which === "#login") {
-					// handle login
-					collection.findOne({"name": req.body.username}, function(err, doc) {
-						if (err) console.log("Error in iterating database...");
-						else {
-							if (doc === null) {
-								res.status(200).send("login-name-error");
-								db.close();
-								return; // return to prevent the async function from running
-							} else {
-								// black box, and is an abstraction that I am willing to accept
-								// when comes to how bcrypt module handles its security and authentication
-								// the result is magically formulated by bcrypt to chec whether the password
-								// provided by the user is correct or not
-								bcrypt.compare(req.body.password, doc.password, function(err, result) {
-									if (result === true) {
-										var responseObj = {};
-										responseObj.id = doc.id;
-										res.status(200).send(responseObj);
-									}
-									else res.status(200).send("login-password-error"); // 0 means not a success
-									db.close();
-								})
-							}
+
+		if (req.body.which === "#login") { // handles login
+			this.modelU.query(req.body.username, function(doc) {
+				// black box, and is an abstraction that I am willing to accept
+				// when comes to how bcrypt module handles its security and authentication
+				// the result is magically formulated by bcrypt to chec whether the password
+				// provided by the user is correct or not				
+				bcrypt.compare(req.body.password, doc.password, function(err, result) {
+					if (result === true) {
+						var responseObj = {};
+						responseObj.id = doc.id;
+						res.status(200).send(responseObj);
+					} else { 
+						res.status(200).send("login-password-error"); // 0 means not a success
+					}
+				});
+			}, function() { res.status(200).send("loging-name-error"); }); // when user cannot be found in the database
+	
+		} else { // handles registration
+			// object which will hold the user details to be added to the database
+			var userDetails = {}; 
+
+			// query mongoDb Users collection with the request body's username
+			this.modelU.query(req.body.username, function() {
+				// if a document exists with the name provided we know that its a problem
+				res.status(200).send("0");
+
+			}, function() {
+				bcrypt.genSalt(SALT, function(err, salt) {
+					bcrypt.hash(req.body.password, salt, function(err, hash) {
+						userDetails.password = hash;
+						if (req.body.username !== "") {
+							userDetails.id = genObj.generateId(req.body.username);
+							// user registered and inserted to the database
+							self.modelU.insert(userDetails, function() {
+								console.log("User registered");
+							});
+							// the file system folder needs to be created for individual users
+							// each user has their own folder
+							fs.mkdir(FSPATH + req.body.username, function(err) {
+								if (err) console.log("Error in creating directory...");
+								else console.log("Directory called " + req.body.username + " created");
+							});
+							// added to the static database of users, NOTE** - on initial registration the user's FSTree is empty
+							self.database.add(req.body.username);
+							// this function body is the last thing that gets executed in this funciton body
+							res.status(200).send("registration-success");
+						} else {
+							res.status(200).send("registration-failure");
 						}
 					});
-				} else {
-					// handle registration
-					var userDetails = {}; 
-					// always use find one if you are absolutely sure that there is one document you are looking for
-					collection.findOne({"name": req.body.username}, function(err, doc) {
-						if (err) console.log("Error in finding the user...");
-						else {
-							if (doc != null && doc.name === req.body.username) {
-								res.status(200).send("0");
-								db.close();
-							} else {
-								bcrypt.genSalt(SALT, function(err, salt) {
-									bcrypt.hash(req.body.password, salt, function(err, hash) {
-										userDetails.password = hash;
-										if (req.body.username != "") {
-											userDetails.id = genObj.generateId(req.body.username);
-
-											collection.insert(userDetails, function(err) {
-												if (err) console.log(err);
-												else console.log("User registered");
-											});
-											// closes the opened database to make sure data gets saved
-											db.close(); 
-											// the file system folder also needs to be created for individual users
-											// each user has their own folder
-											fs.mkdir(FSPATH + req.body.username, function(err) {
-												if (err) console.log("Error in creating directory...");
-												else console.log("Directory called " + req.body.username + " created");
-											});
-
-											// added to the static database of users
-											self.database.add(req.param.username);
-
-											// this function body is the last thing that gets executed in this funciton body
-											res.status(200).send("registration-success");
-										} else {
-											res.status(200).send("registration-failure");
-										}
-									});
-								});
-								// asynchronousity allows this to run first
-								userDetails.name = req.body.username;
-							}
-						}
-					});
-				}
-			}
-		});
+				});
+				// asynchronousity allows this to run first and this gets used within the nested scope
+				userDetails.name = req.body.username;
+			});
+		}
 	}
 
 	redirect(req, res) {
@@ -124,23 +113,13 @@ class DriveController {
 	}
 
 	nameCheck(req, res) {
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				console.log("Access to TinDrive database successful...");
-				db.collection("Users").findOne({"name": req.body.val}, function(err, doc) {
-					if (err) console.log("Error in finding the user");
-					else {
-						if (doc == null)  // if the name is not found in the data base then green light
-							res.status(200).send("1");
-						else  // if it is found in the database then red light
-							res.status(200).send("0");
-						db.close();
-					}
-				});
-			}
-		});		
+		this.modelU.query(req.body.val, function() {
+			res.status(200).send("0"); // if it is found in the database then red light
+		}, function() { 
+			res.status(200).send("1"); // if the name is not found in the data base then green light
+		});
 	}
+
 	// renders a new page depending on the name of the user hence the route
 	// "/:username means that the route is dynamic depending on whatever is being sent!"
 	username(req, res) {
@@ -272,7 +251,11 @@ class DriveController {
 
 
 	logout(req, res) {
-		this.modelAU.remove(req.body.name, function() { res.sendStatus(200); }, function() { res.status(200).render("404"); });
+		this.modelAU.remove(req.body.name, function() { 
+			res.sendStatus(200); 
+		}, function() { 
+			res.status(200).render("404"); 
+		});
 	}
 
 	// on 404 errors

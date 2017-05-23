@@ -76,6 +76,7 @@ class LoginRegistration {
 		this.submitForm(divId);
 		this.nameCheck(divId);
 	}
+	// divId can be #login or it can be #registration depending on the focus of the DOM
 	submitForm(divId) {
 		var self = this;
 		$(divId).on("keypress", function(event) {

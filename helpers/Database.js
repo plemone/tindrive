@@ -26,7 +26,7 @@ class Database {
 
 	// adds a collection to user database upon a fresh registration
 	add(username) {
-		fileSystem = new FileSystem(req.body.username, this.root);
+		var fileSystem = new FileSystem(username, this.root);
 		this.collection.push(fileSystem);
 	}
 
