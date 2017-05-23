@@ -6,7 +6,7 @@ class FileIcon extends Icon {
 	constructor(filename, x, y) {
 		// base class initializer syntax/super constructor
 		super(filename, x, y);
-		this.background = "url(static/imgs/file-3.png)";
+		this.background = "url(public/images/file-3.png)";
 	}
 
 }

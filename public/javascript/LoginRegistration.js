@@ -30,7 +30,7 @@ class LoginRegistration {
 			else $(divId).animate({left: '480px', top: '5px', height: '700px', width: '700px'});
 			$(divId).css("z-index", "1"); // z-index specifies the stack order of an element
 											// an element with a higher stack order is always on top the other element
-			$(divId).append("<img id = close-icon src = 'static/imgs/close.png'></img>");
+			$(divId).append("<img id = close-icon src = 'public/images/close.png'></img>");
 
 			this.createTextFields(divId);
 
@@ -186,7 +186,7 @@ class LoginRegistration {
 		var register = "#register";
 		var l = "#l";
 		var r = "#r";
-		$(cls).css("background-image", "url(static/imgs/cloud-3.png)"); // images for the div
+		$(cls).css("background-image", "url(public/images/cloud-3.png)"); // images for the div
 		$(cls).css("background-repeat", "no-repeat"); // prevents image from repeating to fill background
 		$(cls).css("background-size", "contain"); // allows the background image to be filled around the div
 		$(cls).css("text-align", "center");

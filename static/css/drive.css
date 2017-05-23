@@ -1,7 +1,0 @@
-body {
-    background-repeat: no-repeat; /* prevents multiple repeats of the image */
-    background-image: url("cloud.png");
-    background-color: #262626;
-    font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
-}
-    

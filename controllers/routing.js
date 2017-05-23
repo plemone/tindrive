@@ -21,9 +21,6 @@ module.exports = function() { // just a lambda
 	app.set("view engine", "pug");
 	app.use(express.static(ROOT));
 
-
-	/* Route that doesn't use bodyParser */
-
 	/*
 		Due to the limit set by the body parser module, in order to send data via HTTP
 		post request I had to use the req.on data asynchronous function, where data is
@@ -31,7 +28,6 @@ module.exports = function() { // just a lambda
 		To avoid body parser from handling the request I bounded the bodyparser middleware
 		after the request.
 	*/
-
 	app.post("/:username/uploadFiles", function(req, res) { CONTROLLER.uploadFiles(req, res); });
 
 

@@ -314,18 +314,18 @@ class FileSystemLayout {
 
 			if (self.indexSelected === self.contents.length - 1) {
 				if (self.contents[0].constructor === FileIcon) {
-					$("#" + self.contents[0].id).css("background-image", "url(static/imgs/file-3.png)");
+					$("#" + self.contents[0].id).css("background-image", "url(public/images/file-3.png)");
 				} else {
-					$("#" + self.contents[0].id).css("background-image", "url(static/imgs/folder.png)")
+					$("#" + self.contents[0].id).css("background-image", "url(public/images/folder.png)")
 				}			
 			}
 
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
 			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/file-4.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/file-4.png)");
 			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/folder-2.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/folder-2.png)");
 			}
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
@@ -338,9 +338,9 @@ class FileSystemLayout {
 			// we need to turn all contents next of us to blue as mentioned above
 			for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
 				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+					$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
 				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
+					$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
@@ -381,17 +381,17 @@ class FileSystemLayout {
 			// so we need to turn the length - 1 index icon blue before we can proceed
 			if (self.indexSelected === 0) {
 				if (self.contents[self.contents.length - 1].constructor === FileIcon) {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(static/imgs/file-3.png)");
+					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(public/images/file-3.png)");
 				} else {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(static/imgs/folder.png)")
+					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(public/images/folder.png)")
 				}			
 			}
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
 			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/file-4.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/file-4.png)");
 			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(static/imgs/folder-2.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/folder-2.png)");
 			}
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
@@ -407,9 +407,9 @@ class FileSystemLayout {
 			// don't have to turn anything blue 
 			for (var i = self.indexSelected - 1; i > -1; --i) {
 				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+					$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
 				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
+					$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
@@ -480,9 +480,9 @@ class FileSystemLayout {
 				// only then can we select it, we can't select something that is unselected
 				if (self.contents[i] === icon && !self.contents[i].selected) { // red - selected
 					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-4.png)");
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-4.png)");
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder-2.png)")
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder-2.png)")
 					}
 					self.contents[i].selected = true;
 					self.globalClick = true; // turns on the drop zone event handlers job to do its thing
@@ -493,9 +493,9 @@ class FileSystemLayout {
 					self.selected = self.contents[i];
 				} else { // blue - unselected
 					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png)");
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");	
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");	
 					}
 					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
 				}
@@ -572,10 +572,10 @@ class FileSystemLayout {
 				for (var i = 0; i < self.contents.length; ++i) {
 					// checks if the object type if of FileIcon
 					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/file-3.png");
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png");
 						// also needs to turn off the selected boolean which is indicating that it is currently turned on			
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(static/imgs/folder.png)");
+						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
 					}
 					self.contents[i].selected = false; // unselects by turning the select boolean of each icon false	
 				}

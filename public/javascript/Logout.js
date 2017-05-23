@@ -21,7 +21,7 @@ class Logout {
 	generateCSS() {
 		var t = "#logout";
 		$(t).css("position", "relative");
-		$(t).css("background-image", "url(static/imgs/cloud-4.png)");
+		$(t).css("background-image", "url(public/images/cloud-4.png)");
 		$(t).css("background-repeat", "no-repeat");
 		$(t).css("background-size", "contain");
 		$(t).css("cursor", "pointer");
