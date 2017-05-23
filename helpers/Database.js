@@ -18,7 +18,8 @@ class Database {
 
 	constructor() {
 		this.collection = [];
-		this.root = "./src/user-fs/"; // the full path is necessary for the built in fs module
+		// the reason we don't cd out is because our root is actually in app.js and we start locating from our source since app.js includes everything
+		this.root = "./filesystems/user-fs/"; // the full path is necessary for the built in fs module
 									 // to do its work, and that's why we don't just start from the
 									 // username's folder as home
 	}

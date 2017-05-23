@@ -8,6 +8,8 @@ var MongoClient = require("mongodb").MongoClient; // database module
 var fs = require("fs"); // used to manipulate the file system 
 var Database = require("./../helpers/Database.js"); // ./../ means cd out of the current folder
 
+var ActiveUsers = require("./../models/ActiveUsers.js");
+
 /* Constants */
 const SALT = 10; // salt for the bcrypt password hashing
 const DB = "mongodb://localhost:27017/TinDriveUsers"; // alias to the string commonly used throughout the program
@@ -19,6 +21,7 @@ class DriveController {
 		// generate the database for every single user registered in the system
 		this.database = new Database();
 		this.database.generate();
+		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUser elel
 	}
 
 	intro() {
@@ -113,25 +116,10 @@ class DriveController {
 	}
 
 	redirect(req, res) {
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				console.log("Access to TinDrive Database successful...");
-				// on logout remove the active user
-				db.collection("ActiveUsers").findOne({"name": req.body.name}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database...");
-					else {
-						if (doc == null)  {
-							// The user currently logged in gets added to the collection
-							// of active users, any ongoing interation while the user is logged on
-							// needs to be checked with mongodbs collection of active users first.
-							db.collection("ActiveUsers").insert({"name": req.body.name});
-						}
-						res.sendStatus(200);
-						db.close()
-					}
-				});
-			}
+		this.modelAU.insert(req.body.name, function() {
+			res.sendStatus(200);
+		}, function() {
+			res.status(200).send("404");
 		});
 	}
 
@@ -158,21 +146,10 @@ class DriveController {
 	username(req, res) {
 		// to obtain the dynamic url aliased by :username we can directly access the url
 		// aliased by this by using the syntax req.params.username
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database...");
-					else {
-						if (doc === null) 
-							res.status(200).render("404");
-						else 
-							res.status(200).render("drive", {name: req.params.username}); // syntax to pass variables to pug using express
-						db.close();
-					}
-				});
-			}
-		});
+		this.modelAU.query(req.params.username, function() {
+			res.status(200).render("drive", {name: req.params.username});
+		}, function() { res.status(200).render("404"); });
+
 	}
 
 	// check mongodb if the active user is pressed, if they are from the database (facade class)
@@ -180,28 +157,18 @@ class DriveController {
 	// send the array back by putting it inside a json object
 	init(req, res) {
 		var self = this;
-		// Checking ActiveUsers is important as even REST APIS need to momentarily
-		// login the users, a user that isn't logged in CANNOT make a request
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the user");
-					else {
-						// retrieve the file system of the user from the facade class
-						var userFS = self.database.retrieve(req.params.username);
-						// retrieve the array from the tree encapsulated inside the users file system
-						var ls = userFS.tree.lsL(req.body.path);
-						// create the response object
-						var responseObj = {};
-						// encapsulate the directory contents array inside the response object
-						responseObj.ls = ls;
-						// send the response objet
-						res.status(200).send(responseObj);
-					}
-				});
-			}
-		});
+		this.modelAU.query(req.params.username, function() {
+			// retrieve the file system of the user from the facade class
+			var userFS = self.database.retrieve(req.params.username);
+			// retrieve the array from the tree encapsulated inside the users file system
+			var ls = userFS.tree.lsL(req.body.path);
+			// create the response object
+			var responseObj = {};
+			// encapsulate the directory contents array inside the response object
+			responseObj.ls = ls;
+			// send the response objet
+			res.status(200).send(responseObj);
+		}, function() { res.status(200).render("404"); });
 	}
 
 	uploadFiles(req, res) {
@@ -213,37 +180,25 @@ class DriveController {
 		// after the request
 
 		// check for the username provided is found in the collection of active users in the database
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database...");
-					else {
-						if (doc === null) res.sendStatus(404);
-						else {
-							var bytes = "";
-							// bytes being send in as chunks that get stored inside the bytes variable asynchronously
-							req.on("data", function(chunk) {
-								bytes += chunk;
-							});
+		this.modelAU.query(req.params.username, function() {
+			var bytes = "";
+			// bytes being send in as chunks that get stored inside the bytes variable asynchronously
+			req.on("data", function(chunk) {
+				bytes += chunk;
+			});
+			req.on("end", function() {
 
-							req.on("end", function() {
-								var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
+				var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
+				// retrieve the user' file system
+				var userFS = self.database.retrieve(req.params.username);
+				// file uploaded and saved to file system
+				userFS.uploadFile(requestObj);
+				
+				res.sendStatus(200);
 
-								// retrieve the user' file system
-								var userFS = self.database.retrieve(req.params.username);
+			});
+		}, function() { res.status(200).render("404"); });
 
-								// file uploaded and saved to file system
-								userFS.uploadFile(requestObj);
-
-								db.close();
-
-							});
-						}
-					}
-				});
-			}
-		});		
 	}
 
 	// the instructions to create a folder is being sent from the client side
@@ -255,30 +210,16 @@ class DriveController {
 
 		// searches the Mongodb TinDrive database in the active users collection for the username that is
 		// contained in the part of the url
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database...");
-					else {
-						if (doc === null) res.status(200).render("404");
-						else { // we have found a user by the name of req.params.username in the database for ActiveUsers collections!
-							// make the folder with the specific path provided through the request object which 
-							// represents a folder						
-
-							// retrieve the file system of the user from the facade class
-							var userFS = self.database.retrieve(req.params.username);
-
-							// delegate the responsibilities to the userFS
-							userFS.uploadFolder(req.body);
-
-							res.sendStatus(200);						
-							db.close();		
-						}
-					}
-				});
-			}
-		});		
+		this.modelAU.query(req.params.username, function() {
+			// we have found a user by the name of req.params.username in the database for ActiveUsers collections!
+			// make the folder with the specific path provided through the request object which 
+			// represents a folder						
+			// retrieve the file system of the user from the facade class
+			var userFS = self.database.retrieve(req.params.username);
+			// delegate the responsibilities to the userFS
+			userFS.uploadFolder(req.body);
+			res.sendStatus(200);						
+		}, function() { res.status(200).render("404"); });
 	}
 
 	// when doubleclick is made on the client side on a folder
@@ -289,32 +230,21 @@ class DriveController {
 		// Mongodb needs to be checked for the current client that is trying to communicate
 		// with the db has gone through the authentication process or not
 
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database...");
-					else {
+		this.modelAU.query(req.params.username, function() {
+			// retrieve the userFS using the facade class
+			var userFS = self.database.retrieve(req.params.username);
 
-						// retrieve the userFS using the facade class
-						var userFS = self.database.retrieve(req.params.username);
+			// retrieve the list of contents in a particular directory
+			var ls = userFS.tree.lsL(req.body.path);
 
-						// retrieve the list of contents in a particular directory
-						var ls = userFS.tree.lsL(req.body.path);
+			// encapsulate the diretory contents in a response object
+			var responseObj = {};
+			responseObj.ls = ls;
 
-						// encapsulate the diretory contents in a response object
-						var responseObj = {};
-						responseObj.ls = ls;
+			// send the responseObject back
+			res.status(200).send(responseObj);
 
-						// send the responseObject back
-						res.status(200).send(responseObj);
-
-						// most importantly close the connection opened with the database
-						db.close();
-					}
-				});
-			}
-		});
+		}, function() { res.status(200).render("404"); });
 	}
 
 	// when the back space is pressed on the client side
@@ -324,44 +254,29 @@ class DriveController {
 		// TinDrive's ActiveUsers collection needs to be checked for the user who is trying to communicate
 		// with the server, if the user is not in the Active connection we refuse to give information back
 		// only through legit authentication can the user access information
-		MongoClient.connect(DB, function(err, db) {
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").findOne({"name": req.params.username}, function(err, doc) {
-					if (err) console.log("Error in finding the name in database");
-					else {
-						// retrieve the user's file system using the facade class-- database
-						var userFS = self.database.retrieve(req.params.username);
+		this.modelAU.query(req.params.username, function() {
+			// retrieve the user's file system using the facade class-- database
+			var userFS = self.database.retrieve(req.params.username);
 
-						// retrieve the list of contents in a particular directory
-						var ls = userFS.tree.lsL(req.body.path);
+			// retrieve the list of contents in a particular directory
+			var ls = userFS.tree.lsL(req.body.path);
 
-						// encapsulates the directory contents in a response object
-						var responseObj = {};
-						responseObj.ls = ls;
+			// encapsulates the directory contents in a response object
+			var responseObj = {};
+			responseObj.ls = ls;
 
-						// send the response object black
-						res.status(200).send(responseObj);
+			// send the response object black
+			res.status(200).send(responseObj);
 
-						// most importantly close the connection opened with the database
-						db.close();
-					}
-				});
-			}
-		});	
+		}, function() { res.status(200).render("404"); });
 
 	}
 
 
 	logout(req, res) {
-		MongoClient.connect(DB, function(err, db) {
-			console.log("Logged out!");
-			if (err) console.log("Failed to connect to TinDrive database...");
-			else {
-				db.collection("ActiveUsers").remove({"name": req.body.name});
-				res.sendStatus(200);
-			}
-		});
+		this.modelAU.remove(req.body.name, function() {
+			res.sendStatus(200);
+		}, function() { res.status(200).render("404"); });
 	}
 
 	err(req, res) {

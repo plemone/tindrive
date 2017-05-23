@@ -12,7 +12,7 @@
 class Path {
 	constructor() {
 		// keeps track of the path, folders gets added on to this
-		this.get = "./src/user-fs/" + $("#username").text() + "/";
+		this.get = "./filesystems/user-fs/" + $("#username").text() + "/";
 		// contains the current directory that the user is currently in
 		this.cwd = "";
 		// everytime you visit a folder it will get added in this array, it will
