@@ -173,12 +173,6 @@ class DriveController {
 
 	uploadFiles(req, res) {
 		var self = this;
-		// Due to the limit set by the body parser module, in order to send data via HTTP
-		// post request I had to use the req.on data asynchronous function, where data is
-		// accumulated asynchronously and recursively and stored inside a variable.
-		// To avoid body parser from handling the request I bounded the bodyparser middleware
-		// after the request
-
 		// check for the username provided is found in the collection of active users in the database
 		this.modelAU.query(req.params.username, function() {
 			var bytes = "";
@@ -187,10 +181,11 @@ class DriveController {
 				bytes += chunk;
 			});
 			req.on("end", function() {
-
 				var requestObj = JSON.parse(bytes); // a string object is being sent which represents a JSON object, so parsiing it to the JSON object is required
+				
 				// retrieve the user' file system
 				var userFS = self.database.retrieve(req.params.username);
+				
 				// file uploaded and saved to file system
 				userFS.uploadFile(requestObj);
 				
@@ -224,8 +219,9 @@ class DriveController {
 
 	// when doubleclick is made on the client side on a folder
 	expandDir(req, res) {
-		var self = this; // this keyword is different for each function scope, so we make a variable point to this within
-						// the current function scope's this
+		// this keyword is different for each function scope, so we make a variable point to this within
+		// the current function scope's this	
+		var self = this; 
 
 		// Mongodb needs to be checked for the current client that is trying to communicate
 		// with the db has gone through the authentication process or not
@@ -249,11 +245,13 @@ class DriveController {
 
 	// when the back space is pressed on the client side
 	back(req, res) {
-		var self = this; // the keyword this is varies between scopes, we make a variable which points to the this within the scope so that it can be used within nested scope inside the function
-
-		// TinDrive's ActiveUsers collection needs to be checked for the user who is trying to communicate
-		// with the server, if the user is not in the Active connection we refuse to give information back
-		// only through legit authentication can the user access information
+		// the keyword this is varies between scopes, we make a variable which points to the this within the scope so that it can be used within nested scope inside the function
+		var self = this; 
+		/*
+			TinDrive's ActiveUsers collection needs to be checked for the user who is trying to communicate
+			with the server, if the user is not in the Active connection we refuse to give information back
+			only through legit authentication can the user access information
+		*/
 		this.modelAU.query(req.params.username, function() {
 			// retrieve the user's file system using the facade class-- database
 			var userFS = self.database.retrieve(req.params.username);
@@ -274,15 +272,11 @@ class DriveController {
 
 
 	logout(req, res) {
-		this.modelAU.remove(req.body.name, function() {
-			res.sendStatus(200);
-		}, function() { res.status(200).render("404"); });
+		this.modelAU.remove(req.body.name, function() { res.sendStatus(200); }, function() { res.status(200).render("404"); });
 	}
 
-	err(req, res) {
-		res.status(404).render("404");		
-	}
-
+	// on 404 errors
+	err(req, res) { res.status(404).render("404"); }
 
 }
 
