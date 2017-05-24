@@ -287,7 +287,16 @@ class FileSystemLayout {
 
 			// either of these statement needs to be true for the entire statement to evaluate to true
 			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
+			
+				// issues, if your last move was up and you hit index 0, then you have to set the index
+				// to length - 1!
+
+				if (self.arrowKeySelected === "up" && self.indexSelected === 0) {
+					self.indexSelected = self.contents.length; // no - 1 because the expression below does the - 1
+				}
+
 				--self.indexSelected; // since we are going left we decrement, as we are going in reverse direction along the self.contents array
+
 			}
 
 			/*
@@ -513,6 +522,10 @@ class FileSystemLayout {
 			if (self.arrowKeySelected === "right") {
 				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
 			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
+				if (self.indexSelected === self.contents.length - 1) {
+					self.indexSelected = -1; // - 1 because ++self.indexSelected makes it 0 in the expression just bel
+				}
+
 				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
 			}
 
