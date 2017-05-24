@@ -242,7 +242,7 @@ class FileSystemLayout {
 	// return key event handler for the window
 	returnKey(event, self) {
 		// return key code is 13
-		if (event.which === 13 && self.selected) { // both these expression need to be true for the entire statement to be evaluated to true
+		if (event.which === 13 && self.selected) { // both these statement need to be true for the entire statement to be evaluated to true
 			// return key does essentially what double click event handler does
 			// so if we can use similar instructions that doubleClick uses
 		
@@ -291,7 +291,7 @@ class FileSystemLayout {
 				// issues, if your last move was up and you hit index 0, then you have to set the index
 				// to length - 1!
 
-				if (self.arrowKeySelected === "up" && self.indexSelected === 0) {
+				if ((self.arrowKeySelected === "up" || self.arrowKeySelected === "down") && self.indexSelected === 0) {
 					self.indexSelected = self.contents.length; // no - 1 because the expression below does the - 1
 				}
 
@@ -393,6 +393,9 @@ class FileSystemLayout {
 
 			// either of these statement needs to be true in order for the entire statement to evaluate to true
 			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
+				if (self.arrowKeySelected === "down" && self.indexSelected === self.contents.length - 1) {
+					self.indexSelected = -1; // not 0 because in the expression below it becomes 0
+				}
 				++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
 			}
 
@@ -498,8 +501,7 @@ class FileSystemLayout {
 			*/
 
 
-			// why 7 instead of 8 as there are 8 rows? Its because when you move left or right the index already
-			// gets incremented or decremented on that very step! So next step you have an increment or decrement of 1
+			
 			if (self.indexSelected - 8 > -1) { // if after subtracting 8 the index doesn't go below -1 then substract
 
 				self.indexSelected -= 8;
@@ -556,16 +558,15 @@ class FileSystemLayout {
 			/*
 				Each row can hold 8 items, so which ever index you are in the contents array
 				you should always increase 8 from your current index to be on the new index.
-				If you go index out of boudns which will be over the length - 1 index of the
-				current contents arraay then you simply don't move.
+				If you go index out of boudns which will be over the length - 1 index, so basically
+				if we after sum we reach a number greater then or equal to length of the contents 
+				then we simply don't move.
 				Turn the current index red, and turn anything before the current index blue.
 
 			*/
 
-			// why 7 instead of 8 as there are 8 rows? Its because when you move left or right the index already
-			// gets incremented or decremented on that very step! So next step you have an increment or decrement of 1
 
-			if (self.indexSelected + 8 < self.contents.length - 1) { // if after adding the index doesn't go above length - 1 then add
+			if (self.indexSelected + 8 < self.contents.length) { // if after adding the index doesn't go above length - 1 then add
 
 				self.indexSelected += 8;
 
@@ -652,7 +653,7 @@ class FileSystemLayout {
 			// else unselect all other icons by making them blue and unselecting it
 			// each iteration will either be the fileIcon clicked or all other icons
 			for (var i = 0; i < self.contents.length; ++i) {
-				// both these expression need to be true in order for the entire entire statement to be true
+				// both these statement need to be true in order for the entire entire statement to be true
 				// which makes sense as we want the current element in the array to be the icon we clicked
 				// AND we have to make sure that the element in the array is not selected, because if it is not selected
 				// only then can we select it, we can't select something that is unselected
