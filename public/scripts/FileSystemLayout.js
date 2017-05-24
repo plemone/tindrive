@@ -273,16 +273,20 @@ class FileSystemLayout {
 		}
 	}
 
+	// issue - r, r, r, d, l
+
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
 
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
+			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
+		
 			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
 
 			// either of these statement needs to be true for the entire statement to evaluate to true
-			if (self.arrowKeySelected === "up" || self.arroyKeySelected === "down") {
+			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
 				--self.indexSelected; // since we are going left we decrement, as we are going in reverse direction along the self.contents array
 			}
 
@@ -321,7 +325,6 @@ class FileSystemLayout {
 
 			self.arrowKeySelected = "left";
 			
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
 			
 			/*
 
@@ -372,6 +375,10 @@ class FileSystemLayout {
 
 		} else if (event.which === 39) { // right
 
+			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
+			// before we do anything we need to check if the we are at the first index in the array
+			// if we are chances are we have cycled through the files once and have reached this point
+			// so we need to turn the length - 1 index icon blue before we can proceed
 
 			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
 
@@ -407,10 +414,6 @@ class FileSystemLayout {
 		
 			self.arrowKeySelected = "right";
 
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			// before we do anything we need to check if the we are at the first index in the array
-			// if we are chances are we have cycled through the files once and have reached this point
-			// so we need to turn the length - 1 index icon blue before we can proceed
 			if (self.indexSelected === 0) {
 				if (self.contents[self.contents.length - 1].constructor === FileIcon) {
 					$("#" + self.contents[self.contents.length - 1].id).css("background-image", self.blueFile);
@@ -456,15 +459,17 @@ class FileSystemLayout {
 
 		} else if (event.which === 38) { // up 
 
-			self.arroyKeySelected = "up"; // indicator of the key selected
+			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
 
 			if (self.arrowKeySelected === "right") {
-				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by +1
-			} else {
-				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by +1
+				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
+			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
+				
+				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
 			}
 
-			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
+
+			self.arrowKeySelected = "up"; // indicator of the key selected
 
 			/*
 				Each row can hold 8 items, so which ever index you are in the contents array
@@ -502,15 +507,16 @@ class FileSystemLayout {
 
 		} else if (event.which === 40) { // down
 
-			self.arrowKeySelected = "down"; // indicator of the arrow key selected
+			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
+
 
 			if (self.arrowKeySelected === "right") {
-				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by +1
-			} else {
-				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by +1
+				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
+			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
+				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
 			}
 
-			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
+			self.arrowKeySelected = "down"; // indicator of the arrow key selected
 
 
 			/*
