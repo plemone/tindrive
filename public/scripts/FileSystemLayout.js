@@ -468,6 +468,9 @@ class FileSystemLayout {
 
 		} else if (event.which === 38) { // up 
 
+
+			// forgot to add a bunch of sstuff like file selected and all that!
+
 			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
 
 			if (self.arrowKeySelected === "right") {
@@ -500,8 +503,15 @@ class FileSystemLayout {
 				} else {
 					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
 				}
-
-				// self.indexSelected + 1 because you cannot turn the file/folder blue which you just turned red
+				// turn on global click to unselect on a global click
+				self.selected = self.contents[self.indexSelected];
+				self.contents[self.indexSelected].selected = true;
+				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
+				self.counter = 1; // prevents an activated global click from deactivating current marked red window
+								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+								 // it happens simultaneously! )	
+		
+					// self.indexSelected + 1 because you cannot turn the file/folder blue which you just turned red
 				for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
 					if (self.contents[i].constructor === FileIcon) {
 						$("#" + self.contents[i].id).css("background-image", self.blueFile);
@@ -553,6 +563,15 @@ class FileSystemLayout {
 				} else {
 					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
 				}
+
+				// turn on global click to unselect on a global click
+				self.selected = self.contents[self.indexSelected];
+				self.contents[self.indexSelected].selected = true;
+				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
+				self.counter = 1; // prevents an activated global click from deactivating current marked red window
+								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+								 // it happens simultaneously! )	
+					
 
 				// self.indexSelected - 1 because you cannot turn the file/folder blue which you just turned red
 				for (var i = self.indexSelected - 1; i > -1; --i) {
