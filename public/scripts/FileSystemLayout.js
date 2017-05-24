@@ -30,6 +30,11 @@ class FileSystemLayout {
 		this.route = "/" + $("#username").text() + "/";
 
 		this.arrowKeySelected = "";
+
+		this.redFile = "url(public/images/file-4.png)"; // file color red for css properties
+		this.redFolder = "url(public/images/folder-2.png)"; // folder color red css properties
+		this.blueFile = "url(public/images/file-3.png)"; // file color blue css properties
+		this.blueFolder = "url(public/images/folder.png)"; // folder color blue css properties
 	}
 
 	create() {
@@ -274,6 +279,13 @@ class FileSystemLayout {
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
+			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
+
+			// either of these statement needs to be true for the entire statement to evaluate to true
+			if (self.arrowKeySelected === "up" || self.arroyKeySelected === "down") {
+				--self.indexSelected; // since we are going left we decrement, as we are going in reverse direction along the self.contents array
+			}
+
 			/*
 				When the momentum is right we increment in advance the position, we are going to take. This
 				causes a few problems, if we want to go left, we have already incremented the index by + 1.
@@ -321,18 +333,18 @@ class FileSystemLayout {
 
 			if (self.indexSelected === self.contents.length - 1) {
 				if (self.contents[0].constructor === FileIcon) {
-					$("#" + self.contents[0].id).css("background-image", "url(public/images/file-3.png)");
+					$("#" + self.contents[0].id).css("background-image", self.blueFile);
 				} else {
-					$("#" + self.contents[0].id).css("background-image", "url(public/images/folder.png)")
+					$("#" + self.contents[0].id).css("background-image", self.blueFolder)
 				}			
 			}
 
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
 			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/file-4.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
 			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/folder-2.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
 			}
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
@@ -345,9 +357,9 @@ class FileSystemLayout {
 			// we need to turn all contents next of us to blue as mentioned above
 			for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
 				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
+					$("#" + self.contents[i].id).css("background-image", self.blueFile);
 				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
+					$("#" + self.contents[i].id).css("background-image", self.blueFolder);
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
@@ -359,6 +371,16 @@ class FileSystemLayout {
 			}
 
 		} else if (event.which === 39) { // right
+
+
+			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
+
+			// either of these statement needs to be true in order for the entire statement to evaluate to true
+			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
+				++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
+			}
+
+
 
 			/*
 				Similar algorithm to what left key follows, except this is exact opposite. So basically, when you are
@@ -391,17 +413,17 @@ class FileSystemLayout {
 			// so we need to turn the length - 1 index icon blue before we can proceed
 			if (self.indexSelected === 0) {
 				if (self.contents[self.contents.length - 1].constructor === FileIcon) {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(public/images/file-3.png)");
+					$("#" + self.contents[self.contents.length - 1].id).css("background-image", self.blueFile);
 				} else {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", "url(public/images/folder.png)")
+					$("#" + self.contents[self.contents.length - 1].id).css("background-image", self.blueFolder)
 				}			
 			}
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
 			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/file-4.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
 			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", "url(public/images/folder-2.png)");
+				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
 			}
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
@@ -417,9 +439,9 @@ class FileSystemLayout {
 			// don't have to turn anything blue 
 			for (var i = self.indexSelected - 1; i > -1; --i) {
 				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
+					$("#" + self.contents[i].id).css("background-image", self.blueFile);
 				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
+					$("#" + self.contents[i].id).css("background-image", self.blueFolder);
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
@@ -434,6 +456,14 @@ class FileSystemLayout {
 
 		} else if (event.which === 38) { // up 
 
+			self.arroyKeySelected = "up"; // indicator of the key selected
+
+			if (self.arrowKeySelected === "right") {
+				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by +1
+			} else {
+				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by +1
+			}
+
 			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
 
 			/*
@@ -444,26 +474,41 @@ class FileSystemLayout {
 
 			*/
 
+
+			// why 7 instead of 8 as there are 8 rows? Its because when you move left or right the index already
+			// gets incremented or decremented on that very step! So next step you have an increment or decrement of 1
 			if (self.indexSelected - 8 > -1) { // if after subtracting 8 the index doesn't go below -1 then substract
 
 				self.indexSelected -= 8;
 
-				if (self.contents[self.indexSelected].constructor === FileIcon) {
-					
-
+				if (self.contents[self.indexSelected].constructor === FileIcon) { // if element in the array is file icon
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile); // turn file red
 				} else {
-
-
-
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
 				}
 
-
+				// self.indexSelected + 1 because you cannot turn the file/folder blue which you just turned red
+				for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
+					if (self.contents[i].constructor === FileIcon) {
+						$("#" + self.contents[i].id).css("background-image", self.blueFile);
+					} else {
+						$("#" + self.contents[i].id).css("background-image", self.blueFolder);
+					}
+				}
 
 			}
 
 
 
 		} else if (event.which === 40) { // down
+
+			self.arrowKeySelected = "down"; // indicator of the arrow key selected
+
+			if (self.arrowKeySelected === "right") {
+				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by +1
+			} else {
+				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by +1
+			}
 
 			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
 
@@ -477,19 +522,27 @@ class FileSystemLayout {
 
 			*/
 
+			// why 7 instead of 8 as there are 8 rows? Its because when you move left or right the index already
+			// gets incremented or decremented on that very step! So next step you have an increment or decrement of 1
+
 			if (self.indexSelected + 8 < self.contents.length - 1) { // if after adding the index doesn't go above length - 1 then add
 
 				self.indexSelected += 8;
 
-				if (self.contents[self.indexSelected].constructor === FileIcon) {
-
-
+				if (self.contents[self.indexSelected].constructor === FileIcon) { // if element in the array if file icon
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile); // turn file red
 				} else {
-
-
-					
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
 				}
 
+				// self.indexSelected - 1 because you cannot turn the file/folder blue which you just turned red
+				for (var i = self.indexSelected - 1; i > -1; --i) {
+					if (self.contents[i].constructor === FileIcon) {
+						$("#" + self.contents[i].id).css("background-image", self.blueFile);
+					} else {
+						$("#" + self.contents[i].id).css("background-image", self.blueFolder);
+					}
+				}
 
 
 			}
@@ -556,9 +609,9 @@ class FileSystemLayout {
 				// only then can we select it, we can't select something that is unselected
 				if (self.contents[i] === icon && !self.contents[i].selected) { // red - selected
 					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-4.png)");
+						$("#" + self.contents[i].id).css("background-image", self.redFile);
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder-2.png)")
+						$("#" + self.contents[i].id).css("background-image", self.redFolder)
 					}
 					self.contents[i].selected = true;
 					self.globalClick = true; // turns on the drop zone event handlers job to do its thing
@@ -569,9 +622,9 @@ class FileSystemLayout {
 					self.selected = self.contents[i];
 				} else { // blue - unselected
 					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
-						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png)");
+						$("#" + self.contents[i].id).css("background-image", self.blueFile);
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");	
+						$("#" + self.contents[i].id).css("background-image", self.blueFolder);	
 					}
 					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
 				}
@@ -651,7 +704,7 @@ class FileSystemLayout {
 						$("#" + self.contents[i].id).css("background-image", "url(public/images/file-3.png");
 						// also needs to turn off the selected boolean which is indicating that it is currently turned on			
 					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", "url(public/images/folder.png)");
+						$("#" + self.contents[i].id).css("background-image", self.blueFolder);
 					}
 					self.contents[i].selected = false; // unselects by turning the select boolean of each icon false	
 				}
