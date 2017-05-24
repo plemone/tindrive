@@ -258,6 +258,9 @@ class FileSystemLayout {
 
 			// make request object which encapsulates the path for the server to query
 
+			// you need to change the arrow key to an empty string when you enter a folder, or else
+			// you will get a momentum error
+
 			var requestObj = {};
 
 			requestObj.path = self.path.get;
@@ -594,13 +597,9 @@ class FileSystemLayout {
 					}
 				}
 
-
 			}
 
-
-
 		}
-
 
 	}
 
@@ -698,6 +697,9 @@ class FileSystemLayout {
 
 				// make request object which encapsulates the path for the server to query
 
+				// you need to change the arrow key to an empty string when you enter a folder, or else
+				// you will get a momentum error
+
 				var requestObj = {};
 
 				requestObj.path = self.path.get;
@@ -723,6 +725,16 @@ class FileSystemLayout {
 		// of times, the value of i gets messed up as i does become greater than this.contents.size()
 		// at one point even the the elements have not been popped off
 		var size = this.contents.length;
+
+		// nullifying the momentum
+		this.arrowKeySelected = "";
+
+		// nullifying the key selection
+		this.indexSelected = 0;
+
+		// nullifying the folder/file selected
+		this.selected = null;
+
 
 		for (var i = 0; i < size; ++i) {
 			// killing two birds with one exression, pop returns the element that is being removed
