@@ -296,13 +296,16 @@ class FileSystemLayout {
 			if (self.arrowKeySelected === "right") { 
 				if (self.indexSelected !== 1 && self.indexSelected !== 0) { 
 					self.indexSelected -= 2; 
-				} else if (self.indexSelected === 0) {					
-					self.indexSelected = self.contents.length - 2;
+				} else if (self.indexSelected === 0) {
+					if (self.contents.length !== 1) { // when length is one or there is only 1 folder then the index becomes -1 as length -2 = -1, so this is a case that needs to be checked	
+						self.indexSelected = self.contents.length - 2;
+					} else { // when that happens 0 out the index 
+						self.indexSelected = 0;
+					}
 				} else { 
 					self.indexSelected = self.contents.length - 1;
 				}
 			} 
-
 
 			self.arrowKeySelected = "left";
 			
@@ -372,11 +375,14 @@ class FileSystemLayout {
 				} else if (self.indexSelected === self.contents.length - 2) {
 					self.indexSelected = 0;
 				} else { // when index is 0 we don't want index out of bounds now
-					self.indexSelected = 1; 				
+					if (self.contents.length !== 1) { // if our contents array has only one element this is a problem, as if we set our index to 1 and then if we make a move to right we go index out of bounds!
+						self.indexSelected = 1; 		
+					} else { // if our length does turn out to be one then we just 0 out the index, to start back at where we were at
+						self.indexSelected = 0;
+					}
 				}
 			} 
 		
-
 			self.arrowKeySelected = "right";
 
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key

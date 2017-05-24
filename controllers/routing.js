@@ -65,6 +65,3 @@ module.exports = function() { // just a lambda
 	app.listen(3000, CONTROLLER.intro());
 
 }
-
-
-// glass in the park
