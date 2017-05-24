@@ -474,6 +474,12 @@ class FileSystemLayout {
 			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
 
 			if (self.arrowKeySelected === "right") {
+
+				if (self.indexSelected === 0) {
+					self.indexSelected = self.contents.length; // no -1 because in the expression below -1 is implemente
+				}
+
+
 				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
 			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
 				
@@ -530,6 +536,11 @@ class FileSystemLayout {
 
 
 			if (self.arrowKeySelected === "right") {
+
+				if (self.indexSelected === 0) {
+					self.indexSelected = self.contents.length; // no need to use -1 as in the expression right below - 1 is implemented
+				}
+
 				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
 			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
 				if (self.indexSelected === self.contents.length - 1) {
