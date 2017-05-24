@@ -432,7 +432,73 @@ class FileSystemLayout {
 				self.indexSelected = 0;
 			}
 
-		} 
+		} else if (event.which === 38) { // up 
+
+			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
+
+			/*
+				Each row can hold 8 items, so which ever index you are in the contents array
+				you should always decrease 8 from your current index to be on the new index.
+				If you go index out of bound which is below 0 in this case then simply don't move.
+				Turn the current index red, and turn anything after the current index blue.
+
+			*/
+
+			if (self.indexSelected - 8 > -1) { // if after subtracting 8 the index doesn't go below -1 then substract
+
+				self.indexSelected -= 8;
+
+				if (self.contents[self.indexSelected].constructor === FileIcon) {
+					
+
+				} else {
+
+
+
+				}
+
+
+
+			}
+
+
+
+		} else if (event.which === 40) { // down
+
+			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
+
+
+			/*
+				Each row can hold 8 items, so which ever index you are in the contents array
+				you should always increase 8 from your current index to be on the new index.
+				If you go index out of boudns which will be over the length - 1 index of the
+				current contents arraay then you simply don't move.
+				Turn the current index red, and turn anything before the current index blue.
+
+			*/
+
+			if (self.indexSelected + 8 < self.contents.length - 1) { // if after adding the index doesn't go above length - 1 then add
+
+				self.indexSelected += 8;
+
+				if (self.contents[self.indexSelected].constructor === FileIcon) {
+
+
+				} else {
+
+
+					
+				}
+
+
+
+			}
+
+
+
+		}
+
+
 	}
 
 	// back space event handler
