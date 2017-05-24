@@ -128,7 +128,7 @@ class FileSystemLayout {
 			requestObj.type = file.type;
 			requestObj.contents = base64;
 			requestObj.path = self.path.get;
-		
+
 			// make the ajax request
 			requestObj = JSON.stringify(requestObj);
 			$.ajax({

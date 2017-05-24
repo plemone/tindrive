@@ -36,7 +36,7 @@ class FileSystem {
 		var buffer = new Buffer(fileObj.contents, "base64");
 
 		// writes the data to file system
-		fs.writeFile(this.path + fileObj.name, buffer, function(err) {
+		fs.writeFile(fileObj.path + fileObj.name, buffer, function(err) {
 			if (err) console.log("Error in writing file to operating system's file system...");
 			else console.log("File successfully saved..."); 
 		});

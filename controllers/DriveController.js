@@ -4,7 +4,6 @@
 var IdGenerator = require("./../helpers/IdGenerator.js"); // unique user id generator ./../ means cd out of the current folder
 var FileSystem = require("./../helpers/FileSystem.js"); // unique file system for the user ./../ means cd out of the current folder
 var bcrypt = require("bcrypt"); // password encryption module 
-var MongoClient = require("mongodb").MongoClient; // database module 
 var fs = require("fs"); // used to manipulate the file system 
 var Database = require("./../helpers/Database.js"); // ./../ means cd out of the current folder
 
@@ -167,7 +166,7 @@ class DriveController {
 				
 				// file uploaded and saved to file system
 				userFS.uploadFile(requestObj);
-				
+
 				res.sendStatus(200);
 
 			});
@@ -259,7 +258,7 @@ class DriveController {
 	}
 
 	// on 404 errors
-	err(req, res) { res.status(404).render("404"); }
+	err(req, res) { res.status(200).render("404"); }
 
 }
 
