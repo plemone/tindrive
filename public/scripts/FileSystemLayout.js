@@ -241,7 +241,11 @@ class FileSystemLayout {
 			// return key does essentially what double click event handler does
 			// so if we can use similar instructions that doubleClick uses
 		
-			// the path needs to be extended as we are now visiting a new folder
+			// we need to check one very important thing, which is to make sure we don't cd into a
+			// file that is currently selected!
+			if (self.selected.constructor === FileIcon) return; // ends the function here
+		
+			// otherwise the path needs to be extended as we are now visiting a new folder	
 			self.path.extend(self.selected.name);
 
 			// now we need to remove all the current contents from the drop zone

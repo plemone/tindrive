@@ -36,6 +36,9 @@ class FileSystem {
 		var buffer = new Buffer(fileObj.contents, "base64");
 
 		// writes the data to file system
+		// the reason its fileObj.path + fileObj.name is because the fs module takes in the pathname
+		// that is going to save plus the name of the file that it is going to save all in one string,
+		// resulting in something like this ./filesystem/user-fs/Tanvir/filename.txt and not just ./filesystem/user-fs/Tanvir/
 		fs.writeFile(fileObj.path + fileObj.name, buffer, function(err) {
 			if (err) console.log("Error in writing file to operating system's file system...");
 			else console.log("File successfully saved..."); 
@@ -44,7 +47,6 @@ class FileSystem {
 		// add to the tree
 		var file = new FileInfo(fileObj.name, fileObj.lastModified, fileObj.size, fileObj.type, fileObj.path);
 		this.tree.insertFile(file);
-
 	}
 
 	// folders created
