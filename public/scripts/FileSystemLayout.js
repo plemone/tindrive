@@ -16,6 +16,9 @@ class FileSystemLayout {
 		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
 								// if left is pressed index reduces by -1, if right is pressed index increases by +1
 								// using math we then calculate the y axis for up and down keys
+		
+		this.prev = {}; // object that stores the momentum and the index of the selection
+
 		this.selected = null; // will contain the DOM element currently selected
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
@@ -264,7 +267,7 @@ class FileSystemLayout {
 			var requestObj = {};
 
 			requestObj.path = self.path.get;
-
+		
 			$.ajax({
 				url: self.route + "expandDir", // same route as doubleClick
 				type: "POST",
@@ -280,7 +283,6 @@ class FileSystemLayout {
 
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
-
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
@@ -378,6 +380,10 @@ class FileSystemLayout {
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
+
+			self.prev.index = self.indexSelected;
+			self.prev.direction = "left";
+
 			// we check if the index is 0 or not before decrementing it, as we don't want index to go below 0
 			if (self.indexSelected !== 0) {
 				--self.indexSelected;
@@ -463,6 +469,11 @@ class FileSystemLayout {
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
+
+			self.prev.index = self.indexSelected;
+			self.prev.direction = "right";
+
+
 			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
 			// we need to make sure that we don't exceed the length of the array contents
 			// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
@@ -533,6 +544,8 @@ class FileSystemLayout {
 
 			}
 
+			self.prev.index = self.indexSelected;
+			self.prev.direction = "up";
 
 
 		} else if (event.which === 40) { // down
@@ -568,7 +581,6 @@ class FileSystemLayout {
 
 			*/
 
-
 			if (self.indexSelected + 8 < self.contents.length) { // if after adding the index doesn't go above length - 1 then add
 
 				self.indexSelected += 8;
@@ -598,7 +610,9 @@ class FileSystemLayout {
 				}
 
 			}
-
+		
+			self.prev.index = self.indexSelected;
+			self.prev.direction = "down";
 		}
 
 	}
@@ -628,6 +642,18 @@ class FileSystemLayout {
 					// on success extract the array of contents from the data and
 					// populate the drop zone with new contents
 					self.populateDropZone(data.ls);
+					// assign current index keeper to the previous index which was
+					// the index you were in before you cding into the folder
+					// we set the index depending on the direction of the previous index!
+					if (self.prev.direction === "left") {
+						self.indexSelected = self.prev.index; // if its left then we decrement to left to prepare for our next hop
+						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cding
+					} else {
+						self.indexSelected = self.prev.index; // if its right then we decrement to right to prepare for our next hop
+						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cdiing
+					}
+					// turn the folder red again as you hit backspace and the content is the prev.index which is the previous index before you cded into the folder
+					$("#" + self.contents[self.prev.index].id).css("background-image", self.redFolder);
 				}
 			})
 		}
@@ -716,7 +742,6 @@ class FileSystemLayout {
 		}
 	}
 
-
 	// removes all the contents currently available in the dropzone and populate the contents
 	// which are currently there
 	populateDropZone(ls) {
@@ -751,7 +776,6 @@ class FileSystemLayout {
 		}
 
 	}
-
 
 	// attaches a click event handler to the drop zone window, where upon clicking
 	// the dropzone if any item gets selected, it automatically gets deselected
