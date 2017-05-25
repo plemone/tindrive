@@ -16,9 +16,6 @@ class FileSystemLayout {
 		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
 								// if left is pressed index reduces by -1, if right is pressed index increases by +1
 								// using math we then calculate the y axis for up and down keys
-		
-		this.prev = {}; // object that stores the momentum and the index of the selection
-
 		this.selected = null; // will contain the DOM element currently selected
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
@@ -267,7 +264,7 @@ class FileSystemLayout {
 			var requestObj = {};
 
 			requestObj.path = self.path.get;
-		
+
 			$.ajax({
 				url: self.route + "expandDir", // same route as doubleClick
 				type: "POST",
@@ -283,6 +280,7 @@ class FileSystemLayout {
 
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
+
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
@@ -380,10 +378,6 @@ class FileSystemLayout {
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
-
-			self.prev.index = self.indexSelected;
-			self.prev.direction = "left";
-
 			// we check if the index is 0 or not before decrementing it, as we don't want index to go below 0
 			if (self.indexSelected !== 0) {
 				--self.indexSelected;
@@ -469,11 +463,6 @@ class FileSystemLayout {
 				}
 				self.contents[self.indexSelected].selected = false;
 			}
-
-			self.prev.index = self.indexSelected;
-			self.prev.direction = "right";
-
-
 			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
 			// we need to make sure that we don't exceed the length of the array contents
 			// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
@@ -544,8 +533,6 @@ class FileSystemLayout {
 
 			}
 
-			self.prev.index = self.indexSelected;
-			self.prev.direction = "up";
 
 
 		} else if (event.which === 40) { // down
@@ -610,9 +597,7 @@ class FileSystemLayout {
 				}
 
 			}
-		
-			self.prev.index = self.indexSelected;
-			self.prev.direction = "down";
+
 		}
 
 	}
@@ -620,10 +605,8 @@ class FileSystemLayout {
 	// back space event handler
 	backSpace(event, self) {
 
-		// if we are at the root folder we don't want to backspace out of it also known as cd out of it
-
+		// if statement to prevent cding out of the root folder
 		if (self.path.get === "./filesystems/user-fs/" + $("#username").text() + "/") return;
-
 
 		// event that handles backspace, which is basically when you hit backspace you go back to the
 		// previous working directory by shorting the path and sending an ajax request
@@ -648,20 +631,6 @@ class FileSystemLayout {
 					// on success extract the array of contents from the data and
 					// populate the drop zone with new contents
 					self.populateDropZone(data.ls);
-					// assign current index keeper to the previous index which was
-					// the index you were in before you cding into the folder
-					// we set the index depending on the direction of the previous index!
-					if (self.prev.direction === "left") {
-						self.indexSelected = self.prev.index; // if its left then we decrement to left to prepare for our next hop
-						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cding
-						// we don't want to increment or decrement anything because the arrow keys already do it based on the direction
-					} else {
-						self.indexSelected = self.prev.index; // if its right then we decrement to right to prepare for our next hop
-						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cdiing
-						// we don't want to increment or decrement anything because the arrow keys already do it based on the direction
-					}
-					// turn the folder red again as you hit backspace and the content is the prev.index which is the previous index before you cded into the folder
-					$("#" + self.contents[self.prev.index].id).css("background-image", self.redFolder);
 				}
 			})
 		}
