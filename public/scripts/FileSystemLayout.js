@@ -619,6 +619,12 @@ class FileSystemLayout {
 
 	// back space event handler
 	backSpace(event, self) {
+
+		// if we are at the root folder we don't want to backspace out of it also known as cd out of it
+
+		if (self.path.get === "./filesystems/user-fs/" + $("#username").text() + "/") return;
+
+
 		// event that handles backspace, which is basically when you hit backspace you go back to the
 		// previous working directory by shorting the path and sending an ajax request
 
@@ -648,9 +654,11 @@ class FileSystemLayout {
 					if (self.prev.direction === "left") {
 						self.indexSelected = self.prev.index; // if its left then we decrement to left to prepare for our next hop
 						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cding
+						// we don't want to increment or decrement anything because the arrow keys already do it based on the direction
 					} else {
 						self.indexSelected = self.prev.index; // if its right then we decrement to right to prepare for our next hop
 						self.arrowKeySelected = self.prev.direction; // we change the direction back to where we were before cdiing
+						// we don't want to increment or decrement anything because the arrow keys already do it based on the direction
 					}
 					// turn the folder red again as you hit backspace and the content is the prev.index which is the previous index before you cded into the folder
 					$("#" + self.contents[self.prev.index].id).css("background-image", self.redFolder);
