@@ -35,6 +35,9 @@ class FileSystemLayout {
 		this.redFolder = "url(public/images/folder-2.png)"; // folder color red css properties
 		this.blueFile = "url(public/images/file-3.png)"; // file color blue css properties
 		this.blueFolder = "url(public/images/folder.png)"; // folder color blue css properties
+
+
+		this.init = 0; // first time you cd into a folder
 	}
 
 	create() {
@@ -281,6 +284,10 @@ class FileSystemLayout {
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
 
+		if (self.contents.length === 0) return;
+
+		++self.init;
+
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
@@ -384,9 +391,15 @@ class FileSystemLayout {
 			} else {
 				self.indexSelected = self.contents.length - 1;
 			}
+			//console.log(self.indexSelected);
+			if (self.init === 1) { // event though the left key is pressed we give it the property as if the right key was pressed!
+				self.indexSelected = 1; // by making the index one
+				self.arrowKeySelected = "right"; // and changing the direction of the key to right!
+				// this avoids the buggy behaviour of the left key
+			}
+			//console.log(self.init)
 
 		} else if (event.which === 39) { // right
-
 			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
 			// before we do anything we need to check if the we are at the first index in the array
 			// if we are chances are we have cycled through the files once and have reached this point
@@ -396,13 +409,13 @@ class FileSystemLayout {
 
 			// either of these statement needs to be true in order for the entire statement to evaluate to true
 			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
-				if (self.arrowKeySelected === "down" && self.indexSelected === self.contents.length - 1) {
+				if (self.arrowKeySelected === "down" && self.indexSelected === self.contents.length - 1 || self.arrowKeySelected === "up" && self.indexSelected === 0) {
 					self.indexSelected = -1; // not 0 because in the expression below it becomes 0
 				}
-				++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
+				if (self.indexSelected + 1 < self.contents.length) {
+					++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
+				}
 			}
-
-
 
 			/*
 				Similar algorithm to what left key follows, except this is exact opposite. So basically, when you are
@@ -474,7 +487,6 @@ class FileSystemLayout {
 
 		} else if (event.which === 38) { // up 
 
-
 			// forgot to add a bunch of sstuff like file selected and all that!
 
 			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
@@ -488,8 +500,9 @@ class FileSystemLayout {
 
 				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
 			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
-				
-				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
+				if (self.indexSelected + 1 < self.contents.length - 1) {
+					++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
+				}
 			}
 
 
@@ -533,8 +546,6 @@ class FileSystemLayout {
 
 			}
 
-
-
 		} else if (event.which === 40) { // down
 
 			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
@@ -557,6 +568,22 @@ class FileSystemLayout {
 
 			self.arrowKeySelected = "down"; // indicator of the arrow key selected
 
+			if (self.indexSelected === 0 && self.contents[self.indexSelected] !== self.selected) {
+				if (self.contents[self.indexSelected].constructor === FileIcon) {
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
+				} else {
+					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
+				}
+								// turn on global click to unselect on a global click
+				self.selected = self.contents[self.indexSelected];
+				self.contents[self.indexSelected].selected = true;
+				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
+				self.counter = 1; // prevents an activated global click from deactivating current marked red window
+								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+								 // it happens simultaneously! )	
+
+				return;
+			}
 
 			/*
 				Each row can hold 8 items, so which ever index you are in the contents array
@@ -722,6 +749,10 @@ class FileSystemLayout {
 	// removes all the contents currently available in the dropzone and populate the contents
 	// which are currently there
 	populateDropZone(ls) {
+
+		// we are entering a new folder so self.init should be 0 for that environment
+		self.init = 0;
+
 		// needs to be stored in a variable because in a for loop the length
 		// gets calculated each time, and we don't want that, we want to pop for a fix number
 		// of times, the value of i gets messed up as i does become greater than this.contents.size()
