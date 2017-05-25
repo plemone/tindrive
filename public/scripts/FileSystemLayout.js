@@ -410,7 +410,7 @@ class FileSystemLayout {
 			// either of these statement needs to be true in order for the entire statement to evaluate to true
 			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
 				if (self.arrowKeySelected === "down" && self.indexSelected === self.contents.length - 1 || self.arrowKeySelected === "up" && self.indexSelected === 0) {
-					self.indexSelected = -1; // not 0 because in the expression below it becomes 0
+					self.indexSelected = 0;
 				}
 				if (self.indexSelected + 1 < self.contents.length) {
 					++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
