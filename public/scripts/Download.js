@@ -8,6 +8,7 @@ class Download {
 		this.width = 174; // width of the button
 		this.height = 45; // height of the button
 		this.id = "#download"; // id of the object
+		this.descriptionId = "#description";
 		this.element = "<div id = download><p id = description >download</p></div>"; // contains the DOM information
 		this.contents = []; // contains the contents that need to be downloaded
 	}
@@ -22,13 +23,19 @@ class Download {
 		var self = this;
 
 		$(this.id).on("mouseover", function() {
-			$(self.id).css("box-shadow", "0 4px 2px -2px gray");
+
+			$(self.descriptionId).css("color", "#859dc4"); // color of the text becomes white
+			$(self.descriptionId).css("text-shadow", "1px 0 black, 0 0px white, 0px 0 white, 0 1px black"); // border becomes black
+		
 		});
 
 
 		$(this.id).on("mouseout", function() {
-			$(self.id).css("box-shadow", "");
-		});
+
+			$(self.descriptionId).css("color", "black"); // color of the text becomes black
+			$(self.descriptionId).css("text-shadow", "1px 0 white, 0 0px black, 0px 0 black, 0 1px white"); // border becomes white
+		
+		}); 
 
 
 		$(this.id).on("click", function() {
@@ -41,8 +48,11 @@ class Download {
 		// this event is responsible for when a button is being pressed, as the button is being pressed
 		// you can change the design to make it look like its being pressed
 		$(this.id).on("mousedown", function() {
-			$(self.id).css("bottom", "-4px");
-			$(self.id).css("box-shadow", "0 1px 0 #00823F");
+			$(self.id).css("bottom", "-4px"); // lifts the div up a little on mouse down
+			$(self.id).css("box-shadow", "0 1px 0 #00823F"); // decreases the size of the shadow on mouse down
+			$(self.descriptionId).css("color", "black"); // color of the text becomes black
+			$(self.descriptionId).css("text-shadow", "1px 0 white, 0 0px black, 0px 0 black, 0 1px white"); // border becomes white
+	
 		});
 
 		// this event is the opposite of mousedown, when the button gets released this event is fired, also
@@ -50,6 +60,7 @@ class Download {
 		$(this.id).on("mouseup", function() {
 			$(self.id).css("box-shadow", "0 4px 2px -2px gray"); // shadow of the box on focus
 			$(self.id).css("bottom", "+4px"); // moves the positiion back to normal on focus
+
 		});
 
 
@@ -79,15 +90,16 @@ class Download {
 
 	generateCSS() {
 		var id = this.id;	
-		var p = "#description";			
+		var p = this.descriptionId;			
 		$(id).css("position", "relative");
 		$(id).css("top", this.y);
 		$(id).css("left", this.x);
 		$(id).css("font-size", "105%");
 		$(id).css("text-align", "center");
 		$(id).css("width", this.width);
-		$(id).css("height", this.height);
+		$(id).css("height", this.height);		
 		$(id).css("cursor", "pointer");
+		$(id).css("box-shadow", "0 4px 2px -2px gray");		
 		$(p).css("position", "relative");
 		$(p).css("top", "10px");
 		$(p).css("text-shadow", "1px 0 white, 0 0px black, 0px 0 black, 0 1px white");
