@@ -26,18 +26,15 @@ class FileSystemLayout {
 
 		this.selected = null; // will contain the DOM element currently selected
 
-		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
-								  // then the counter will be incremented
+		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then then the counter will be incremented
 		
-		this.counter = 0; // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
-						  // and turn the color of the file from red to blue
+		this.counter = 0; // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file and turn the color of the file from red to blue
 		
 		this.dropZoneId = "#dnd"; // main focus variable
 		
 		this.keyStack = []; // a stack of event keys for creating a new folder
 		
-		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on
-														// the situation to make ajax requests
+		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on the situation to make ajax requests
 
 		this.redFile = "url(public/images/file-4.png)"; // file color red for css properties
 		
@@ -90,18 +87,63 @@ class FileSystemLayout {
 			}
 		}
 
-		var file = new FileIcon(fileName, this.x, this.y);
-		file.create(); // create the file icon components
-		this.contents.push(file); // push the fileIcon to the content array
-		this.attachIconEH(file); // attach the event handler of the file
+		// never name variables file, JavaScript confuses it with some built in keyword
+
+		var fileIcon = new FileIcon(fileName, this.x, this.y);
+		fileIcon.create(); // create the file icon components
+		this.contents.push(fileIcon); // push the fileIcon to the content array
+		this.attachIconEH(fileIcon); // attach the event handler of the file
+	
+		// update the table with the new file
+		this.table.add(fileIcon); 
+
+		// extract the row and index value of the row
+		var {r, i} = this.table.at();
+
+		// add the table coordinates for the individual folder
+		fileIcon.tableCoordinates.push(r);
+		fileIcon.tableCoordinates.push(i);
+
 	}
 
-	// adds a file icon to the DOM
+	addFolderToDOM(folderName) {
+		// a check to see if folder with a similar name exists or not
+		for (var i = 0; i < this.contents.length; ++i) {
+			if (this.contents[i].name === folderName) {
+				alert("Folder with that name already exists!");
+				return;
+			}
+		}
+		var folder = new FolderIcon(folderName, this.x, this.y);
+		folder.create();
+		this.contents.push(folder);
+		this.attachIconEH(folder);
+
+		// update the table with the new folder
+		this.table.add(folder);
+
+		// extract the row and index value of the row
+		var {r, i} = this.table.at();
+
+		// add the table coordinates for the individual folder
+		folder.tableCoordinates.push(r);
+		folder.tableCoordinates.push(i);
+
+	}
+
+	// adds a file icon to the DOM and uploads the folder to the server
 	addFile(fObj) {
 		this.addFileToDOM(fObj.name);
 		// makes asynchronous request to the server to upload the file
 		this.uploadFile(fObj);
 	}
+
+	// adds a folder icon to the DOM and uploads the folder to the server
+	addFolder(folderName) {
+		this.addFolderToDOM(folderName);
+		this.uploadFolder(folderName);
+	}
+
 	/*
 		the data is being manipulated as a string and will be sent to the server using a string
 		the data can also be sent to the server using an ArrayBuffer object but I chose string for simplicity
@@ -159,30 +201,6 @@ class FileSystemLayout {
 			})
 		}
 		reader.readAsDataURL(file); // calls the reader.onload function
-	}
-
-	addFolderToDOM(folderName) {
-		// a check to see if folder with a similar name exists or not
-		for (var i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i].name === folderName) {
-				alert("Folder with that name already exists!");
-				return;
-			}
-		}
-		var folder = new FolderIcon(folderName, this.x, this.y);
-		folder.create();
-		this.contents.push(folder);
-		this.attachIconEH(folder);
-
-		var folderObj = {};
-		folderObj.name = folderName;
-		folderObj.path = this.path.get;
-	}
-
-
-	addFolder(folderName) {
-		this.addFolderToDOM(folderName);
-		this.uploadFolder(folderName);
 	}
 
 	// check documentation of the uploadFile method, it follow similar structure
@@ -280,10 +298,12 @@ class FileSystemLayout {
 				we need to check one very important thing, which is to make sure we don't cd into a
 				file that is currently selected!
 			*/
+
 			if (self.selected.constructor === FileIcon) return; // ends the function here
 		
 			// otherwise the path needs to be extended as we are now visiting a new folder	
 			self.path.extend(self.selected.name);
+
 			/*
 				now we need to remove all the current contents from the drop zone
 				and get the conents inside the folder that we just double clicked

@@ -19,6 +19,7 @@ class Icon {
 		this.selected = false;
 		this.background = "";
 		this.dropZoneId = "#dnd";
+		this.tableCoordinates = [];
 	}
 
 	create() {
