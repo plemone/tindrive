@@ -5,45 +5,58 @@
 // of how the file system actually looks like, x and y axis value to place a 
 // file, should be the main communicator with the user, and should have a 
 // composition relationship with FileIcon and FolderIcon classes
+
 class FileSystemLayout {
 
 	constructor() {
-		// should have x and y coordinates
 		this.x = 15;
+
 		this.y = 7;
+		
 		this.contents = []; // contains a collection of conents being added to the window can be a fileIcon or FolderIcon
 		
 		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
 								// if left is pressed index reduces by -1, if right is pressed index increases by +1
 								// using math we then calculate the y axis for up and down keys
+		
 		this.selected = null; // will contain the DOM element currently selected
+
+		this.arrowKeySelected = ""; // variable indicates which arrow key was selected
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
 								  // then the counter will be incremented
-		this.counter = 0;		 // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
-							     // and turn the color of the file from red to blue
+		
+		this.counter = 0; // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file
+						  // and turn the color of the file from red to blue
+		
 		this.dropZoneId = "#dnd"; // main focus variable
+		
 		this.keyStack = []; // a stack of event keys for creating a new folder
-		this.path = new Path();
-		// default route options, strings get added on top of this depending on
-		// the situation to make ajax requests
-		this.route = "/" + $("#username").text() + "/";
-
-		this.arrowKeySelected = "";
+		
+		this.path = new Path(); // composition relationsip with Path
+		
+		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on
+														// the situation to make ajax requests
+		
+		this.init = 0; // first time you cd into a folder
 
 		this.redFile = "url(public/images/file-4.png)"; // file color red for css properties
+		
 		this.redFolder = "url(public/images/folder-2.png)"; // folder color red css properties
+		
 		this.blueFile = "url(public/images/file-3.png)"; // file color blue css properties
+		
 		this.blueFolder = "url(public/images/folder.png)"; // folder color blue css properties
 
+		this.downloadComponent = new Download();
 
-		this.init = 0; // first time you cd into a folder
 	}
 
 	create() {
 		this.generateInitialFS();
 		this.attachGlobalClickEH();
 		this.attachWindowEH();
+		this.downloadComponent.create();
 	}
 
 	generateInitialFS() {

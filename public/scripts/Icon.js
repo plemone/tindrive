@@ -81,8 +81,8 @@ class Icon {
 		$(id).css("width", this.width.toString()); // width of the icon
 		$(id).css("height",	this.height.toString()); // height of the icon
 		$(id).css("background-image", this.background);
-		$(id).css("background-repeat", "no-repeat");
-		$(id).css("background-size", "contain");
+		$(id).css("background-repeat", "no-repeat"); // prevents repeat the same image contained within
+		$(id).css("background-size", "contain"); // Scale the image to the largest size such that both its width and its height can fit inside the content area
 		$(wrapper).css("float", "left"); // stacks divs up next to each other
 		$(wrapper).css("width", (this.width + 25).toString()); // width of the wrapper
 		$(wrapper).css("height", (this.height + 25).toString()); // width of the height
