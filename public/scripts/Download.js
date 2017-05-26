@@ -43,12 +43,6 @@ class Download {
 	}
 
 	remove(content) {
-
-		// // if the content type is folder we just empty out all the file
-		// if (content.type === "folder") {
-		// 	this.contents = [];
-		// }
-
 		// loops over the contents array and tries to match content provided with the content in the contents array
 		for (var i = 0; i < this.contents.length; ++i) {
 			// if content is found then remove
