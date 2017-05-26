@@ -49,10 +49,7 @@ class Download {
 		// you can change the design to make it look like its being pressed
 		$(this.id).on("mousedown", function() {
 			$(self.id).css("bottom", "-4px"); // lifts the div up a little on mouse down
-			$(self.id).css("box-shadow", "0 1px 0 #00823F"); // decreases the size of the shadow on mouse down
-			$(self.descriptionId).css("color", "black"); // color of the text becomes black
-			$(self.descriptionId).css("text-shadow", "1px 0 white, 0 0px black, 0px 0 black, 0 1px white"); // border becomes white
-	
+			$(self.id).css("box-shadow", "0 1px 0 #00823F"); // decreases the size of the shadow on mouse down	
 		});
 
 		// this event is the opposite of mousedown, when the button gets released this event is fired, also
