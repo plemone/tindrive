@@ -4,13 +4,13 @@ class Download {
 
 	constructor() {
 		this.x = 890; // contains x coordinate
-		this.y = -594; // contains y ccoordinate
-		this.width = 40; // width of the button
-		this.height = 30; // height of the button
+		this.y = -570; // contains y ccoordinate
+		this.width = 43; // width of the button
+		this.height = 33; // height of the button
 		this.id = "#download"; // id of the object
-		this.element = "<button id = download></button>"; // contains the DOM information
-		this.background = "url(public/images/download-1.png)"; // background image
-		this.changeBackground = "url(public/images/download-2.png)"; // the image which background image changes to on hover
+		this.element = "<div id = download></div>"; // contains the DOM information
+		this.background = "url(public/images/download-2.png)"; // background image
+		this.changeBackground = "url(public/images/download-1.png)"; // the image which background image changes to on hover
 		this.contents = []; // contains the contents that need to be downloaded
 	}
 
@@ -69,6 +69,7 @@ class Download {
 		$(id).css("border-radius", "80%");
 		$(id).css("border", "0"); // removes the black outline on click
 		$(id).css("outline", "none");
+		$(id).css("cursor", "pointer");
 		$(id).css("top", this.y);
 		$(id).css("left", this.x);
 		$(id).css("width", this.width);
