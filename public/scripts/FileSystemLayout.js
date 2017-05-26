@@ -15,13 +15,7 @@ class FileSystemLayout {
 		
 		this.contents = []; // contains a collection of conents being added to the window can be a fileIcon or FolderIcon
 		
-		this.indexSelected = 0; // a variable which is a pointer to the index that is currently selected by the arrow key
-								// if left is pressed index reduces by -1, if right is pressed index increases by +1
-								// using math we then calculate the y axis for up and down keys
-		
 		this.selected = null; // will contain the DOM element currently selected
-
-		this.arrowKeySelected = ""; // variable indicates which arrow key was selected
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then
 								  // then the counter will be incremented
@@ -33,12 +27,8 @@ class FileSystemLayout {
 		
 		this.keyStack = []; // a stack of event keys for creating a new folder
 		
-		this.path = new Path(); // composition relationsip with Path
-		
 		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on
 														// the situation to make ajax requests
-		
-		this.init = 0; // first time you cd into a folder
 
 		this.redFile = "url(public/images/file-4.png)"; // file color red for css properties
 		
@@ -48,7 +38,9 @@ class FileSystemLayout {
 		
 		this.blueFolder = "url(public/images/folder.png)"; // folder color blue css properties
 
-		this.downloadComponent = new Download();
+		this.downloadComponent = new Download(); // composition relationship with the download component
+
+		this.path = new Path(); // composition relationsip with Path
 
 	}
 
@@ -322,6 +314,9 @@ class FileSystemLayout {
 		}
 
 		this.downloadComponent.remove(content);
+
+		this.contents[index].selected = false; // turns the boolean false indicating it has been unselected
+					
 	}
 
 	// turns a selected icon red
@@ -347,6 +342,17 @@ class FileSystemLayout {
 
 		this.downloadComponent.add(content);
 
+		this.selected = this.contents[index]; // turn on global click to unselect on a global click
+		this.contents[index].selected = true;
+		this.globalClick = true; // turns on the drop zone event handlers job to do its thing
+
+		/*
+			prevents an activated global click from deactivating current marked red window
+			while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+			it happens simultaneously! )
+		*/		
+		this.counter = 0;	
+
 	}
 
 
@@ -354,309 +360,27 @@ class FileSystemLayout {
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
 
-		if (self.contents.length === 0) return;
-
-		++self.init;
-
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-		
-			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
 
-			// either of these statement needs to be true for the entire statement to evaluate to true
-			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
-			
-				// issues, if your last move was up and you hit index 0, then you have to set the index
-				// to length - 1!
-
-				if ((self.arrowKeySelected === "up" || self.arrowKeySelected === "down") && self.indexSelected === 0) {
-					self.indexSelected = self.contents.length; // no - 1 because the expression below does the - 1
-				}
-
-				--self.indexSelected; // since we are going left we decrement, as we are going in reverse direction along the self.contents array
-
-			}
-
-			/*
-				When the momentum is right we increment in advance the position, we are going to take. This
-				causes a few problems, if we want to go left, we have already incremented the index by + 1.
-				
-				We start at 2 lets say and we go highlight 2 and the next iteration we highlight 3, so we do 2 + 3 in advance.
-				0 1 2 3 4 5 6
-
-				But then in the next iteration we press the left key! This is a problem, now we actually need to go back from 3
-				to 1, so we do 3 - 2. NOTE** - This is why we use 2.
-
-				There are two special cases. Lets say we started fresh and started going right, our initial position is 0 and
-				we increment by 1 for the next iteration as we are thinking in advance. But this time instead again we go left.
-				And we run into a problem as 0 - 2 is -2 from if we follow our algorithm. So what we do instead is when we encounter
-				0 we decrease our index will be the length of the array - 1.
-
-				Now if we are at 2 our index will be length of the array - 2!
-
-			*/
-
-			if (self.arrowKeySelected === "right") { 
-				if (self.indexSelected !== 1 && self.indexSelected !== 0) { 
-					self.indexSelected -= 2; 
-				} else if (self.indexSelected === 0) {
-					if (self.contents.length !== 1) { // when length is one or there is only 1 folder then the index becomes -1 as length -2 = -1, so this is a case that needs to be checked	
-						self.indexSelected = self.contents.length - 2;
-					} else { // when that happens 0 out the index 
-						self.indexSelected = 0;
-					}
-				} else { 
-					self.indexSelected = self.contents.length - 1;
-				}
-			} 
-
-			self.arrowKeySelected = "left";
-			
-			
-			/*
-
-				Another approach for us to take would be turning all the icons blue which come after us!
-				But if we are at the begining and we are about to cycle back to the end we need to clean up the
-				first index!
-
-			*/
-
-			if (self.indexSelected === self.contents.length - 1) {
-				self.turnBlue(0);
-			}
-
-			// one icon for file and another one for folder, so a check has to be made
-			// make it red
-			self.turnRed(self.indexSelected);
-
-			// turn on global click to unselect on a global click
-			self.selected = self.contents[self.indexSelected];
-			self.contents[self.indexSelected].selected = true;
-			self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-			self.counter = 1; // prevents an activated global click from deactivating current marked red window
-							 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-							 // it happens simultaneously! )	
-		
-			// we need to turn all contents next of us to blue as mentioned above
-			for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
-				self.turnBlue(i);
-				self.contents[self.indexSelected].selected = false;
-			}
-			// we check if the index is 0 or not before decrementing it, as we don't want index to go below 0
-			if (self.indexSelected !== 0) {
-				--self.indexSelected;
-			} else {
-				self.indexSelected = self.contents.length - 1;
-			}
-			//console.log(self.indexSelected);
-			if (self.init === 1) { // event though the left key is pressed we give it the property as if the right key was pressed!
-				self.indexSelected = 1; // by making the index one
-				self.arrowKeySelected = "right"; // and changing the direction of the key to right!
-				// this avoids the buggy behaviour of the left key
-			}
-			//console.log(self.init)
 
 		} else if (event.which === 39) { // right
-			event.preventDefault(); // prevents default browser behaviour of scrolling the page up down or sideways using the specific arrow key
-			// before we do anything we need to check if the we are at the first index in the array
-			// if we are chances are we have cycled through the files once and have reached this point
-			// so we need to turn the length - 1 index icon blue before we can proceed
+	
 
-			// momentum gets neutralized when going up or down, so we gotta bring back the momentum
 
-			// either of these statement needs to be true in order for the entire statement to evaluate to true
-			if (self.arrowKeySelected === "up" || self.arrowKeySelected === "down") {
-				if (self.arrowKeySelected === "down" && self.indexSelected === self.contents.length - 1 || self.arrowKeySelected === "up" && self.indexSelected === 0) {
-					self.indexSelected = 0;
-				}
-				if (self.indexSelected + 1 < self.contents.length) {
-					++self.indexSelected; // ++ because our momentum is right, which means we are moving forwards along the self.contents array
-				}
-			}
-
-			/*
-				Similar algorithm to what left key follows, except this is exact opposite. So basically, when you are
-				at index length - 2 you are actually at lenth - 3, and instead you should be at 0th index, as you are about
-				to click right, but momentum is left, so you have to add +2!, but adding plus 2 ends up making us at an index
-				which is out of bounds, so we circulate the array and end up at index 0. Now similarly if we are at index
-				length - 1, we are actually at length - 2, and we should be at index 1.
-
-			*/
-
-			if (self.arrowKeySelected === "left") { // last move was left
-				if (self.indexSelected !== self.contents.length - 2 && self.indexSelected !== self.contents.length - 1) {
-					self.indexSelected += 2;
-				} else if (self.indexSelected === self.contents.length - 2) {
-					self.indexSelected = 0;
-				} else { // when index is 0 we don't want index out of bounds now
-					if (self.contents.length !== 1) { // if our contents array has only one element this is a problem, as if we set our index to 1 and then if we make a move to right we go index out of bounds!
-						self.indexSelected = 1; 		
-					} else { // if our length does turn out to be one then we just 0 out the index, to start back at where we were at
-						self.indexSelected = 0;
-					}
-				}
-			} 
-		
-			self.arrowKeySelected = "right";
-
-			if (self.indexSelected === 0) {
-				self.turnBlue(self.contents.length - 1);			
-			}
-			// one icon for file and another one for folder, so a check has to be made
-			// make it red
-			self.turnRed(self.indexSelected);
-
-			// turn on global click to unselect on a global click
-			self.selected = self.contents[self.indexSelected];
-			self.contents[self.indexSelected].selected = true;
-			self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-			self.counter = 1; // prevents an activated global click from deactivating current marked red window
-							 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-							 // it happens simultaneously! )	
-		
-			// we need to turn all contents in the previous index of the context array to blue
-			// before we can turn the new content red, also we need to make sure we don't go to a
-			// negative index so we check for if the index is 0 before we do so, if the index is 0 then we
-			// don't have to turn anything blue 
-			for (var i = self.indexSelected - 1; i > -1; --i) {
-				self.turnBlue(i);
-				self.contents[self.indexSelected].selected = false;
-			}
-			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
-			// we need to make sure that we don't exceed the length of the array contents
-			// to do that everytime we hit the length of the array content we simply set the index to 0 to start over
-			if (self.indexSelected !== self.contents.length - 1) { // we want to increment till we hit the length - 1 index or the last index, once we do, it is assumed we have already turned that icon red, so just reset the counter
-				++self.indexSelected;
-			} else {
-				self.indexSelected = 0;
-			}
 
 		} else if (event.which === 38) { // up 
 
-			// forgot to add a bunch of sstuff like file selected and all that!
-
-			event.preventDefault(); // to prevent default browser movement which is in this case is to move the scroll bar up
-
-			if (self.arrowKeySelected === "right") {
-
-				if (self.indexSelected === 0) {
-					self.indexSelected = self.contents.length; // no -1 because in the expression below -1 is implemente
-				}
 
 
-				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
-			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
-				if (self.indexSelected + 1 < self.contents.length - 1) {
-					++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
-				}
-			}
 
 
-			self.arrowKeySelected = "up"; // indicator of the key selected
-
-			/*
-				Each row can hold 8 items, so which ever index you are in the contents array
-				you should always decrease 8 from your current index to be on the new index.
-				If you go index out of bound which is below 0 in this case then simply don't move.
-				Turn the current index red, and turn anything after the current index blue.
-
-			*/
-
-
-			
-			if (self.indexSelected - 8 > -1) { // if after subtracting 8 the index doesn't go below -1 then substract
-
-				self.indexSelected -= 8;
-
-				self.turnRed(self.indexSelected);
-
-				// turn on global click to unselect on a global click
-				self.selected = self.contents[self.indexSelected];
-				self.contents[self.indexSelected].selected = true;
-				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-				self.counter = 1; // prevents an activated global click from deactivating current marked red window
-								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-								 // it happens simultaneously! )	
-		
-					// self.indexSelected + 1 because you cannot turn the file/folder blue which you just turned red
-				for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
-					self.turnBlue(i);
-				}
-
-			}
 
 		} else if (event.which === 40) { // down
 
-			event.preventDefault(); // to prevent default browser movement which is in this case to move the scroll bar down
 
 
-			if (self.arrowKeySelected === "right") {
-
-				if (self.indexSelected === 0) {
-					self.indexSelected = self.contents.length; // no need to use -1 as in the expression right below - 1 is implemented
-				}
-
-				--self.indexSelected; // if momemntum is right we decrease it cuz its inremented by 1 already
-			} else if (self.arrowKeySelected === "left") { // exlusively mentioning left instead of an else, because else can be down or up as well
-				if (self.indexSelected === self.contents.length - 1) {
-					self.indexSelected = -1; // - 1 because ++self.indexSelected makes it 0 in the expression just bel
-				}
-
-				++self.indexSelected;  // if momentum is left we increase it cuz its decremented by 1 already
-			}
-
-			self.arrowKeySelected = "down"; // indicator of the arrow key selected
-
-			if (self.indexSelected === 0 && self.contents[self.indexSelected] !== self.selected) {
-
-				self.turnRed(self.indexSelected);
-
-				// turn on global click to unselect on a global click
-				self.selected = self.contents[self.indexSelected];
-				self.contents[self.indexSelected].selected = true;
-				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-				self.counter = 1; // prevents an activated global click from deactivating current marked red window
-								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-								 // it happens simultaneously! )	
-
-				return;
-			}
-
-			/*
-				Each row can hold 8 items, so which ever index you are in the contents array
-				you should always increase 8 from your current index to be on the new index.
-				If you go index out of boudns which will be over the length - 1 index, so basically
-				if we after sum we reach a number greater then or equal to length of the contents 
-				then we simply don't move.
-				Turn the current index red, and turn anything before the current index blue.
-
-			*/
-
-			if (self.indexSelected + 8 < self.contents.length) { // if after adding the index doesn't go above length - 1 then add
-
-				self.indexSelected += 8;
-
-				self.turnRed(self.indexSelected);
-
-				// turn on global click to unselect on a global click
-				self.selected = self.contents[self.indexSelected];
-				self.contents[self.indexSelected].selected = true;
-				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-				self.counter = 1; // prevents an activated global click from deactivating current marked red window
-								 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-								 // it happens simultaneously! )	
-					
-
-				// self.indexSelected - 1 because you cannot turn the file/folder blue which you just turned red
-				for (var i = self.indexSelected - 1; i > -1; --i) {
-		
-					self.turnBlue(i);
-
-				}
-
-			}
 
 		}
 
@@ -724,26 +448,15 @@ class FileSystemLayout {
 				// which makes sense as we want the current element in the array to be the icon we clicked
 				// AND we have to make sure that the element in the array is not selected, because if it is not selected
 				// only then can we select it, we can't select something that is unselected
+			
 				if (self.contents[i] === icon && !self.contents[i].selected) { // red - selected
-					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", self.redFile);
-					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", self.redFolder)
-					}
-					self.contents[i].selected = true;
-					self.globalClick = true; // turns on the drop zone event handlers job to do its thing
-					self.counter = 0; // prevents an activated global click from deactivating current marked red window
-									 // while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-									 // it happens simultaneously! )
-					self.indexSelected = i + 1; // set the indexSelected to current index
-					self.selected = self.contents[i];
+			
+					self.turnRed(i);
+
 				} else { // blue - unselected
-					if (self.contents[i].constructor === FileIcon) { // checks if the array file is a fileIcon
-						$("#" + self.contents[i].id).css("background-image", self.blueFile);
-					} else { // else it is a folder icon
-						$("#" + self.contents[i].id).css("background-image", self.blueFolder);	
-					}
-					self.contents[i].selected = false; // turns the boolean false indicating it has been unselected
+				
+					self.turnBlue(i)
+
 				}
 			}
 		});
