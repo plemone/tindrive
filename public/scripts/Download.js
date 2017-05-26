@@ -15,7 +15,6 @@ class Download {
 	}
 
 	create() {
-
 		$("#main-div").append(this.element);
 		this.generateCSS();
 		this.attachEH();
@@ -24,9 +23,7 @@ class Download {
 	attachEH() {
 		var self = this;
 		$(this.id).on("mouseover", function() {
-
 			$(self.id).css("background-image", self.changeBackground);
-
 		});
 
 		$(this.id).on("mouseout", function() {
@@ -34,17 +31,30 @@ class Download {
 		});
 
 		$(this.id).on("click", function() {
-
-
+			for (var i = 0; i < self.contents.length; ++i) {
+				console.log(self.contents[i]);
+			}
 		});
 	}
 
 	// the following method is a setter for the contents attribute
-	setContents() {
-
-
+	add(content) {
+		this.contents.push(content); // pushes the content received through the param to the contents array
 	}
 
+	remove(content) {
+
+		// loops over the contents array and tries to match content provided with the content in the contents array
+		for (var i = 0; i < this.contents.length; ++i) {
+			// if content is found then remove
+			if (content === this.contents[i]) {
+				// splice permanently changes the index
+				this.contents.splice(i, 1); // remove 1 element at index i
+				return; // ends the function and breaks out of the loop
+			}
+		}
+
+	}
 
 	generateCSS() {
 		var id = this.id;				
@@ -54,6 +64,8 @@ class Download {
 		$(id).css("background-position", "center");
 		$(id).css("position", "relative");
 		$(id).css("border-radius", "80%");
+		$(id).css("border", "0"); // removes the black outline on click
+		$(id).css("outline", "none");
 		$(id).css("top", this.y);
 		$(id).css("left", this.x);
 		$(id).css("width", this.width);

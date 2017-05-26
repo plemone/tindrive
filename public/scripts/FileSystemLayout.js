@@ -292,7 +292,34 @@ class FileSystemLayout {
 		}
 	}
 
-	// issue - r, r, r, d, l
+	// turns a selected icon blue
+	turnBlue(index) {
+		if (this.contents[index].constructor === FileIcon) {
+			$("#" + this.contents[index].id).css("background-image", this.blueFile);
+		} else {
+			$("#" + this.contents[index].id).css("background-image", this.blueFolder)
+		}
+
+		// any icon turned blue will be removed from the download contents
+
+		this.downloadComponent.remove(this.contents[index]);
+	}
+
+	// turns a selected icon red
+	turnRed(index) {
+		if (this.contents[index].constructor === FileIcon) {
+			$("#" + this.contents[index].id).css("background-image", this.redFile);
+		} else {
+			$("#" + this.contents[index].id).css("background-image", this.redFolder)
+		}
+
+		// any red icon selected will be added to the download components contents
+
+		this.downloadComponent.add(this.contents[index]);
+
+	}
+
+
 
 	// arrow keys icon navigation event handler
 	arrowKeyNav(event, self) {
@@ -367,20 +394,13 @@ class FileSystemLayout {
 			*/
 
 			if (self.indexSelected === self.contents.length - 1) {
-				if (self.contents[0].constructor === FileIcon) {
-					$("#" + self.contents[0].id).css("background-image", self.blueFile);
-				} else {
-					$("#" + self.contents[0].id).css("background-image", self.blueFolder)
-				}			
+				self.turnBlue(0);
 			}
 
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
-			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
-			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
-			}
+			self.turnRed(self.indexSelected);
+
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
 			self.contents[self.indexSelected].selected = true;
@@ -391,11 +411,7 @@ class FileSystemLayout {
 		
 			// we need to turn all contents next of us to blue as mentioned above
 			for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
-				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", self.blueFile);
-				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", self.blueFolder);
-				}
+				self.turnBlue(i);
 				self.contents[self.indexSelected].selected = false;
 			}
 			// we check if the index is 0 or not before decrementing it, as we don't want index to go below 0
@@ -456,19 +472,12 @@ class FileSystemLayout {
 			self.arrowKeySelected = "right";
 
 			if (self.indexSelected === 0) {
-				if (self.contents[self.contents.length - 1].constructor === FileIcon) {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", self.blueFile);
-				} else {
-					$("#" + self.contents[self.contents.length - 1].id).css("background-image", self.blueFolder)
-				}			
+				self.turnBlue(self.contents.length - 1);			
 			}
 			// one icon for file and another one for folder, so a check has to be made
 			// make it red
-			if (self.contents[self.indexSelected].constructor === FileIcon) {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
-			} else {
-				$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
-			}
+			self.turnRed(self.indexSelected);
+
 			// turn on global click to unselect on a global click
 			self.selected = self.contents[self.indexSelected];
 			self.contents[self.indexSelected].selected = true;
@@ -482,11 +491,7 @@ class FileSystemLayout {
 			// negative index so we check for if the index is 0 before we do so, if the index is 0 then we
 			// don't have to turn anything blue 
 			for (var i = self.indexSelected - 1; i > -1; --i) {
-				if (self.contents[i].constructor === FileIcon) { // dealing with file
-					$("#" + self.contents[i].id).css("background-image", self.blueFile);
-				} else { // dealing with folder
-					$("#" + self.contents[i].id).css("background-image", self.blueFolder);
-				}
+				self.turnBlue(i);
 				self.contents[self.indexSelected].selected = false;
 			}
 			// increment of the id is needed so that in the next right we choose the next icon as the index is changed of the contents array
@@ -535,11 +540,8 @@ class FileSystemLayout {
 
 				self.indexSelected -= 8;
 
-				if (self.contents[self.indexSelected].constructor === FileIcon) { // if element in the array is file icon
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile); // turn file red
-				} else {
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
-				}
+				self.turnRed(self.indexSelected);
+
 				// turn on global click to unselect on a global click
 				self.selected = self.contents[self.indexSelected];
 				self.contents[self.indexSelected].selected = true;
@@ -550,11 +552,7 @@ class FileSystemLayout {
 		
 					// self.indexSelected + 1 because you cannot turn the file/folder blue which you just turned red
 				for (var i = self.indexSelected + 1; i < self.contents.length; ++i) {
-					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", self.blueFile);
-					} else {
-						$("#" + self.contents[i].id).css("background-image", self.blueFolder);
-					}
+					self.turnBlue(i);
 				}
 
 			}
@@ -582,12 +580,10 @@ class FileSystemLayout {
 			self.arrowKeySelected = "down"; // indicator of the arrow key selected
 
 			if (self.indexSelected === 0 && self.contents[self.indexSelected] !== self.selected) {
-				if (self.contents[self.indexSelected].constructor === FileIcon) {
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile);
-				} else {
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder);
-				}
-								// turn on global click to unselect on a global click
+
+				self.turnRed(self.indexSelected);
+
+				// turn on global click to unselect on a global click
 				self.selected = self.contents[self.indexSelected];
 				self.contents[self.indexSelected].selected = true;
 				self.globalClick = true; // turns on the drop zone event handlers job to do its thing
@@ -612,11 +608,7 @@ class FileSystemLayout {
 
 				self.indexSelected += 8;
 
-				if (self.contents[self.indexSelected].constructor === FileIcon) { // if element in the array if file icon
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFile); // turn file red
-				} else {
-					$("#" + self.contents[self.indexSelected].id).css("background-image", self.redFolder); // turn folder red
-				}
+				self.turnRed(self.indexSelected);
 
 				// turn on global click to unselect on a global click
 				self.selected = self.contents[self.indexSelected];
@@ -629,11 +621,9 @@ class FileSystemLayout {
 
 				// self.indexSelected - 1 because you cannot turn the file/folder blue which you just turned red
 				for (var i = self.indexSelected - 1; i > -1; --i) {
-					if (self.contents[i].constructor === FileIcon) {
-						$("#" + self.contents[i].id).css("background-image", self.blueFile);
-					} else {
-						$("#" + self.contents[i].id).css("background-image", self.blueFolder);
-					}
+		
+					self.turnBlue(i);
+
 				}
 
 			}
