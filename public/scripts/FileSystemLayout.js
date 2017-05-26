@@ -257,8 +257,16 @@ class FileSystemLayout {
 
 	// return key event handler for the window
 	returnKey(event, self) {
+
 		// return key code is 13
 		if (event.which === 13 && self.selected) { // both these statement need to be true for the entire statement to be evaluated to true
+			// enter key has a default behaviour equal to the left click, so we prevent the mixups as
+			// out left click is special
+			event.preventDefault();
+
+			self.downloadComponent.empty(); // we empty out the selected download components when cding into a folder 
+
+
 			// return key does essentially what double click event handler does
 			// so if we can use similar instructions that doubleClick uses
 		
@@ -301,8 +309,19 @@ class FileSystemLayout {
 		}
 
 		// any icon turned blue will be removed from the download contents
+		var content = {};
+		// the name and path is needed, as these are the info that Download component will send to the server
+		content.name = this.contents[index].name;
+		content.path = this.path.get;
+		
+		// add the type of content it is, if constructor type is a FileIcon then its a file else a folder
+		if (this.contents[index].constructor === FileIcon) {
+			content.type = "file";
+		} else {
+			content.type = "folder";
+		}
 
-		this.downloadComponent.remove(this.contents[index]);
+		this.downloadComponent.remove(content);
 	}
 
 	// turns a selected icon red
@@ -314,8 +333,19 @@ class FileSystemLayout {
 		}
 
 		// any red icon selected will be added to the download components contents
+		var content = {};
+		// the name and path is needed, as these are the info that Download component will send to the server
+		content.name = this.contents[index].name;
+		content.path = this.path.get;
 
-		this.downloadComponent.add(this.contents[index]);
+		// add the type of content it is, if constructor type is a FileIcon then its a file else a folder
+		if (this.contents[index].constructor === FileIcon) {
+			content.type = "file";
+		} else {
+			content.type = "folder";
+		}
+
+		this.downloadComponent.add(content);
 
 	}
 
@@ -645,6 +675,11 @@ class FileSystemLayout {
 		// if path.get === "./src/user-fs/" + $("#username").text() + "/", then we are at the root directory
 		// and we cannot go back further then that!
 		if (event.which === 8 && self.path.get !== "./src/user-fs/" + $("#username").text() + "/") {
+
+			// we empty out the selected downloads when we enter another folder environment
+
+			self.downloadComponent.empty();
+
 			// shorten the path and back up a folder
 			self.path.shorten();
 
@@ -716,11 +751,15 @@ class FileSystemLayout {
 
 	doubleClick(icon) {
 		var self = this;
+
+
 		/* Double click on the icon, deals with only folder icons */
 		// a check is made to make sure this behaviour is not generated for Icons that are not
 		// folder icons, double clicks should only work folder icons for now
 		if (icon.constructor !== FileIcon) {
 			$("#" + icon.id).on("dblclick", function() {
+
+				self.downloadComponent.empty(); // we empty out the download components when we cd into the folder
 	
 				// the path needs to be extended as we are now visiting a new folder
 				self.path.extend(icon.name);

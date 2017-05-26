@@ -30,7 +30,7 @@ class Download {
 			$(self.id).css("background-image", self.background);
 		});
 
-		$(this.id).on("click", function() {
+		$(this.id).on("click", function(event) {
 			for (var i = 0; i < self.contents.length; ++i) {
 				console.log(self.contents[i]);
 			}
@@ -44,16 +44,25 @@ class Download {
 
 	remove(content) {
 
+		// // if the content type is folder we just empty out all the file
+		// if (content.type === "folder") {
+		// 	this.contents = [];
+		// }
+
 		// loops over the contents array and tries to match content provided with the content in the contents array
 		for (var i = 0; i < this.contents.length; ++i) {
 			// if content is found then remove
-			if (content === this.contents[i]) {
+			if (content.name === this.contents[i].name) {
 				// splice permanently changes the index
 				this.contents.splice(i, 1); // remove 1 element at index i
 				return; // ends the function and breaks out of the loop
 			}
 		}
 
+	}
+
+	empty() {
+		this.contents = [];
 	}
 
 	generateCSS() {
