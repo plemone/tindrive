@@ -16,7 +16,6 @@ class Icon {
 		this.id = this.generateId();				
 		this.width = 75; // width of the file icon
 		this.height = 60; // height of the file icon
-		this.selected = false;
 		this.unselect = ""; // gets defined in the inherited classes
 		this.select = ""; // gets defined in the inherited classes
 		this.dropZoneId = "#dnd";

@@ -16,6 +16,8 @@ class FileSystemLayout {
 
 		this.y = 7;
 
+		this.dropZoneId = "#dnd"; // main focus variable
+
 		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
 
 		this.downloadComponent = new Download(); // composition relationship with the download component
@@ -28,22 +30,13 @@ class FileSystemLayout {
 		
 		this.counter = 0; // only if the counter is greater than 0 the click event handler will loop through everything and unselect and selected file and turn the color of the file from red to blue
 		
-		this.dropZoneId = "#dnd"; // main focus variable
-		
 		this.keyStack = []; // a stack of event keys for creating a new folder
 		
 		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on the situation to make ajax requests
 
-		this.redFile = "url(public/images/file-4.png)"; // file color red for css properties
-		
-		this.redFolder = "url(public/images/folder-2.png)"; // folder color red css properties
-		
-		this.blueFile = "url(public/images/file-3.png)"; // file color blue css properties
-		
-		this.blueFolder = "url(public/images/folder.png)"; // folder color blue css properties
-
 	}
 
+	// basic create() method that comes in with every component
 	create() {
 		this.generateInitialFS();
 		this.attachGlobalClickEH();
@@ -51,6 +44,7 @@ class FileSystemLayout {
 		this.downloadComponent.create();
 	}
 
+	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed
 	generateInitialFS() {
 		var self = this;
 		// on creation of the file system layout we must make an ajax request to get the list
@@ -76,6 +70,7 @@ class FileSystemLayout {
 		})
 	}
 
+	// adds a file to the document object model
 	addFileToDOM(fileName) {
 
 		// never name variables file, JavaScript confuses it with some built in keyword
@@ -105,6 +100,7 @@ class FileSystemLayout {
 
 	}
 
+	// adds a folder to the document object model
 	addFolderToDOM(folderName) {
 
 		var folder = new FolderIcon(folderName, this.x, this.y, this.path.get); // name of the folder, x and y coordinate and path the icon belongs to
@@ -158,6 +154,7 @@ class FileSystemLayout {
 		Object to interpret the raw buffer as needed. 
 	*/
 
+	// uploads a file to the server
 	uploadFile(file) { // requests the server to upload the file
 		var self = this;
 		var reader = new FileReader();
@@ -205,8 +202,7 @@ class FileSystemLayout {
 		reader.readAsDataURL(file); // calls the reader.onload function
 	}
 
-	// check documentation of the uploadFile method, it follow similar structure
-	// except now we are uploading a folder instead of a file
+	// uploads a folder to the server
 	uploadFolder(folderName) {
 		var self = this;
 		var folderObj = {};
@@ -221,16 +217,18 @@ class FileSystemLayout {
 		})
 	}
 
-	/*
-		on keydown push the keycodde 16 to the stack
-		on keyup if the key is 78 then push it to the stack and then the next
-		instruction is to check if the first and second index is either 16 and 78 or 78 and 16
-		then inside the if statement prompt the user, after the prompt in next instruction
-		simply loop over the array and clear the array
-		the array will get cleared no matter what key up you make, but remember only the
-		right combination will trigger the prompt 
-	*/
+
+	// attaches all the event handlers that the document window will utilize
 	attachWindowEH() {
+		/*
+			on keydown push the keycodde 16 to the stack
+			on keyup if the key is 78 then push it to the stack and then the next
+			instruction is to check if the first and second index is either 16 and 78 or 78 and 16
+			then inside the if statement prompt the user, after the prompt in next instruction
+			simply loop over the array and clear the array
+			the array will get cleared no matter what key up you make, but remember only the
+			right combination will trigger the prompt 
+		*/
 		var self = this;
 		// checks if the keycode is 16 which is shift on keydown
 		// also checks if the keycode is 78 which is n on key up
@@ -332,7 +330,7 @@ class FileSystemLayout {
 	}
 
 
-	// arrow keys icon navigation event handler
+	// arrow keys icon navigation event handler for the window
 	arrowKeys(event, self) {
 
 		// one of these if statment will be checked one after another in order
@@ -361,7 +359,7 @@ class FileSystemLayout {
 
 	}
 
-	// back space event handler
+	// back space event handler for the window
 	backSpace(event, self) {
 
 		// if statement to prevent cding out of the root folder
@@ -402,17 +400,33 @@ class FileSystemLayout {
 		}
 	}
 
-	/*	
-		attaches file event handler
-		the idea is to loop over the contents array and turn on the the file icon provided
-		and turn off the file icon not provided
-	*/
+	// attaches a click event handler to the drop zone window, where upon clicking the dropzone if any item gets selected, it automatically gets deselected
+	attachGlobalClickEH() {
+		var self = this;
+		// target the drop zone for clicks only
+		$(this.dropZoneId).on("click", function() {
+			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
+				var tableSize = self.table.size(); // for more optimized performance, this prevents the for loop from calculating the size each iteration
+				for (var i = 0; i < tableSize; ++i) {
+					self.unselect(self.table.get(i));	
+				}		
+			} 		
+			else if (self.globalClick) { // this check, checks only if first check is not fulfilled, if globalClick gets turned on
+				++self.counter; // then we simply increment the counter so that if another drop zone click is made we can loop through the
+								// entire contents and unselect them!
+			} 
+		});
 
+	}
+
+
+	// all the event handlers that can be associated with files in the file system layout in the drop zone
 	attachIconEH(icon) {
 		this.singleClick(icon);
 		this.doubleClick(icon);
 	}
 
+	// single click event handler
 	singleClick(icon) {
 		var self = this; // this in each scope is different in JavaScript
 		/* Single click on the icon, deals with both file icons and folder icons */
@@ -425,7 +439,9 @@ class FileSystemLayout {
 				else unselect all other icons by making them blue and unselecting it
 				each iteration will either be the fileIcon clicked or all other icons
 			*/
-			for (var i = 0; i < self.table.size(); ++i) {
+			var tableSize = self.table.size(); // storing the size of the table in a variable for faster and optimized performance, as the for loop calculates the length each iteration over and over again
+
+			for (var i = 0; i < tableSize; ++i) {
 				/*
 					both these statement need to be true in order for the entire entire statement to be true
 					which makes sense as we want the current element in the array to be the icon we clicked
@@ -434,17 +450,18 @@ class FileSystemLayout {
 				*/
 				if (self.table.get(i) === icon && !self.table.get(i).isRed()) { // red - selected
 			
-					self.turnRed(i);
+					self.select(self.table.get(i));
 
 				} else { // blue - unselected
 				
-					self.turnBlue(i)
+					self.unselect(self.table.get(i));
 
 				}
 			}
 		});
 	}
 
+	// double click event handler
 	doubleClick(icon) {
 		var self = this;
 
@@ -484,8 +501,7 @@ class FileSystemLayout {
 		}
 	}
 
-	// removes all the contents currently available in the dropzone and populate the contents
-	// which are currently there
+	// removes all the contents currently available in the dropzone and populate the contents which are currently there
 	populateDropZone(ls) {
 		/*
 			needs to be stored in a variable because in a for loop the length
@@ -493,13 +509,14 @@ class FileSystemLayout {
 			of times, the value of i gets messed up as i does become greater than this.table.size()
 			at one point even the the elements have not been popped off
 		*/
-		var size = this.table.size();
+
+		var tableSize = this.table.size(); // length must be the same event if elements are being removed, as the for loop will calculate the length in each iteration we don't want that, we have a fixed number of elements we would like to remove
 
 		// nullifying the folder/file selected
 		this.selected = null;
 
 
-		for (var i = 0; i < size; ++i) {
+		for (var i = 0; i < tableSize; ++i) {
 			// killing two birds with one exression, pop returns the element that is being removed
 			// from the array
 			$("#wrapper-" + this.table.removeLast().id).remove();
@@ -515,52 +532,29 @@ class FileSystemLayout {
 
 	}
 
-	// attaches a click event handler to the drop zone window, where upon clicking
-	// the dropzone if any item gets selected, it automatically gets deselected
-	attachGlobalClickEH() {
-		var self = this;
-		// target the drop zone for clicks only
-		$(this.dropZoneId).on("click", function() {
-			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
-				for (var i = 0; i < self.table.size(); ++i) {
-					self.turnBlue(i);	
-				}		
-			} 		
-			else if (self.globalClick) { // this check, checks only if first check is not fulfilled, if globalClick gets turned on
-				++self.counter; // then we simply increment the counter so that if another drop zone click is made we can loop through the
-								// entire contents and unselect them!
-			} 
-		});
+	// turns a selected icon blue, its a wrapper function with some underlying functionalities
+	unselect(icon) {
 
-	}
-
-
-	// turns a selected icon blue
-	turnBlue(index) {
-
-		this.table.get(index).turnBlue();
+		icon.turnBlue();
 
 		// any icon turned blue will be removed from the download contents
-		this.downloadComponent.remove(this.table.get(index));
+		this.downloadComponent.remove(icon);
 
 	}
 
-	// turns a selected icon red
-	turnRed(index) {
+	// turns a selected icon red, its a wrapper function which wraps around a icon method with added functionalities
+	select(icon) {
 		
-		this.table.get(index).turnRed();
+		icon.turnRed();
 
 		// any red icon selected will be added to the download components contents
-		this.downloadComponent.add(this.table.get(index));
+		this.downloadComponent.add(icon);
 
-		this.selected = this.table.get(index); // turn on global click to unselect on a global click
+		// turn on global click to unselect on a global click
+		this.selected = icon;
 		
 		this.activateGlobalNullifier();
 
-	}
-
-
-	activateGlobalNullifier() {
 		/*
 			prevents an activated global click from deactivating current marked red window
 			while switching between two tiles (this is mandatory as the global event is fired immediently after a click
@@ -570,7 +564,6 @@ class FileSystemLayout {
 		this.globalClick = true; // turns on the drop zone event handlers job to do its thing
 		this.counter = 0; // resets the counter, just to prevent large numbers from stacking	
 	}
-
 
 
 }
