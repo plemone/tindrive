@@ -16,7 +16,10 @@
 
 class Table {
 
-	constructor() {
+	// in the comments below assume that maxRowLength is 8
+	constructor(maxRowLength) {
+
+		this.maxRowLength = maxRowLength;
 
 		this.table = [[]]; // table containing a single row, and will contain multiple rows, each represented by an array inside the table
 
@@ -28,8 +31,10 @@ class Table {
 
 	// takes in a content and adds it to the table
 	add(content) {	
-		// if this.i === 8, it means we have exceeded the number of elements we are allowed in that row, as upto index 7 it is only valid anything beyond that means add new row
-		if (this.i === 7) {
+		// remember after we push an element to the array the index gets incremented, so if we are at 7 now
+		// it means that we have pushed something is suppose to be at the 7th element! therefore our next push
+		// should be on the next row and on the 0th index, thats why we do this.maxRowLength - 1, which is 8 - 1 = 7 for our example
+		if (this.i === this.maxRowLength - 1) {
 			this.i = -1; // we reset the i, as we will be creating a new row, and when something is about to get added i will increase, so we are starting off at -1 agian
 			++this.row; // row gets increased as we are creating a new row in the table
 			this.table.push([]) // this line creates a new empty row and adds it to the table
@@ -72,7 +77,7 @@ class Table {
 		if (this.i === -1) { // when this.i is -1, it means that we are currently out of elements in the current array
 			this.table.splice(this.row, 1); // we have to remove the empty array as we are done removing each and every element from the array
 			--this.row;
-			this.i = 7; // we make the i 7th again so that it referes to the last index in the new row
+			this.i = this.maxRowLength - 1; // we make the i 7th again so that it referes to the last index in the new row
 		}
 
 		var returnObject = this.table[this.row].pop(); // we pop the element from the latest array we are currently in the row
@@ -97,8 +102,44 @@ class Table {
 	}
 
 
-	get(row, i) {
-		return table[row][i]; // returns the ith element in the provided row
+	// want to basically get the list at index i, but the i should be in terms of a single list not the multidimensional list
+	/*
+		
+		Very cool algorithm, we are about to experience, so this is what the array might look like:
+
+			[
+		0	 [0, 1, 2, 3, 4, 5, 6, 7],
+		1	 [8, 9, 10, 11, 12, 13, 14, 15],
+		2	 [16, 17, 18, 19, 20, 21, 22, 23],
+		3	 [24, 25, 26, 27, 28, 29, 30, 31],
+			]
+
+		The table above contains 32 elements, with 4 rows, 4 * 8 = 32.
+
+		Now to achieve our goal the intuition is to use mod. And our intuition
+		is correct.
+
+		17 mod 8 = 1, 26 mod 8 = 2, 5 mod 8 = 5.
+
+		From the couple of mods above you can clearly see how our intuition works out, so thats
+		what the index of each row will be basically mod by the length of the row array.
+
+		Now what is the row number then?
+
+		Row number is basically the number divided by the length of the rowth array which in our example is
+		8. So lets prove it:
+
+		17 / 8 = 2.125, 31 / 8 = 3.875, 10 / 8 = 1.25.
+
+		But wait 31 / 8 is 3.875, does that mean the index is 4? No, we simply do Math.ceil(); which is basically
+		a rounded off to a ceiling so if something is 3.9999, it will be ceiling rounded off to 3.  
+	*/
+	get(i) {
+
+
+
+
+
 	}
 
 	getRows() {

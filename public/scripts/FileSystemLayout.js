@@ -18,7 +18,7 @@ class FileSystemLayout {
 
 		this.contents = []; 
 
-		this.table = new Table(); // datastructure that structures the icon in a table like manner
+		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
 
 		this.downloadComponent = new Download(); // composition relationship with the download component
 
