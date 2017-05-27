@@ -34,6 +34,8 @@ class FileSystemLayout {
 		
 		this.route = "/" + $("#username").text() + "/"; // default route options, strings get added on top of this depending on the situation to make ajax requests
 
+		this.ctrl = false; // keeps track of whether control button is pressed or not
+
 	}
 
 	// basic create() method that comes in with every component
@@ -243,6 +245,11 @@ class FileSystemLayout {
 			self.arrowKeys(event, self);
 			self.returnKey(event, self);
 
+			// 17 for ctrl button
+			if (event.which === 17) {
+				self.ctrl = true; // upon control key down we set the boolean indicating this event to true
+			}
+
 		});
 		/*
 			when a key is released we need to make sure that it is the n key, therefore
@@ -277,6 +284,13 @@ class FileSystemLayout {
 			for (var i = 0; i < keyStackSize; ++i) {
 				self.keyStack.pop();
 			}
+
+			// 17 for ctrl button
+			if (event.which == 17) {
+				self.ctrl = false; // upon control key up we set the boolean indicating this event to false
+			}
+
+
 		})
 	}
 
@@ -454,7 +468,26 @@ class FileSystemLayout {
 
 				} else { // blue - unselected
 				
-					self.unselect(self.table.get(i));
+
+					/*
+						ctrl algorithm - When keydown event and the event.which happens to be the ctrl key then
+										 we simply set the boolean attribute this.ctrl to true, keep an array of files
+										 for us its this.selections, which is also an attribute, if ctrl is not pressed
+										 then a normal global click will turn all the elements blue automatically as
+										 it always does it regardless and is the default behaviour for the global click.
+										 The line below if (!self.ctrl) { self.unselect(self.table.get(i)) }, it prevents
+										 another single click from unselecting what was last selected, default behaviiour
+										 would be to unselect any item currently selected, but when ctrl is pressed we don't
+										 unselect! only unselect is done on a global click. Remember upon unselect, the
+										 this.selections array element will get popped off, as that array keeps track of selections.
+
+					*/
+
+
+					// unselect only when control button is not pressed
+					if (!self.ctrl) {
+						self.unselect(self.table.get(i));
+					}
 
 				}
 			}
