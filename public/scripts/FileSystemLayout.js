@@ -300,13 +300,13 @@ class FileSystemLayout {
 	// return key event handler for the window
 	returnKey(event, self) {
 
+		console.log(self.selections);
+
 		// return key code is 13
-		if (event.which === 13 && self.selections.length !== 0 && self.selection.length < 2) { // all these statement need to be true for the entire statement to be evaluated to true
+		if (event.which === 13 && self.selections.length !== 0 && self.selections.length < 2) { // all these statement need to be true for the entire statement to be evaluated to true
 			// enter key has a default behaviour equal to the left click, so we prevent the mixups as
 			// out left click is special
 			event.preventDefault();
-
-			self.downloadComponent.empty(); // we empty out the selected download components when cding into a folder 
 
 			/*
 				return key does essentially what double click event handler does
@@ -315,7 +315,6 @@ class FileSystemLayout {
 				we need to check one very important thing, which is to make sure we don't cd into a
 				file that is currently selected!
 			*/
-
 			if (self.selections[0].constructor === FileIcon) return; // ends the function here
 		
 			// otherwise the path needs to be extended as we are now visiting a new folder	
@@ -394,8 +393,6 @@ class FileSystemLayout {
 
 			// we empty out the selected downloads when we enter another folder environment
 
-			self.downloadComponent.empty();
-
 			// shorten the path and back up a folder
 			self.path.shorten();
 
@@ -433,7 +430,6 @@ class FileSystemLayout {
 								// entire contents and unselect them!
 			} 
 		});
-
 	}
 
 
@@ -505,8 +501,6 @@ class FileSystemLayout {
 		if (icon.constructor !== FileIcon) {
 			$("#" + icon.id).on("dblclick", function() {
 
-				self.downloadComponent.empty(); // we empty out the download components when we cd into the folder
-	
 				// the path needs to be extended as we are now visiting a new folder
 				self.path.extend(icon.name);
 				
@@ -539,6 +533,9 @@ class FileSystemLayout {
 
 	// removes all the contents currently available in the dropzone and populate the contents which are currently there
 	populateDropZone(ls) {
+		this.downloadComponent.empty(); // we empty out the contents to be downloaded as we discarded our selection
+		this.deleteComponent.empty(); //  we empty our contents to be downlownloaded as we discarded our selection
+
 		/*
 			needs to be stored in a variable because in a for loop the length
 			gets calculated each time, and we don't want that, we want to pop for a fix number
@@ -570,14 +567,20 @@ class FileSystemLayout {
 
 	// turns a selected icon blue, its a wrapper function with some underlying functionalities
 	unselect(icon) {
-
 		icon.turnBlue();
 
 		// any icon turned blue will be removed from the download contents
 		this.downloadComponent.remove(icon);
 
 		// remove an item from the selections array, usually one element will be selected and one element will be unselected, so we will be most likely removing from an array which consists of only one element
-		this.selections.pop();
+		// we need to loop over the selections array and remove only the icon in the parameter form the selections array
+
+		for (var i = 0; i < this.selections.length; ++i) {
+			if (this.selections[i].name === icon.name) { // if element matches the icon
+				this.selections.splice(i, 1);
+				return; // exit the function, this also prevets further iteration of the loop
+			}
+		}
 
 	}
 
