@@ -4,8 +4,7 @@
 class Icon {
 
 	constructor(filename, x, y, path) {
-		// this disallows the construction of Icon objects, that means
-		// Icon class is abstract!
+		// this disallows the construction of Icon objects, that means Icon class is abstract!
 		if (this.constructor === Icon) {
 			throw Error("Abstract class cannot be constructed");
 		}

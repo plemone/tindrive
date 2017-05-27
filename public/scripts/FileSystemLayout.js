@@ -22,6 +22,8 @@ class FileSystemLayout {
 
 		this.downloadComponent = new Download(); // composition relationship with the download component
 
+		this.deleteComponent = new Delete();
+
 		this.path = new Path(); // composition relationsip with Path
 
 		this.selections = []; // will contain the DOM element currently selected either by click or key navigations
@@ -44,6 +46,7 @@ class FileSystemLayout {
 		this.attachGlobalClickEH();
 		this.attachWindowEH();
 		this.downloadComponent.create();
+		this.deleteComponent.create();
 	}
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed
@@ -471,10 +474,10 @@ class FileSystemLayout {
 
 					/*
 						ctrl algorithm - When keydown event and the event.which happens to be the ctrl key then
-										 we simply set the boolean attribute this.ctrl to true, keep an array of files
-										 for us its this.selections, which is also an attribute, if ctrl is not pressed
-										 then a normal global click will turn all the elements blue automatically as
-										 it always does it regardless and is the default behaviour for the global click.
+										 we simply set the boolean attribute this.ctrl to true, we alsokeep an array of icons
+										 called this.selections, which is also an attribute and keeps track of what is being selected, 
+										 if ctrl is not pressed then a normal global click will turn all the icon blue in the table 
+										 automatically as it always does it regardless of ctrl or not and is the default behaviour for the global click.
 										 The line below if (!self.ctrl) { self.unselect(self.table.get(i)) }, it prevents
 										 another single click from unselecting what was last selected, default behaviiour
 										 would be to unselect any item currently selected, but when ctrl is pressed we don't

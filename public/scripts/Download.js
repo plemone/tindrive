@@ -1,68 +1,17 @@
-'use strict' // ES6 syntax support
+'use strict' // ES6 syntax explicitly
 
-class Download {
+class Download extends UtilityButton {
 
 	constructor() {
-		this.x = 827; // contains x coordinate
-		this.y = -600; // contains y ccoordinate
-		this.width = 174; // width of the button
-		this.height = 45; // height of the button
-		this.id = "#download"; // id of the object
-		this.descriptionId = "#description";
-		this.element = "<div id = download><h4 id = description >download</h4></div>"; // contains the DOM information
+		super("download");
 		this.contents = []; // contains the contents that need to be downloaded
-	}
-
-	create() {
-		$("#main-div").append(this.element);
-		this.generateCSS();
-		this.attachEH();
-	}
-
-	attachEH() {
-		var self = this;
-
-		$(this.id).on("mouseover", function() {
-
-			$(self.descriptionId).css("color", "#4f6a96"); // color of the text becomes white
-			//text-shadow: h-shadow v-shadow blur-radius color|none|initial|inherit;
-			$(self.descriptionId).css("text-shadow", "1px 1px 1px white"); // border becomes black
-		
-		});
-
-
-		$(this.id).on("mouseout", function() {
-
-			$(self.descriptionId).css("color", "#262626"); // color of the text becomes black
-			//text-shadow: h-shadow v-shadow blur-radius color|none|initial|inherit;
-			$(self.descriptionId).css("text-shadow", "1px 1px 1px white"); // border becomes white
-		
-		}); 
-
-
-		$(this.id).on("click", function() {
-			for (var i = 0; i < self.contents.length; ++i) {
-				console.log(self.contents[i]);
-			}
-		});
-
-
-		// this event is responsible for when a button is being pressed, as the button is being pressed
-		// you can change the design to make it look like its being pressed
-		$(this.id).on("mousedown", function() {
-			$(self.id).css("bottom", "-4px"); // lifts the div up a little on mouse down
-			$(self.id).css("box-shadow", "0 1px 0 #00823F"); // decreases the size of the shadow on mouse down, these two effects make it look like the button is being pressed
-		});
-
-		// this event is the opposite of mousedown, when the button gets released this event is fired, also
-		// change some css to make it look like button is being released, or simply revert back to the old style upon release
-		$(this.id).on("mouseup", function() {
-			$(self.id).css("box-shadow", "0 4px 2px -2px gray"); // shadow of the box on focus
-			$(self.id).css("bottom", "+4px"); // moves the positiion back to normal on focus
-
-		});
-
-
+		this.functions = [function() { // this attribute stores a list of functions that gets fired upon object creation, this.functions essentially creates an array of functions
+			$(this.id).on("click", function() { // adds anonymous function to the array of functions
+				for (var i = 0; i < self.contents.length; ++i) {
+					console.log(self.contents[i]);
+				}
+			});
+		}];
 	}
 
 	// the following method is a setter for the contents attribute
@@ -76,7 +25,7 @@ class Download {
 			// if content is found then remove
 			if (content.name === this.contents[i].name) {
 				// splice permanently changes the index
-				this.contents.splice(i, 1); // remove 1 element at index i
+				this.contents.splice(i, 1); // remove elements starting from index i and remove 1 element
 				return; // ends the function and breaks out of the loop
 			}
 		}
@@ -86,25 +35,5 @@ class Download {
 	empty() {
 		this.contents = [];
 	}
-
-	generateCSS() {
-		var id = this.id;	
-		var p = this.descriptionId;			
-		$(id).css("position", "relative");
-		$(id).css("top", this.y);
-		$(id).css("left", this.x);
-		$(id).css("font-size", "105%");
-		$(id).css("text-align", "center");
-		$(id).css("width", this.width);
-		$(id).css("height", this.height);		
-		$(id).css("cursor", "pointer");
-		$(id).css("box-shadow", "0 4px 2px -2px gray");		
-		$(p).css("position", "relative");
-		$(p).css("top", "10px");
-		$(p).css("color", "#262626"); // same color as the background
-		//text-shadow: h-shadow v-shadow blur-radius color|none|initial|inherit;
-		$(p).css("text-shadow", "1px 1px 1px white");
-	}
-
 
 }
