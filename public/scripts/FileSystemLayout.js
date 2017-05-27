@@ -24,7 +24,7 @@ class FileSystemLayout {
 
 		this.path = new Path(); // composition relationsip with Path
 
-		this.selected = null; // will contain the DOM element currently selected
+		this.selections = []; // will contain the DOM element currently selected either by click or key navigations
 
 		this.globalClick = false; // this keeps track of whether the drop zone click should make all the files blue or not, if it is true then then the counter will be incremented
 		
@@ -284,7 +284,7 @@ class FileSystemLayout {
 	returnKey(event, self) {
 
 		// return key code is 13
-		if (event.which === 13 && self.selected) { // both these statement need to be true for the entire statement to be evaluated to true
+		if (event.which === 13 && self.selections.length !== 0 && self.selection.length < 2) { // all these statement need to be true for the entire statement to be evaluated to true
 			// enter key has a default behaviour equal to the left click, so we prevent the mixups as
 			// out left click is special
 			event.preventDefault();
@@ -299,10 +299,10 @@ class FileSystemLayout {
 				file that is currently selected!
 			*/
 
-			if (self.selected.constructor === FileIcon) return; // ends the function here
+			if (self.selections[0].constructor === FileIcon) return; // ends the function here
 		
 			// otherwise the path needs to be extended as we are now visiting a new folder	
-			self.path.extend(self.selected.name);
+			self.path.extend(self.selections[0].name);
 
 			/*
 				now we need to remove all the current contents from the drop zone
@@ -513,7 +513,7 @@ class FileSystemLayout {
 		var tableSize = this.table.size(); // length must be the same event if elements are being removed, as the for loop will calculate the length in each iteration we don't want that, we have a fixed number of elements we would like to remove
 
 		// nullifying the folder/file selected
-		this.selected = null;
+		this.selections = [];
 
 
 		for (var i = 0; i < tableSize; ++i) {
@@ -540,6 +540,9 @@ class FileSystemLayout {
 		// any icon turned blue will be removed from the download contents
 		this.downloadComponent.remove(icon);
 
+		// remove an item from the selections array, usually one element will be selected and one element will be unselected, so we will be most likely removing from an array which consists of only one element
+		this.selections.pop();
+
 	}
 
 	// turns a selected icon red, its a wrapper function which wraps around a icon method with added functionalities
@@ -550,11 +553,9 @@ class FileSystemLayout {
 		// any red icon selected will be added to the download components contents
 		this.downloadComponent.add(icon);
 
-		// turn on global click to unselect on a global click
-		this.selected = icon;
+		// add to the selections array the icon currently selected
+		this.selections.push(icon);
 		
-		this.activateGlobalNullifier();
-
 		/*
 			prevents an activated global click from deactivating current marked red window
 			while switching between two tiles (this is mandatory as the global event is fired immediently after a click
