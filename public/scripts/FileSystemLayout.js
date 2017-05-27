@@ -16,8 +16,6 @@ class FileSystemLayout {
 
 		this.y = 7;
 
-		this.contents = []; 
-
 		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
 
 		this.downloadComponent = new Download(); // composition relationship with the download component
@@ -92,8 +90,7 @@ class FileSystemLayout {
 		}
 
 		fileIcon.create(); // create the file icon components, after the check as this draws the file icon in the browser
-		
-		this.contents.push(fileIcon); // push the fileIcon to the content array
+	
 		this.attachIconEH(fileIcon); // attach the event handler of the file
 	
 		// update the table with the new file
@@ -122,8 +119,7 @@ class FileSystemLayout {
 
 		folder.create(); // create the file icon components, after the check as this draws the file icon in the browser
 
-		this.contents.push(folder);
-		this.attachIconEH(folder);
+		this.attachIconEH(folder); // attach the event handler of the folder
 
 		// update the table with the new folder
 		this.table.add(folder);
@@ -429,14 +425,14 @@ class FileSystemLayout {
 				else unselect all other icons by making them blue and unselecting it
 				each iteration will either be the fileIcon clicked or all other icons
 			*/
-			for (var i = 0; i < self.contents.length; ++i) {
+			for (var i = 0; i < self.table.size(); ++i) {
 				/*
 					both these statement need to be true in order for the entire entire statement to be true
 					which makes sense as we want the current element in the array to be the icon we clicked
 					AND we have to make sure that the element in the array is not selected, because if it is not selected
 					only then can we select it, we can't select something that is unselected
 				*/
-				if (self.contents[i] === icon && !self.contents[i].isRed()) { // red - selected
+				if (self.table.get(i) === icon && !self.table.get(i).isRed()) { // red - selected
 			
 					self.turnRed(i);
 
@@ -506,7 +502,6 @@ class FileSystemLayout {
 		for (var i = 0; i < size; ++i) {
 			// killing two birds with one exression, pop returns the element that is being removed
 			// from the array
-			this.contents.pop();
 			$("#wrapper-" + this.table.removeLast().id).remove();
 		}
 
@@ -527,7 +522,7 @@ class FileSystemLayout {
 		// target the drop zone for clicks only
 		$(this.dropZoneId).on("click", function() {
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
-				for (var i = 0; i < self.contents.length; ++i) {
+				for (var i = 0; i < self.table.size(); ++i) {
 					self.turnBlue(i);	
 				}		
 			} 		
@@ -543,22 +538,22 @@ class FileSystemLayout {
 	// turns a selected icon blue
 	turnBlue(index) {
 
-		this.contents[index].turnBlue();
+		this.table.get(index).turnBlue();
 
 		// any icon turned blue will be removed from the download contents
-		this.downloadComponent.remove(this.contents[index]);
+		this.downloadComponent.remove(this.table.get(index));
 
 	}
 
 	// turns a selected icon red
 	turnRed(index) {
 		
-		this.contents[index].turnRed();
+		this.table.get(index).turnRed();
 
 		// any red icon selected will be added to the download components contents
-		this.downloadComponent.add(this.contents[index]);
+		this.downloadComponent.add(this.table.get(index));
 
-		this.selected = this.contents[index]; // turn on global click to unselect on a global click
+		this.selected = this.table.get(index); // turn on global click to unselect on a global click
 		
 		this.activateGlobalNullifier();
 

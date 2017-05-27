@@ -114,6 +114,8 @@ class Table {
 		3	 [24, 25, 26, 27, 28, 29, 30, 31],
 			]
 
+		Array that we mimicing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+
 		The table above contains 32 elements, with 4 rows, 4 * 8 = 32.
 
 		Now to achieve our goal the intuition is to use mod. And our intuition
@@ -131,14 +133,15 @@ class Table {
 
 		17 / 8 = 2.125, 31 / 8 = 3.875, 10 / 8 = 1.25.
 
-		But wait 31 / 8 is 3.875, does that mean the index is 4? No, we simply do Math.ceil(); which is basically
-		a rounded off to a ceiling so if something is 3.9999, it will be ceiling rounded off to 3.  
+		But wait 31 / 8 is 3.875, does that mean the index is 4? No, we simply do Math.floor(); which is basically
+		a rounded off to a floor so if something is 3.9999, it will be floor rounded off to 3. This is known as rounding down.  
 	*/
 	get(i) {
 
+		var index = i % this.maxRowLength; // same as example above 17 mod 8 = 1
+		var row = Math.floor(i / this.maxRowLength); // same as example above 17 / 8 = 2.125 -> Math.floor(2.125)
 
-
-
+		return this.table[row][index];
 
 	}
 
@@ -157,9 +160,11 @@ class Table {
 
 }
 
+// uncomment to run test
+
 // function test() {
 
-// 	var t = new Table();
+// 	var t = new Table(8);
 
 // 	for (var i = 0; i < 10; ++i) {
 // 		t.add(i);
@@ -171,11 +176,14 @@ class Table {
 
 // 	console.log("size: " + size);
 
+// 	console.log(t.get(7));
+
 // 	for (var i = 0; i < size; ++i) {
 // 		console.log(t.removeLast());
 // 	}
 
 // 	console.log(t);
+
 
 
 // }
@@ -188,8 +196,6 @@ class Table {
 
 // }
 
-
-// uncomment to run test
 
 // if (!module.parent) {
 // 	main();
