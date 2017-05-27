@@ -300,8 +300,6 @@ class FileSystemLayout {
 	// return key event handler for the window
 	returnKey(event, self) {
 
-		console.log(self.selections);
-
 		// return key code is 13
 		if (event.which === 13 && self.selections.length !== 0 && self.selections.length < 2) { // all these statement need to be true for the entire statement to be evaluated to true
 			// enter key has a default behaviour equal to the left click, so we prevent the mixups as
@@ -569,8 +567,10 @@ class FileSystemLayout {
 	unselect(icon) {
 		icon.turnBlue();
 
-		// any icon turned blue will be removed from the download contents
+		// any icon turned blue will be removed from the download contents and delete contents
 		this.downloadComponent.remove(icon);
+		this.deleteComponent.remove(icon);
+
 
 		// remove an item from the selections array, usually one element will be selected and one element will be unselected, so we will be most likely removing from an array which consists of only one element
 		// we need to loop over the selections array and remove only the icon in the parameter form the selections array
@@ -589,8 +589,10 @@ class FileSystemLayout {
 		
 		icon.turnRed();
 
-		// any red icon selected will be added to the download components contents
+		// any red icon selected will be added to the download components contents and delete contents
 		this.downloadComponent.add(icon);
+		this.deleteComponent.add(icon);
+
 
 		// add to the selections array the icon currently selected
 		this.selections.push(icon);
