@@ -26,6 +26,7 @@ class Table {
 
 	}
 
+	// takes in a content and adds it to the table
 	add(content) {	
 		// if this.i === 8, it means we have exceeded the number of elements we are allowed in that row, as upto index 7 it is only valid anything beyond that means add new row
 		if (this.i === 8) {
@@ -39,11 +40,32 @@ class Table {
 		++this.i; // increments i as we just added a content to the row array
 	}
 
+	// takes in a content by value and tries to match that content in the table and removes it
 	remove(content) {
 
 
 
 	}
+
+	// removes last entry form the table and returns it
+	removeLast() {
+
+
+
+
+	}
+
+
+	size() {
+		var size = 0;
+		for (var i = 0; i < table.lenght; ++i) {
+			for (var j = 0; j < table[i].length; ++j) {
+				++size; // increment the size for the number of elements in the table
+			}
+		}
+		return size;
+	}
+
 
 	get(row, i) {
 		return table[row][i]; // returns the ith element in the provided row

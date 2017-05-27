@@ -89,7 +89,7 @@ class FileSystemLayout {
 
 		// never name variables file, JavaScript confuses it with some built in keyword
 
-		var fileIcon = new FileIcon(fileName, this.x, this.y);
+		var fileIcon = new FileIcon(fileName, this.x, this.y, this.path.get); // name of the file, x and y coordinate and path the icon belongs to
 		fileIcon.create(); // create the file icon components
 		this.contents.push(fileIcon); // push the fileIcon to the content array
 		this.attachIconEH(fileIcon); // attach the event handler of the file
@@ -114,7 +114,7 @@ class FileSystemLayout {
 				return;
 			}
 		}
-		var folder = new FolderIcon(folderName, this.x, this.y);
+		var folder = new FolderIcon(folderName, this.x, this.y, this.path.get); // name of the folder, x and y coordinate and path the icon belongs to
 		folder.create();
 		this.contents.push(folder);
 		this.attachIconEH(folder);
@@ -430,7 +430,7 @@ class FileSystemLayout {
 					AND we have to make sure that the element in the array is not selected, because if it is not selected
 					only then can we select it, we can't select something that is unselected
 				*/
-				if (self.contents[i] === icon && !self.contents[i].selected) { // red - selected
+				if (self.contents[i] === icon && !self.contents[i].isRed()) { // red - selected
 			
 					self.turnRed(i);
 
@@ -535,68 +535,38 @@ class FileSystemLayout {
 
 	// turns a selected icon blue
 	turnBlue(index) {
-		if (this.contents[index].constructor === FileIcon) {
-			$("#" + this.contents[index].id).css("background-image", this.blueFile);
-		} else {
-			$("#" + this.contents[index].id).css("background-image", this.blueFolder)
-		}
+
+		this.contents[index].turnBlue();
 
 		// any icon turned blue will be removed from the download contents
-		var content = {};
-		// the name and path is needed, as these are the info that Download component will send to the server
-		content.name = this.contents[index].name;
-		content.path = this.path.get;
-		
-		// add the type of content it is, if constructor type is a FileIcon then its a file else a folder
-		if (this.contents[index].constructor === FileIcon) {
-			content.type = "file";
-		} else {
-			content.type = "folder";
-		}
+		this.downloadComponent.remove(this.contents[index]);
 
-		this.downloadComponent.remove(content);
-
-		this.contents[index].selected = false; // turns the boolean false indicating it has been unselected
-					
 	}
 
 	// turns a selected icon red
 	turnRed(index) {
-		if (this.contents[index].constructor === FileIcon) {
-			$("#" + this.contents[index].id).css("background-image", this.redFile);
-		} else {
-			$("#" + this.contents[index].id).css("background-image", this.redFolder)
-		}
+		
+		this.contents[index].turnRed();
 
 		// any red icon selected will be added to the download components contents
-		var content = {};
-		// the name and path is needed, as these are the info that Download component will send to the server
-		content.name = this.contents[index].name;
-		content.path = this.path.get;
-
-		// add the type of content it is, if constructor type is a FileIcon then its a file else a folder
-		if (this.contents[index].constructor === FileIcon) {
-			content.type = "file";
-		} else {
-			content.type = "folder";
-		}
-
-		this.downloadComponent.add(content);
+		this.downloadComponent.add(this.contents[index]);
 
 		this.selected = this.contents[index]; // turn on global click to unselect on a global click
 		
-		this.contents[index].selected = true;
-		
-		this.globalClick = true; // turns on the drop zone event handlers job to do its thing
+		this.activateGlobalNullifier();
 
+	}
+
+
+	activateGlobalNullifier() {
 		/*
 			prevents an activated global click from deactivating current marked red window
 			while switching between two tiles (this is mandatory as the global event is fired immediently after a click
 			it happens simultaneously! )
 		*/		
 
-		this.counter = 0;	
-
+		this.globalClick = true; // turns on the drop zone event handlers job to do its thing
+		this.counter = 0; // resets the counter, just to prevent large numbers from stacking	
 	}
 
 

@@ -3,7 +3,7 @@
 // abstract Icon class which gets inherited by FileIcon class and FolderIcon class
 class Icon {
 
-	constructor(filename, x, y) {
+	constructor(filename, x, y, path) {
 		// this disallows the construction of Icon objects, that means
 		// Icon class is abstract!
 		if (this.constructor === Icon) {
@@ -17,9 +17,14 @@ class Icon {
 		this.width = 75; // width of the file icon
 		this.height = 60; // height of the file icon
 		this.selected = false;
-		this.background = "";
+		this.unselect = ""; // gets defined in the inherited classes
+		this.select = ""; // gets defined in the inherited classes
 		this.dropZoneId = "#dnd";
 		this.tableCoordinates = [];
+		this.red = false; // red color indicator
+		this.blue = true; // blue color indicator
+		this.path = path; // path the icon is currently in
+		this.type = ""; // type of icon
 	}
 
 	create() {
@@ -81,7 +86,7 @@ class Icon {
 		$(id).css("top", this.y.toString());
 		$(id).css("width", this.width.toString()); // width of the icon
 		$(id).css("height",	this.height.toString()); // height of the icon
-		$(id).css("background-image", this.background);
+		$(id).css("background-image", this.unselect);
 		$(id).css("background-repeat", "no-repeat"); // prevents repeat the same image contained within
 		$(id).css("background-size", "contain"); // Scale the image to the largest size such that both its width and its height can fit inside the content area
 		$(wrapper).css("float", "left"); // stacks divs up next to each other
@@ -91,6 +96,39 @@ class Icon {
 		$(p).css("font-size", "80%"); // the font size of the paragraph containing the file name
 		$(p).css("word-wrap", "break-word"); // breaks long lined words
 	}
+
+	// indicates whether the icon is red or not
+	isRed() {
+		return this.red;
+	}
+
+	// indicates whether the icon is blue or not
+	isBlue() {
+		return this.blue;
+	}
+
+
+	turnBlue() {
+		var id = "#" + this.id; // jquery id selector shortcut
+
+		this.blue = true; // blue turns true
+		this.red = false; // red turns false
+
+		$(id).css("background-image", this.unselect); // changes the background to blue
+
+	}
+
+
+	turnRed() {
+		var id = "#" + this.id; // jquery id selector shortcut
+
+		this.red = true; // red turns true
+		this.blue = false; // blue turns false
+
+		$(id).css("background-image", this.select); // changes the background to red
+
+	}
+
 
 
 }
