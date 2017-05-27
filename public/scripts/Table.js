@@ -47,6 +47,25 @@ class Table {
 
 	}
 
+
+	// takes in an object through the param and returns true if the object exists in the table, false if the object doesn't exist
+	contains(content, comparison) { // takes in a function comparison, which does the comparison, depending on object to object, this function gets invoked inside contains
+
+		// loops over each row in a table
+		for (var i = 0; i < this.table.length; ++i) {
+
+			// loops over each elements in a row 
+			for (var j = 0; j < this.table[i].length; ++j) {
+				if (comparison(content, this.table[i][j])) return true; // returns true if comparison returns true
+			}
+		}
+
+		return false; // if we passed through all the loops then we haven't found any object which matches any element in the table
+
+
+	}
+
+
 	// removes last entry form the table and returns it
 	removeLast() {
 
@@ -67,7 +86,9 @@ class Table {
 
 	size() {
 		var size = 0;
+		// loops over each row in the table
 		for (var i = 0; i < this.table.length; ++i) {
+			// loops over each element in a row
 			for (var j = 0; j < this.table[i].length; ++j) {
 				++size; // increment the size for the number of elements in the table
 			}
@@ -95,39 +116,40 @@ class Table {
 
 }
 
-function test() {
+// function test() {
 
-	var t = new Table();
+// 	var t = new Table();
 
-	for (var i = 0; i < 10; ++i) {
-		t.add(i);
-	}
+// 	for (var i = 0; i < 10; ++i) {
+// 		t.add(i);
+// 	}
 
-	console.log(t);
+// 	console.log(t);
 
-	var size = t.size();
+// 	var size = t.size();
 
-	console.log("size: " + size);
+// 	console.log("size: " + size);
 
-	for (var i = 0; i < size; ++i) {
-		console.log(t.removeLast());
-	}
+// 	for (var i = 0; i < size; ++i) {
+// 		console.log(t.removeLast());
+// 	}
 
-	console.log(t);
-
-
-}
+// 	console.log(t);
 
 
-
-function main() {
-
-	test();
-
-}
+// }
 
 
 
-if (!module.parent) {
-	main();
-}
+// function main() {
+
+// 	test();
+
+// }
+
+
+// uncomment to run test
+
+// if (!module.parent) {
+// 	main();
+// }

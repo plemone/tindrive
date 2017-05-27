@@ -79,18 +79,20 @@ class FileSystemLayout {
 	}
 
 	addFileToDOM(fileName) {
-		// a check to see if file with a similar name exists or not
-		for (var i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i].name === fileName) {
-				alert("File with that name already exists!");
-				return;
-			}
-		}
 
 		// never name variables file, JavaScript confuses it with some built in keyword
-
 		var fileIcon = new FileIcon(fileName, this.x, this.y, this.path.get); // name of the file, x and y coordinate and path the icon belongs to
-		fileIcon.create(); // create the file icon components
+
+		if (this.table.contains(fileIcon, function(x, y) { // an anonymous function being passed which gets called inside table, and table passed on the parameters to the functions inside tables function
+			if (x.name === y.name) return true;
+			else return false;
+		})) { // checks if the file that got created already exists in the table
+			alert("File with that name already exists!");
+			return;
+		}
+
+		fileIcon.create(); // create the file icon components, after the check as this draws the file icon in the browser
+		
 		this.contents.push(fileIcon); // push the fileIcon to the content array
 		this.attachIconEH(fileIcon); // attach the event handler of the file
 	
@@ -107,15 +109,19 @@ class FileSystemLayout {
 	}
 
 	addFolderToDOM(folderName) {
-		// a check to see if folder with a similar name exists or not
-		for (var i = 0; i < this.contents.length; ++i) {
-			if (this.contents[i].name === folderName) {
-				alert("Folder with that name already exists!");
-				return;
-			}
-		}
+
 		var folder = new FolderIcon(folderName, this.x, this.y, this.path.get); // name of the folder, x and y coordinate and path the icon belongs to
-		folder.create();
+
+		if (this.table.contains(folder, function(x, y) { // an anonymous function being passed which gets called inside table, and table passed on the parameters to the functions inside tables function
+			if (x.name === y.name) return true;
+			else return false;
+		})) {
+			alert("Folder with that name already exists!");
+			return;
+		}
+
+		folder.create(); // create the file icon components, after the check as this draws the file icon in the browser
+
 		this.contents.push(folder);
 		this.attachIconEH(folder);
 
@@ -488,10 +494,10 @@ class FileSystemLayout {
 		/*
 			needs to be stored in a variable because in a for loop the length
 			gets calculated each time, and we don't want that, we want to pop for a fix number
-			of times, the value of i gets messed up as i does become greater than this.contents.size()
+			of times, the value of i gets messed up as i does become greater than this.table.size()
 			at one point even the the elements have not been popped off
 		*/
-		var size = this.contents.length;
+		var size = this.table.size();
 
 		// nullifying the folder/file selected
 		this.selected = null;
@@ -500,7 +506,8 @@ class FileSystemLayout {
 		for (var i = 0; i < size; ++i) {
 			// killing two birds with one exression, pop returns the element that is being removed
 			// from the array
-			$("#wrapper-" + this.contents.pop().id).remove();
+			this.contents.pop();
+			$("#wrapper-" + this.table.removeLast().id).remove();
 		}
 
 		for (var i = 0; i < ls.length; ++i) {
