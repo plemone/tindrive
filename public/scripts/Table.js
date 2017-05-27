@@ -22,15 +22,15 @@ class Table {
 
 		this.row = 0; // maintaings the index of rows in the table
 
-		this.i = 0; // index is basically the index of the rowth array of the table
+		this.i = -1; // i essentially keeps track of the index of the array of the rowth array, therefore at start it needs to be -1, as soon as something gets added we increment i! meaning on initial start when something gets added i is 0, indicating that the element's current index is 0
 
 	}
 
 	// takes in a content and adds it to the table
 	add(content) {	
 		// if this.i === 8, it means we have exceeded the number of elements we are allowed in that row, as upto index 7 it is only valid anything beyond that means add new row
-		if (this.i === 8) {
-			this.i = 0; // we reset the i, as we will be creating a new row
+		if (this.i === 7) {
+			this.i = -1; // we reset the i, as we will be creating a new row, and when something is about to get added i will increase, so we are starting off at -1 agian
 			++this.row; // row gets increased as we are creating a new row in the table
 			this.table.push([]) // this line creates a new empty row and adds it to the table
 		}
@@ -50,16 +50,25 @@ class Table {
 	// removes last entry form the table and returns it
 	removeLast() {
 
+		if (this.i === -1) { // when this.i is -1, it means that we are currently out of elements in the current array
+			this.table.splice(this.row, 1); // we have to remove the empty array as we are done removing each and every element from the array
+			--this.row;
+			this.i = 7; // we make the i 7th again so that it referes to the last index in the new row
+		}
 
+		var returnObject = this.table[this.row].pop(); // we pop the element from the latest array we are currently in the row
 
+		--this.i; // decrease the i
+
+		return returnObject;
 
 	}
 
 
 	size() {
 		var size = 0;
-		for (var i = 0; i < table.lenght; ++i) {
-			for (var j = 0; j < table[i].length; ++j) {
+		for (var i = 0; i < this.table.length; ++i) {
+			for (var j = 0; j < this.table[i].length; ++j) {
 				++size; // increment the size for the number of elements in the table
 			}
 		}
@@ -84,4 +93,41 @@ class Table {
 	}
 
 
+}
+
+function test() {
+
+	var t = new Table();
+
+	for (var i = 0; i < 10; ++i) {
+		t.add(i);
+	}
+
+	console.log(t);
+
+	var size = t.size();
+
+	console.log("size: " + size);
+
+	for (var i = 0; i < size; ++i) {
+		console.log(t.removeLast());
+	}
+
+	console.log(t);
+
+
+}
+
+
+
+function main() {
+
+	test();
+
+}
+
+
+
+if (!module.parent) {
+	main();
 }
