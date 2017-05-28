@@ -16,6 +16,7 @@ class UtilityButton {
 		this.descriptionId = "#" + name + "-description"; // unique description id is needed for each component that inherits this abstract class
 		this.element = "<div id = " + name + "><h4 id = " + name + "-description >" + name + "</h4></div>"; // contains the DOM information
 		this.functions = []; // stores an array of functions that gets iterated and called when the create() method is invoked
+		this.route = ""; // some buttons may require a variable route, which stores away the route to make ajax requests
 	}
 
 	create() { // allow it to take a list of functions that it can call upon creation as well!
@@ -23,18 +24,12 @@ class UtilityButton {
 		this.generateCSS();
 		this.attachEH();
 		for (var i = 0; i < this.functions.length; ++i) {
-			this.functions[i](); // fires the functions stored in the functions array
+			this.functions[i](this); // fires the functions stored in the functions array
 		}
 	}
 
 	attachEH(clickAction) {
 		var self = this;
-
-		$(this.id).on("click", function() {
-			for (var i = 0; i < self.contents.length; ++i) {
-				console.log(self.contents[i]);
-			}
-		});
 
 		$(this.id).on("mouseover", function() {
 

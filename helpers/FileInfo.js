@@ -9,6 +9,7 @@ class FileInfo {
 		this.size = s;
 		this.type = t;
 		this.path = p;
+		this.trashed = false; // indicates whether the file is in the trash folder or not
 	}
 }
 

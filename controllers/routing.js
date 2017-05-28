@@ -59,7 +59,9 @@ module.exports = function() { // just a lambda
 
 	app.post("/:username/expandDir", function(req, res) { CONTROLLER.expandDir(req, res); });
 
-	app.post("/:username/back", function(req, res) {CONTROLLER.back(req, res); });
+	app.post("/:username/back", function(req, res) { CONTROLLER.back(req, res); });
+
+	app.post("/:username/trash", function(req, res) { CONTROLLER.trash(req, res); });
 
 	app.post("/logout", function(req, res) { CONTROLLER.logout(req, res); })
 

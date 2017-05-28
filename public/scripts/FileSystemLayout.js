@@ -1,11 +1,22 @@
 'use strict'; // to avoid JavaScript weirdness
 
 /*
-	responsible for managing the #dnd div which is basically the drop box zone
+	Responsible for managing the #dnd div which is basically the drop box zone
 	should contain some sort of data structure which allows it to keep a track
 	of how the file system actually looks like, x and y axis value to place a 
 	file, should be the main communicator with the user, and should have a 
-	composition relationship with FileIcon and FolderIcon classes
+	composition relationship with FileIcon and FolderIcon classes.
+
+	Main Algorithm - The list of files and folders received from the server is just a mirage of what its actually like in the server, they
+					 contain no information, just the names, with tags like if the element is a file or not, if it is a folder we simply
+					 extend our path with the name of the folder and send the path back to the server. Then the server looks at the path
+					 makes the system call "ls -l" and sends back the new ls -l to the client side. The client side with the information
+				 	 of ls -l again removes all the files and folder its viewing currently in the dropzone and populates with new files
+				 	 and folders. Each time you press back the path gets shortened and the server sends ls -l informations and each time
+					 you click or enter a folder the path gets extended again with the folder name.
+
+					 NOTE** - For viewing files/folders a bunch of personalized client data like icon size, icon image etc is made
+					 		  in this class which isn't necessarily important.
 */
 
 
@@ -20,9 +31,11 @@ class FileSystemLayout {
 
 		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
 
-		this.downloadComponent = new Download(); // composition relationship with the download component
+		this.downloadComponent = new Download(this.route = "/" + $("#username").text() + "/"); // composition relationship with the download component
 
-		this.deleteComponent = new Delete();
+		this.deleteComponent = new Delete(this.route = "/" + $("#username").text() + "/");
+
+		this.trashComponent = new Trash();
 
 		this.path = new Path(); // composition relationsip with Path
 
@@ -48,6 +61,7 @@ class FileSystemLayout {
 		this.attachWindowEH();
 		this.downloadComponent.create();
 		this.deleteComponent.create();
+		this.trashComponent.create();
 	}
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed

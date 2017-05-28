@@ -250,6 +250,21 @@ class DriveController {
 
 	}
 
+	// when the user presses the delete button with a bunch of selected files
+	trash(req, res) {
+		// query the active users database to check the username from the req.params is active or not
+		this.modelAU.query(req.params.username, function() {
+			// succes in finding the user in the database
+			res.sendStatus(200);
+
+		}, function() {
+			// failure to find the user in the database
+			res.status(200).render("404");
+		});
+
+	}
+
+
 
 	logout(req, res) {
 		this.modelAU.remove(req.body.name, function() { 
