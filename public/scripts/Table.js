@@ -150,15 +150,30 @@ class Table {
 		return this.table[r][i];
 	}
 
-	// translate the normal index into table indexes
-	translateIndex(i) {
-		var index = i % this.maxRowLength;
-		var row = Math.floor(i / this.maxRowLength);
-		return [row, index];
+	// returns a row array from the table
+	getRow(r) {
+		return this.table[r];
+	}
+
+	// translate the table index into module index (made up index)
+	translateIndex(row, index) {
+		/*
+			so basically to translate normal indexes into modulo index
+			we need to take the row we are at and the index we are at that row
+			and simply run a for loop for the row number of times and just add our maxLength or 8 in this case
+			to the current index to find our position in the table interms of modulo index
+		*/
+
+		// don't confuse the for loop i with the index
+		for (var i = 0; i < row; ++i) { // this row is the row provided through the parameter
+			index += this.maxRowLength; // some maths was used here
+		}
+
+		return index;
 	}
 
 	// gets the current row
-	getRows() {
+	getRow() {
 		return this.row; // returns the number of rows in the table
 	}
 

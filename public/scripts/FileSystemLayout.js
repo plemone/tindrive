@@ -359,7 +359,7 @@ class FileSystemLayout {
 			// self.navCoordinates's init attribute also needs to be turned off as we have clicked once already!
 			self.navCoordinates.init = false;
 			// everytime you press either up, down, left or right you know something will turn red, so you have to unable the neutralizer global click's counter regardless
-			++self.counter;
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it 0, so we have to do it always after calling the method select
 			return; // we end the function, this prevents the code below the if statement from executing
 		}
 
@@ -372,8 +372,28 @@ class FileSystemLayout {
 
 		} else if (event.which === 39) { // right
 
+			if (self.navCoordinates.r === self.table.getRow() && self.navCoordinates.i === self.table.getCurrentIndexInRow()) {
+				// this if statement basically says if we have reached the maximum point in the table with our current index then we
+				// cannot progress anymore
+				return;
+			}
 
+			if (self.navCoordinates.i !== 7) { // if we are not at the last index for a row array in a table
+				++self.navCoordinates.i; // increment the i of navCoordinates, to move along the x axis
+			} else {
+				self.navCoordinates.i = 0; // 0 because we want to go back to 0 which is where we left offf
+				++self.navCoordinates.r; // we go down the y axis by increasing the row!
+			}
 
+			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
+
+			// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
+			var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
+
+			// what this for loop does is it loops over the array till the point of the index that is currently being selected and simply unselects them allx
+			for (var i = 0; i < iterations; ++i) {
+				self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
+			}
 
 		} else if (event.which === 38) { // up 
 
@@ -438,7 +458,7 @@ class FileSystemLayout {
 			self.navCoordinates.r = -1;
 			self.navCoordinates.i = -1;
 			self.navCoordinates.init = true;
-			
+
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				var tableSize = self.table.size(); // for more optimized performance, this prevents the for loop from calculating the size each iteration
 				for (var i = 0; i < tableSize; ++i) {
