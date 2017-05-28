@@ -348,8 +348,13 @@ class FileSystemLayout {
 	// arrow keys icon navigation event handler for the window
 	arrowKeys(event, self) {
 
-		// for whatever arrow selected if it is the initial selection then x, y coordinates will become 0 and init will become false
+		// if the table is empty there is no point in navigation 
+		if (self.table.size() === 0 && (event.which === 37 || event.which === 39 || event.which === 38 || event.which === 40)) {
+			event.preventDefault(); // even if the table is empty and we don't need any keys to function, we still want to prevent default which is moving the scroll bar left right up down with the keys up down left right, this provides a better experience for the users using the program
+			return;
+		}
 
+		// for whatever arrow selected if it is the initial selection then x, y coordinates will become 0 and init will become false
 		// we don't want this behaviour for just any keys but only left, right, up and down
 		if (self.navCoordinates.init && (event.which === 37 || event.which === 39 || event.which === 38 || event.which === 40)) {
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
@@ -432,7 +437,7 @@ class FileSystemLayout {
 		} else if (event.which === 39) { // right
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
-			if (self.navCoordinates.r === self.table.getRow() && self.navCoordinates.i === self.table.getCurrentIndexInRow()) {
+			if (self.navCoordinates.r === self.table.lastRowIndex() && self.navCoordinates.i === self.table.getCurrentIndexInRow()) {
 				// this if statement basically says if we have reached the maximum point in the table with our current index then we
 				// cannot progress anymore
 				return;
@@ -504,12 +509,10 @@ class FileSystemLayout {
 							We need to translate the new position before to modulo index, to make things easier as we loop
 			*/
 
+			var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i) // this is our currrent index
+			var endIter = self.table.translateIndex(self.navCoordinates.r - 1, self.navCoordinates.i + 1); // the position that we want to be up a row translated to modulo index to make it easier for us to loop and i + 1 because we will be turning that icon at the ith index already red after this if statement so no need to do it twice opposite to what we do in down as here we are moving left
+				
 			if (self.ctrl) {
-
-				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i) // this is our currrent index
-				var endIter = self.table.translateIndex(self.navCoordinates.r - 1, self.navCoordinates.i + 1); // the position that we want to be up a row translated to modulo index to make it easier for us to loop and i + 1 because we will be turning that icon at the ith index already red after this if statement so no need to do it twice opposite to what we do in down as here we are moving left
-				// similar logic to left and right if the index left to our current index is already red since we move up by going left
-				// then we undo the whole process for what down arrow key did
 				// NOTE** - When you are at the 0th index at any row, then self.navCoordinates.i - 1 will be -1, so a check needs to be made where if we are at the index 0 then change it to 7 instead and move up a row!	
 				if (self.navCoordinates.i === 0) {
 					var index = 7; // if index is 0 then make it 7 which would be the last index of any row
@@ -519,6 +522,8 @@ class FileSystemLayout {
 					var row = self.navCoordinates.r; // else do our usual business
 				}
 
+				// similar logic to left and right if the index left to our current index is already red since we move up by going left
+				// then we undo the whole process for what down arrow key did
 				if (self.table.getAt(row, index).isRed()) { 
 					for (var i = startIter; i > endIter - 1; --i) {
 						self.unselect(self.table.get(i));
@@ -538,21 +543,32 @@ class FileSystemLayout {
 
 			// now neutralize all the other selected icons down the y axis not including the selected icon
 
-			var maxRowSize = self.table.getRow() + 1; // aliases the row index to prevent invoking the same function everytime in the for loop and + 1 because it returns the index and we will loop over using this variable and we want to loop up till including the index selected, in other words we make it the number of rows not an index keeper
+			var maxRowSize = self.table.lastRowIndex() + 1; // aliases the row index to prevent invoking the same function everytime in the for loop and + 1 because it returns the index and we will loop over using this variable and we want to loop up till including the index selected, in other words we make it the number of rows not an index keeper
 
-			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
-				for (var i = self.navCoordinates.r + 1; i < maxRowSize; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
+			if (!self.ctrl) { // if the user isn't pressing ctrl button then we unselect anything going up and left
 
-					// rowSize returns the number of elements that the current row pocesses
-					// so this if statement is basically saying that if we have an unfinished row in the table, which is
-					// that we don't have 8 elements in the row and it contains just like 4 elements then if we are at the
-					// 5th index in the previous row unselecting the 5th element in the row below will not be possible
-					if (self.navCoordinates.i < self.table.rowSize(i)) { // self.table.rowSize() and not self.table.rowSize() - 1 because self.navCoordinates.r can never be equal to the length, as indexes are always 1 less than the lengths! because of that our self.navCoordinates.i should always be less than the size, as its the normal criteria as the length is always suppose to be 8 and i is always suppose to 7 at max, but if by any change our i is less than the length of the row it means that the bottom row doesn't have elements more than our current index!
-						// note the index at our current row will always be less than the length of the number of elements in the bottom row, IF AND ONLY IF THE BOTTOM ROW HAS ALL 8 ELEMENTS IN THE ROW, WHICH IS THE MAXIMUM NUMBER OF ELEMENTS
-						self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+				// we start from the index we were before moving up and go till the very last index in the very last row
+				// and as we through, we turn all the red icons blue
 
-					}
+				var lastRowIndex = self.table.lastRowIndex(); // the index of the last row in the table
+
+				var lastRow = self.table.getRowAt(lastRowIndex); // we retrieve the last row using the index
+
+				var lastElementInLastRow = lastRow.length - 1; // this is the index of the last element in the last row
+
+				// with all these information we can now translate
+				var moduloEndIter = self.table.translateIndex(lastRowIndex, lastElementInLastRow);
+
+				// so whats basically happening here is when we go up by one in the y axis, starting from the
+				// icon right next to our icon we start looping till the end of the table by going right
+				// and as we go right we turn each icon blue
+				// so everytime we go up anything right of the current index after going up will turn blue!
+				for (var i = endIter; i < moduloEndIter + 1; ++i) { 
+		
+					self.unselect(self.table.get(i));
+			
 				}
+
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
@@ -561,7 +577,7 @@ class FileSystemLayout {
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
 			// either of these statement need to be true in order for the entire statement to be true, and self.navCoordinates.i > self.table.rowSize(self.navCoordinates.r + 1) - 1 means that if our index in the current row is greater the last index of the bottom row then we can't go down as the bottom row doesn't even have that index to visit!
-			if (self.navCoordinates.r === self.table.getRow() || self.navCoordinates.i > self.table.rowSize(self.navCoordinates.r + 1) - 1) { // if our current coordinate matches the last entry in the table's row
+			if (self.navCoordinates.r === self.table.lastRowIndex() || self.navCoordinates.i > self.table.rowSize(self.navCoordinates.r + 1) - 1) { // if our current coordinate matches the last entry in the table's row
 				// this if statement basically says that if we reached the maximum point in the y axis or
 				// in other words if we are at the last row in the table then we should not increment anymore
 				return;
@@ -577,13 +593,13 @@ class FileSystemLayout {
 
 			*/
 
+			// the if statement above this if statement immedietly catches any illegal activity, which is if you are at the last row and you are trying to go down it will be impossible to do so!
+
+			var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i); // current index
+			var endIter = self.table.translateIndex(self.navCoordinates.r + 1, self.navCoordinates.i - 1); // getting the position where we want to be and - 1 on the index or x axis is because we include it and change its color later on after this if statement by default
+
+
 			if (self.ctrl) {
-
-				// the if statement above this if statement immedietly catches any illegal activity, which is if you are at the last row and you are trying to go down it will be impossible to do so!
-
-				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i); // current index
-				var endIter = self.table.translateIndex(self.navCoordinates.r + 1, self.navCoordinates.i - 1); // getting the position where we want to be and - 1 on the index or x axis is because we include it and change its color later on after this if statement by default
-
 
 				// similar logic to left and right if the index right to our current index is already red, since we are going down and we move down by going right
 				// then we undo the whole process for what down arrow key did
@@ -598,7 +614,7 @@ class FileSystemLayout {
 
 				} else {
 
-					for (var i = startIter; i < endIter + 1; ++i) { // endIter + 1 as we want to include the index endIter as we loop (in our last iteration)
+					for (var i = startIter; i < endIter + 1; ++i) { // endIter + 1 as we want to include the index endIter as we loop
 
 						self.select(self.table.get(i)); // we select the icon at each index specified
 
@@ -613,11 +629,19 @@ class FileSystemLayout {
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
 
-			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
-				// now neutralize all the other selected icons up the y axis not including the selected icon
-				for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoordinates.r means not including self.navCoordinates.r
-					self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+			if (!self.ctrl) { // if the user isn't pressing the ctrl button then we unselect anything going right and down
+
+				// endIter is the icon just before our current position in the same row
+				// so we start from that position as we don't want to to include the file we just turned red and we loop from that position
+				// all the way to the top and left most icon and we turn each icon as we go up blue
+
+				for (var i = endIter; i > -1; --i) { // endIter + 1 as we want to include the index endIter as we loop
+					
+					self.unselect(self.table.get(i)); // we unselect the icon at each index specified
+
 				}
+
+
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select

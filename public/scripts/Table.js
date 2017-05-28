@@ -150,8 +150,8 @@ class Table {
 		return this.table[r][i];
 	}
 
-	// returns a row array from the table
-	getRow(r) {
+	// returns a row array from the table for a specific row number
+	getRowAt(r) {
 		return this.table[r];
 	}
 
@@ -178,8 +178,8 @@ class Table {
 		return index;
 	}
 
-	// gets the current row
-	getRow() {
+	// gets the index of the current row in the table where an element will be added to
+	lastRowIndex() {
 		return this.row; // returns the number of rows in the table
 	}
 
