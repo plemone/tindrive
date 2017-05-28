@@ -356,6 +356,9 @@ class FileSystemLayout {
 			self.navCoordinates.r = 0;
 			self.navCoordinates.i = 0;
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i));
+			
+			// everytime you press either up, down, left or right you know something will turn red, so you have to unable the neutralizer global click's counter regardless
+			++self.counter;
 			return; // we end the function, this prevents the code below the if statement from executing
 		}
 
