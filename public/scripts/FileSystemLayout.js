@@ -510,7 +510,16 @@ class FileSystemLayout {
 				var endIter = self.table.translateIndex(self.navCoordinates.r - 1, self.navCoordinates.i + 1); // the position that we want to be up a row translated to modulo index to make it easier for us to loop and i + 1 because we will be turning that icon at the ith index already red after this if statement so no need to do it twice opposite to what we do in down as here we are moving left
 				// similar logic to left and right if the index left to our current index is already red since we move up by going left
 				// then we undo the whole process for what down arrow key did
-				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) { 
+				// NOTE** - When you are at the 0th index at any row, then self.navCoordinates.i - 1 will be -1, so a check needs to be made where if we are at the index 0 then change it to 7 instead and move up a row!	
+				if (self.navCoordinates.i === 0) {
+					var index = 7; // if index is 0 then make it 7 which would be the last index of any row
+					var row = self.navCoordinates.r - 1; // it also means we jump back up a row since we are at the last index of some row
+				} else {
+					var index = self.navCoordinates.i - 1; // else do our usual business
+					var row = self.navCoordinates.r; // else do our usual business
+				}
+
+				if (self.table.getAt(row, index).isRed()) { 
 					for (var i = startIter; i > endIter - 1; --i) {
 						self.unselect(self.table.get(i));
 					}
@@ -522,8 +531,6 @@ class FileSystemLayout {
 				}
 
 			}
-
-
 
 			--self.navCoordinates.r; // we decrement the row coordinate or in other words we go up the y-axis
 
@@ -572,8 +579,11 @@ class FileSystemLayout {
 
 			if (self.ctrl) {
 
+				// the if statement above this if statement immedietly catches any illegal activity, which is if you are at the last row and you are trying to go down it will be impossible to do so!
+
 				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i); // current index
 				var endIter = self.table.translateIndex(self.navCoordinates.r + 1, self.navCoordinates.i - 1); // getting the position where we want to be and - 1 on the index or x axis is because we include it and change its color later on after this if statement by default
+
 
 				// similar logic to left and right if the index right to our current index is already red, since we are going down and we move down by going right
 				// then we undo the whole process for what down arrow key did
