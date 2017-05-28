@@ -155,6 +155,12 @@ class Table {
 		return this.table[r];
 	}
 
+	// returns the maximum index in a row
+	rowSize(r) {
+		return this.table[r].length; // returns the size of a given row with the index provided 
+	}
+
+
 	// translate the table index into module index (made up index)
 	translateIndex(row, index) {
 		/*

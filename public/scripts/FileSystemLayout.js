@@ -435,12 +435,19 @@ class FileSystemLayout {
 
 			// now neutralize all the other selected icons down the y axis not including the selected icon
 
-			var maxRow = self.table.getRow(); // aliases the row size to prevent invoking the same function everytime in the for loop
+			var maxRowSize = self.table.getRow() + 1; // aliases the row index to prevent invoking the same function everytime in the for loop and + 1 because it returns the index and we will loop over using this variable and we want to loop up till including the index selected, in other words we make it the number of rows not an index keeper
 
-			for (var i = self.navCoordinates.r + 1; i < maxRow; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
+			for (var i = self.navCoordinates.r + 1; i < maxRowSize; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
 
-				self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+				// rowSize returns the number of elements that the current row pocesses
+				// so this if statement is basically saying that if we have an unfinished row in the table, which is
+				// that we don't have 8 elements in the row and it contains just like 4 elements then if we are at the
+				// 5th index in the previous row unselecting the 5th element in the row below will not be possible
+				if (self.navCoordinates.i < self.table.rowSize(i)) { // self.table.rowSize() and not self.table.rowSize() - 1 because self.navCoordinates.r can never be equal to the length, as indexes are always 1 less than the lengths! because of that our self.navCoordinates.i should always be less than the size, as its the normal criteria as the length is always suppose to be 8 and i is always suppose to 7 at max, but if by any change our i is less than the length of the row it means that the bottom row doesn't have elements more than our current index!
 
+					self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+
+				}
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
@@ -448,7 +455,8 @@ class FileSystemLayout {
 		} else if (event.which === 40) { // down
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
-			if (self.navCoordinates.r === self.table.getRow()) { // if our current coordinate matches the last entry in the table's row
+			// either of these statement need to be true in order for the entire statement to be true, and self.navCoordinates.i > self.table.rowSize(self.navCoordinates.r + 1) - 1 means that if our index in the current row is greater the last index of the bottom row then we can't go down as the bottom row doesn't even have that index to visit!
+			if (self.navCoordinates.r === self.table.getRow() || self.navCoordinates.i > self.table.rowSize(self.navCoordinates.r + 1) - 1) { // if our current coordinate matches the last entry in the table's row
 				// this if statement basically says that if we reached the maximum point in the y axis or
 				// in other words if we are at the last row in the table then we should not increment anymore
 				return;
