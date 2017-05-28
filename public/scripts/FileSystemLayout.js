@@ -388,9 +388,12 @@ class FileSystemLayout {
 
 			var tableSize = self.table.size(); // alias the size of the table to prevent invoking the function everytime inside the for loop
 
-			// now we have to loop through anything after our current index till the size of all the elements in the table and unselect the elements
-			for (var i = iterations + 1; i < tableSize; ++i) { // not including the iteartions though, hence + 1
-				self.unselect(self.table.get(i));
+			// if the user is currently pressing the ctrl button then don't unselect the selected icons
+			if (!self.ctrl) {
+				// now we have to loop through anything after our current index till the size of all the elements in the table and unselect the elements
+				for (var i = iterations + 1; i < tableSize; ++i) { // not including the iteartions though, hence + 1
+					self.unselect(self.table.get(i));
+				}
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
@@ -416,10 +419,13 @@ class FileSystemLayout {
 			// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
 			var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
 
-			// what this for loop does is it loops over the array till the point of the index that is currently being selected and simply unselects them allx
-			for (var i = 0; i < iterations; ++i) {
-				self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
+			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
+				// what this for loop does is it loops over the array till the point of the index that is currently being selected and simply unselects them allx
+				for (var i = 0; i < iterations; ++i) {
+					self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
+				}
 			}
+
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 38) { // up 
@@ -437,16 +443,18 @@ class FileSystemLayout {
 
 			var maxRowSize = self.table.getRow() + 1; // aliases the row index to prevent invoking the same function everytime in the for loop and + 1 because it returns the index and we will loop over using this variable and we want to loop up till including the index selected, in other words we make it the number of rows not an index keeper
 
-			for (var i = self.navCoordinates.r + 1; i < maxRowSize; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
+			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
+				for (var i = self.navCoordinates.r + 1; i < maxRowSize; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
 
-				// rowSize returns the number of elements that the current row pocesses
-				// so this if statement is basically saying that if we have an unfinished row in the table, which is
-				// that we don't have 8 elements in the row and it contains just like 4 elements then if we are at the
-				// 5th index in the previous row unselecting the 5th element in the row below will not be possible
-				if (self.navCoordinates.i < self.table.rowSize(i)) { // self.table.rowSize() and not self.table.rowSize() - 1 because self.navCoordinates.r can never be equal to the length, as indexes are always 1 less than the lengths! because of that our self.navCoordinates.i should always be less than the size, as its the normal criteria as the length is always suppose to be 8 and i is always suppose to 7 at max, but if by any change our i is less than the length of the row it means that the bottom row doesn't have elements more than our current index!
+					// rowSize returns the number of elements that the current row pocesses
+					// so this if statement is basically saying that if we have an unfinished row in the table, which is
+					// that we don't have 8 elements in the row and it contains just like 4 elements then if we are at the
+					// 5th index in the previous row unselecting the 5th element in the row below will not be possible
+					if (self.navCoordinates.i < self.table.rowSize(i)) { // self.table.rowSize() and not self.table.rowSize() - 1 because self.navCoordinates.r can never be equal to the length, as indexes are always 1 less than the lengths! because of that our self.navCoordinates.i should always be less than the size, as its the normal criteria as the length is always suppose to be 8 and i is always suppose to 7 at max, but if by any change our i is less than the length of the row it means that the bottom row doesn't have elements more than our current index!
+						// note the index at our current row will always be less than the length of the number of elements in the bottom row, IF AND ONLY IF THE BOTTOM ROW HAS ALL 8 ELEMENTS IN THE ROW, WHICH IS THE MAXIMUM NUMBER OF ELEMENTS
+						self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
 
-					self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
-
+					}
 				}
 			}
 
@@ -466,9 +474,11 @@ class FileSystemLayout {
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
 
-			// now neutralize all the other selected icons up the y axis not including the selected icon
-			for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoorinates.r means not including self.navCoordinates.r
-				self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
+				// now neutralize all the other selected icons up the y axis not including the selected icon
+				for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoorinates.r means not including self.navCoordinates.r
+					self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+				}
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
