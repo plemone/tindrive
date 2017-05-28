@@ -356,14 +356,15 @@ class FileSystemLayout {
 			self.navCoordinates.r = 0;
 			self.navCoordinates.i = 0;
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i));
-			
+			// self.navCoordinates's init attribute also needs to be turned off as we have clicked once already!
+			self.navCoordinates.init = false;
 			// everytime you press either up, down, left or right you know something will turn red, so you have to unable the neutralizer global click's counter regardless
 			++self.counter;
 			return; // we end the function, this prevents the code below the if statement from executing
 		}
 
 
-		// one of these if statment will be checked one after another in order
+		// one of these if statment will be checked one after another in order, this will prevent from weird behaviours from pressing two buttons at once
 		if (event.which === 37) { // left
 
 
@@ -433,6 +434,11 @@ class FileSystemLayout {
 		var self = this;
 		// target the drop zone for clicks only
 		$(this.dropZoneId).on("click", function() {
+			// global click should also reset the navCoordinates, so that key movement will allow it to start from the beginning
+			self.navCoordinates.r = -1;
+			self.navCoordinates.i = -1;
+			self.navCoordinates.init = true;
+			
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				var tableSize = self.table.size(); // for more optimized performance, this prevents the for loop from calculating the size each iteration
 				for (var i = 0; i < tableSize; ++i) {
