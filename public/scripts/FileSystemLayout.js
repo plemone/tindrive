@@ -366,6 +366,7 @@ class FileSystemLayout {
 
 		// one of these if statment will be checked one after another in order, this will prevent from weird behaviours from pressing two buttons at once
 		if (event.which === 37) { // left
+			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
 			if (self.navCoordinates.r === 0 && self.navCoordinates.i === 0) {
 				// this if statement basically just checks if both row and i are at the initial starting position
@@ -392,9 +393,10 @@ class FileSystemLayout {
 				self.unselect(self.table.get(i));
 			}
 
-			++self.counter; // the reason we explicitly do it here is because, the method select always turns it 0, so we have to do it always after calling the method select
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 39) { // right
+			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
 			if (self.navCoordinates.r === self.table.getRow() && self.navCoordinates.i === self.table.getCurrentIndexInRow()) {
 				// this if statement basically says if we have reached the maximum point in the table with our current index then we
@@ -418,18 +420,52 @@ class FileSystemLayout {
 			for (var i = 0; i < iterations; ++i) {
 				self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
 			}
-			++self.counter; // the reason we explicitly do it here is because, the method select always turns it 0, so we have to do it always after calling the method select
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 38) { // up 
+			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
+
+			if (self.navCoordinates.r === 0) { // if our current y axis coordinate or row in the table is 0 then we simply don't move up anymore
+				return;
+			}
+
+			--self.navCoordinates.r; // we decrement the row coordinate or in other words we go up the y-axis
+
+			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at the coordinate in the table
+
+			// now neutralize all the other selected icons down the y axis not including the selected icon
+
+			var maxRow = self.table.getRow(); // aliases the row size to prevent invoking the same function everytime in the for loop
+
+			for (var i = self.navCoordinates.r + 1; i < maxRow; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
+
+				self.unselect(self.table.get);
+
+			}
 
 
 
 
 
 		} else if (event.which === 40) { // down
+			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
+			if (self.navCoordinates.r === self.table.getRow()) { // if our current coordinate matches the last entry in the table's row
+				// this if statement basically says that if we reached the maximum point in the y axis or
+				// in other words if we are at the last row in the table then we should not increment anymore
+				return;
+			}
 
+			++self.navCoordinates.r; // we increment the row coordinate or in other words we go down the y-axis
 
+			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
+
+			// now neutralize all the other selected icons up the y axis not including the selected icon
+			for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoorinates.r means not including self.navCoordinates.r
+				self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
+			}
+
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
 		}
 
