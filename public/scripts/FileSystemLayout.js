@@ -38,6 +38,7 @@ class FileSystemLayout {
 
 		this.ctrl = false; // keeps track of whether control button is pressed or not
 
+		this.navCoordinates = {r: -1, i: -1, init: true}; // dictionary contains 3 key value pairs, x coordinate, y coordinate and init which indicates if this is the first movement or not
 	}
 
 	// basic create() method that comes in with every component
@@ -347,18 +348,30 @@ class FileSystemLayout {
 	// arrow keys icon navigation event handler for the window
 	arrowKeys(event, self) {
 
+		// for whatever arrow selected if it is the initial selection then x, y coordinates will become 0 and init will become false
+
+		// we don't want this behaviour for just any keys but only left, right, up and down
+		if (self.navCoordinates.init && (event.which === 37 || event.which === 39 || event.which === 38 || event.which === 40)) {
+			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
+			self.navCoordinates.r = 0;
+			self.navCoordinates.i = 0;
+			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i));
+			return; // we end the function, this prevents the code below the if statement from executing
+		}
+
+
 		// one of these if statment will be checked one after another in order
 		if (event.which === 37) { // left
 
 
 
+
 		} else if (event.which === 39) { // right
-	
+
 
 
 
 		} else if (event.which === 38) { // up 
-
 
 
 
@@ -586,7 +599,6 @@ class FileSystemLayout {
 
 	// turns a selected icon red, its a wrapper function which wraps around a icon method with added functionalities
 	select(icon) {
-		
 		icon.turnRed();
 
 		// any red icon selected will be added to the download components contents and delete contents

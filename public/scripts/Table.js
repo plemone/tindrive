@@ -145,14 +145,29 @@ class Table {
 
 	}
 
+	// returns the element in the table for a specific row and index of the row
+	getAt(r, i) {
+		return this.table[r][i];
+	}
+
+	// translate the normal index into table indexes
+	translateIndex(i) {
+		var index = i % this.maxRowLength;
+		var row = Math.floor(i / this.maxRowLength);
+		return [row, index];
+	}
+
+	// gets the current row
 	getRows() {
 		return this.row; // returns the number of rows in the table
 	}
 
+	// gets the current index in the current row the table is going to insert
 	getCurrentIndexInRow() {
 		return this.i; // returns current index in a row
 	}
 
+	// returns the row and index
 	at() {
 		return {r: this.row, i: this.i};
 	}
