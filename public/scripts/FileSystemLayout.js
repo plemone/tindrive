@@ -496,6 +496,34 @@ class FileSystemLayout {
 				return;
 			}
 
+			/*
+				Algorithm - If the ctrl button is pressed then we have to loop over from our current positon and hit
+							hit every single icon starting left till not including our new position which is a row above
+							our current index and turn each icon red as we loop.
+
+							We need to translate the new position before to modulo index, to make things easier as we loop
+			*/
+
+			if (self.ctrl) {
+
+				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i) // this is our currrent index
+				var endIter = self.table.translateIndex(self.navCoordinates.r - 1, self.navCoordinates.i + 1); // the position that we want to be up a row translated to modulo index to make it easier for us to loop and i + 1 because we will be turning that icon at the ith index already red after this if statement so no need to do it twice opposite to what we do in down as here we are moving left
+
+				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) { // similar logic to left and right if the index left to our current index is already red, then we undo the whole process for what down arrow key did
+					for (var i = startIter; i > endIter - 1; --i) {
+						self.unselect(self.table.get(i));
+					}
+
+				} else {
+					for (var i = startIter; i > endIter - 1; --i) { // we are including the endIter index as well thats why if endIter is like 3 and i becomes 3 ints still not gereater than 2, and our loop is still valid and we include the index 3 but when i becomes 2 and our looping condition is 3 - 1 = 2, we will break out of the loop as 2 is no longer greater than 2, yes thats right 2 is actually now equal to 2 which is not greater than 2
+						self.select(self.table.get(i)); // we hit icons at each index and select them as we iterate using the for loop
+					}
+				}
+
+			}
+
+
+
 			--self.navCoordinates.r; // we decrement the row coordinate or in other words we go up the y-axis
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at the coordinate in the table
@@ -531,13 +559,37 @@ class FileSystemLayout {
 				return;
 			}
 
+			/*
+				Algorithm - If the ctrl button is pressed then we have to loop from the current position
+							and hit every single icon starting right till not including our new position
+							which is a row below our current index and turn each icon red as we loop.
+
+							We need to translate the new position before to modulo index, to make things easier
+							as we loop
+
+			*/
+
+			if (self.ctrl) {
+
+				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i); // current index
+				var endIter = self.table.translateIndex(self.navCoordinates.r + 1, self.navCoordinates.i - 1); // getting the position where we want to be and - 1 on the index or x axis is because we include it and change its color later on after this if statement by default
+
+				for (var i = startIter; i < endIter + 1; ++i) { // endIter + 1 as we want to include the index endIter as we loop (in our last iteration)
+
+					self.select(self.table.get(i)); // we select the icon at each index specified
+
+				}
+
+			}
+
+
 			++self.navCoordinates.r; // we increment the row coordinate or in other words we go down the y-axis
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
 
 			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
 				// now neutralize all the other selected icons up the y axis not including the selected icon
-				for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoorinates.r means not including self.navCoordinates.r
+				for (var i = 0; i < self.navCoordinates.r; ++i) { // i less than self.navCoordinates.r means not including self.navCoordinates.r
 					self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
 				}
 			}
