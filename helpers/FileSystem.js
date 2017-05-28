@@ -6,7 +6,10 @@ var fs = require("fs"); // used to manipulate the file system
 var FSTree = require("./FSTree.js"); // dot slash is very important when importing files created by self
 var FileInfo = require("./FileInfo.js");
 
-// This class will provide a foundation for the REST API
+// This class will provide a foundation for the REST API.
+
+// This class has a 1-1 composition relationshi with the FSTree datastructure, and provides an abstraction to how
+// the FSTree data structure is used in the file. This class is basically the abstract file system of a user that the server keeps
 
 class FileSystem {
 	constructor(username, path) {

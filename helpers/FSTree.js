@@ -3,6 +3,16 @@
 // literelly mimics the file system, except that it only contains file information
 // rather then the actual file contents
 
+// As files get uploaded, this data structure also gets populated and the way the files get stored
+// mimics the the exact same direction/path/route that the file system takes
+// when the user is requesting a file to download or is cding into a new folder, the file needs to be found or
+// the directory contents needs to be listed, its all done using the FSTree.
+
+// Lists the contents of a specific directory.
+// It can retrieve the file information for a file to be downloaded.
+// It stores away files with exact same architecture of the file system, so that files can be looked up here
+// rather than going through the entire file system.
+
 var FileInfo = require("./FileInfo.js");
 
 class FSTree {

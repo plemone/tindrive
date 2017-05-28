@@ -24,6 +24,8 @@ const FSPATH = "./filesystems/user-fs/";
 
 */
 
+// Main controller class
+
 class DriveController {
 	
 	constructor() {

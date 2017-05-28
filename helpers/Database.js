@@ -11,9 +11,17 @@ var mime = require("mime");
 // asks for a specific file environment to mimic we can simply use this database to look up
 // and retrieve the information as needed!
 
+// This class ia gateway to more complicated classes in the file system, also known as a Facade class following the structural
+// design pattern. This class contains an collection of all the user's individual FileSystem objects. As new users come in
+// the new FileSystems get added to the collections. Also when the server is first booted this database traverses the entire
+// file system and populates each users FSTree, using each user's FileSystem class.
 
-// will contain a collection of all the individual users file syste,
-// it is more like a Facade class, and it follows structural design pattern
+// Comes in with methods like add, which adds a new user to the collection, retrieve, which retrieves a user's file system
+// from the database, generate which generates all the user data on initial boot and traverse, which is a helper function
+// used within the class only, it takes in an FileSystem object, a path to follow for file to be added, or a containerFolder
+// which is the name of the empty folder that is being requested by the server to be created. If a new file is being requested
+// to be added the it is only specified using the path, but for a folder an explicit param called containerFolder needs to be passed.
+
 class Database {
 
 	constructor() {
@@ -64,12 +72,12 @@ class Database {
 		// specific user
 	}
 
-	// recursively adds all the contents of all the nested folders to the fileSystem
+	// recursively adds all the contents of all the nested folders to the fileSystem (helper function)
 	traverse(fsObj, path, containerFolder) {
 		console.log("cding... " + path);
 		var self = this;
 
-		// NOTE** - readder HAS to be synchronouse, because if it is asynchronous event in a loop
+		// NOTE** - reader HAS to be synchronouse, because if it is asynchronous event in a loop
 		// it will it will maintain its asynchronous property, which is it will always be the last
 		// thing to be executed, even if it is nested away in another function!
 		var files = fs.readdirSync(path);

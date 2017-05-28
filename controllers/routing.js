@@ -1,5 +1,8 @@
 /* Author: Md. Tanvir Islam */
 
+// contains all the routings of the server
+
+
 // whenver this module is exported like this, example = require("./routing.js");
 // simply calling example() will generate the entire script
 module.exports = function() { // just a lambda
