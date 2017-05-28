@@ -367,8 +367,32 @@ class FileSystemLayout {
 		// one of these if statment will be checked one after another in order, this will prevent from weird behaviours from pressing two buttons at once
 		if (event.which === 37) { // left
 
+			if (self.navCoordinates.r === 0 && self.navCoordinates.i === 0) {
+				// this if statement basically just checks if both row and i are at the initial starting position
+				// which is the first file in the view, if so then just return without moving back more
+				return;
+			}
 
+			if (self.navCoordinates.i !== 0) { // if we are not at 0 then we can just keep moving backwards
+				--self.navCoordinates.i;
+			} else { // if we are at the first index in the row, then we need to go back up a level
+				self.navCoordinates.i = 7; // we set the index to last element of a row, as we change the row we will be now indexing the last element of the row up a step
+				--self.navCoordinates.r; // we go up a level by changing the y-axis coordinate when we reach 0
+			}
 
+			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i));
+
+			// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
+			var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
+
+			var tableSize = self.table.size(); // alias the size of the table to prevent invoking the function everytime inside the for loop
+
+			// now we have to loop through anything after our current index till the size of all the elements in the table and unselect the elements
+			for (var i = iterations + 1; i < tableSize; ++i) { // not including the iteartions though, hence + 1
+				self.unselect(self.table.get(i));
+			}
+
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 39) { // right
 
@@ -394,6 +418,7 @@ class FileSystemLayout {
 			for (var i = 0; i < iterations; ++i) {
 				self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
 			}
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 38) { // up 
 
@@ -575,6 +600,11 @@ class FileSystemLayout {
 	populateDropZone(ls) {
 		this.downloadComponent.empty(); // we empty out the contents to be downloaded as we discarded our selection
 		this.deleteComponent.empty(); //  we empty our contents to be downlownloaded as we discarded our selection
+
+		// we reset the navigation coordinates as well, because we are entering a new folder
+		this.navCoordinates.r = -1;
+		this.navCoordinates.i = -1;
+		this.navCoordinates.init = true;
 
 		/*
 			needs to be stored in a variable because in a for loop the length
