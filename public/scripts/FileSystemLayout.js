@@ -374,6 +374,22 @@ class FileSystemLayout {
 				return;
 			}
 
+			/*
+				Algorithm - Suppose I have a bunch of icons selected as I go right. Now if I press left
+							while holding the control button I am suppose to unselect the current index.
+							This is done by checking whether the index before the current index which is
+							i - 1 is red or not, if it is red then we unselect the current index. If it
+							isn't red then we don't unselect the current position! 
+
+			*/
+			if (self.ctrl) {
+				var icon = self.table.getAt(self.navCoordinates.r, self.navCoordinates.i);
+				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) {
+					self.unselect(icon);
+				}
+			}
+
+
 			if (self.navCoordinates.i !== 0) { // if we are not at 0 then we can just keep moving backwards
 				--self.navCoordinates.i;
 			} else { // if we are at the first index in the row, then we need to go back up a level
@@ -383,21 +399,23 @@ class FileSystemLayout {
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i));
 
-			// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
-			var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
-
-			var tableSize = self.table.size(); // alias the size of the table to prevent invoking the function everytime inside the for loop
-
 			// if the user is currently pressing the ctrl button then don't unselect the selected icons
 			if (!self.ctrl) {
+				// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
+				var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
+
+				var tableSize = self.table.size(); // alias the size of the table to prevent invoking the function everytime inside the for loop
+
 				// now we have to loop through anything after our current index till the size of all the elements in the table and unselect the elements
 				for (var i = iterations + 1; i < tableSize; ++i) { // not including the iteartions though, hence + 1
 					self.unselect(self.table.get(i));
 				}
+
 			}
 
 			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
+		
 		} else if (event.which === 39) { // right
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
 
@@ -710,21 +728,27 @@ class FileSystemLayout {
 
 	// turns a selected icon red, its a wrapper function which wraps around a icon method with added functionalities
 	select(icon) {
-		icon.turnRed();
 
-		// any red icon selected will be added to the download components contents and delete contents
-		this.downloadComponent.add(icon);
-		this.deleteComponent.add(icon);
+		if (!icon.isRed()) { // if icon is already red then we don't have to repeat these steps, as we don't want duplicates in the database
+
+			icon.turnRed();
+
+			// any red icon selected will be added to the download components contents and delete contents
+			this.downloadComponent.add(icon);
+			this.deleteComponent.add(icon);
 
 
-		// add to the selections array the icon currently selected
-		this.selections.push(icon);
-		
-		/*
-			prevents an activated global click from deactivating current marked red window
-			while switching between two tiles (this is mandatory as the global event is fired immediently after a click
-			it happens simultaneously! )
-		*/		
+			// add to the selections array the icon currently selected
+			this.selections.push(icon);
+			
+			/*
+				prevents an activated global click from deactivating current marked red window
+				while switching between two tiles (this is mandatory as the global event is fired immediently after a click
+				it happens simultaneously! )
+			*/		
+
+		}
+
 
 		this.globalClick = true; // turns on the drop zone event handlers job to do its thing
 		this.counter = 0; // resets the counter, just to prevent large numbers from stacking	
