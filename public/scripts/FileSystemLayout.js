@@ -439,13 +439,11 @@ class FileSystemLayout {
 
 			for (var i = self.navCoordinates.r + 1; i < maxRow; ++i) { // self.navCoordinates.r + 1 because we don't want to include the icon we are in
 
-				self.unselect(self.table.get);
+				self.unselect(self.table.getAt(i, self.navCoordinates.i)); // self.navCoordinates.i because we haven't changed position in the x axis but y axis only so our x axis coordinate remains the same
 
 			}
 
-
-
-
+			++self.counter; // the reason we explicitly do it here is because, the method select always turns it to 0, so we have to do it always after calling the method select
 
 		} else if (event.which === 40) { // down
 			event.preventDefault(); // this prevents the default key behaviour, which is moving the scroll bar left, right, up, down
