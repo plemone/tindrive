@@ -508,8 +508,9 @@ class FileSystemLayout {
 
 				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i) // this is our currrent index
 				var endIter = self.table.translateIndex(self.navCoordinates.r - 1, self.navCoordinates.i + 1); // the position that we want to be up a row translated to modulo index to make it easier for us to loop and i + 1 because we will be turning that icon at the ith index already red after this if statement so no need to do it twice opposite to what we do in down as here we are moving left
-
-				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) { // similar logic to left and right if the index left to our current index is already red, then we undo the whole process for what down arrow key did
+				// similar logic to left and right if the index left to our current index is already red since we move up by going left
+				// then we undo the whole process for what down arrow key did
+				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) { 
 					for (var i = startIter; i > endIter - 1; --i) {
 						self.unselect(self.table.get(i));
 					}
@@ -574,9 +575,24 @@ class FileSystemLayout {
 				var startIter = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i); // current index
 				var endIter = self.table.translateIndex(self.navCoordinates.r + 1, self.navCoordinates.i - 1); // getting the position where we want to be and - 1 on the index or x axis is because we include it and change its color later on after this if statement by default
 
-				for (var i = startIter; i < endIter + 1; ++i) { // endIter + 1 as we want to include the index endIter as we loop (in our last iteration)
+				// similar logic to left and right if the index right to our current index is already red, since we are going down and we move down by going right
+				// then we undo the whole process for what down arrow key did
+				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i + 1).isRed()) { // in the same row we check the very next index right of our current index
 
-					self.select(self.table.get(i)); // we select the icon at each index specified
+					for (var i = startIter; i < endIter + 1; ++i) {
+
+						self.unselect(self.table.get(i)); // we unselect the icon at each index specified
+
+					}
+
+
+				} else {
+
+					for (var i = startIter; i < endIter + 1; ++i) { // endIter + 1 as we want to include the index endIter as we loop (in our last iteration)
+
+						self.select(self.table.get(i)); // we select the icon at each index specified
+
+					}
 
 				}
 
