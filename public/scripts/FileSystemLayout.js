@@ -375,20 +375,33 @@ class FileSystemLayout {
 			}
 
 			/*
-				Algorithm - Suppose I have a bunch of icons selected as I go right. Now if I press left
-							while holding the control button I am suppose to unselect the current index.
-							This is done by checking whether the index before the current index which is
+				Algorithm - Suppose I have a bunch of icons selected as I go right. Now if I press left arrow key
+							while holding the ctrl button I am suppose to unselect the current index. (the left arrow key still selects the already selected icon which would be in index - 1 place, but it shouldn't matter as we have a check to prevent any damage done by that)
+							This is done by checking whether the index before the current index where our current index is i and the index before that is
 							i - 1 is red or not, if it is red then we unselect the current index. If it
 							isn't red then we don't unselect the current position! 
+
+							NOTE** - despite all this we will always follow the default behaviour either ctrl is pressed or not
 
 			*/
 			if (self.ctrl) {
 				var icon = self.table.getAt(self.navCoordinates.r, self.navCoordinates.i);
-				if (self.table.getAt(self.navCoordinates.r, self.navCoordinates.i - 1).isRed()) {
+				
+				// one obvious check is before actually doing the substraction from index we have to check if the index
+				// is 0 or not as there cannot be a negative index, if it is 0 then we jump up in the y axis and also 
+				// turn the i to 7 which would be the last index of an element in a row
+				if (self.navCoordinates.i === 0) {
+					var row = self.navCoordinates.r - 1; // we don't need to check for the r being 0 as there is a check before already for that!
+					var i = 7;
+				} else {
+					var row = self.navCoordinates.r;
+					var i = self.navCoordinates.i - 1;
+				}
+
+				if (self.table.getAt(row, i).isRed()) {
 					self.unselect(icon);
 				}
 			}
-
 
 			if (self.navCoordinates.i !== 0) { // if we are not at 0 then we can just keep moving backwards
 				--self.navCoordinates.i;
@@ -425,6 +438,34 @@ class FileSystemLayout {
 				return;
 			}
 
+			/*
+				Algorithm - Suppose I have a bunch of icons selected as I go left. Now if I press the right arrow key
+							while holding the ctrl button I am suppose to unselect the current current index. (the right arrow key still selects the already selected icon which would be in the index + 1 place, but it shouldn't matter as we have a check to prevent any damage done by that)
+							This is done by checking whether the index after the current index where our current index is i and the index after that is
+							i + 1 is red or not, if it is red then we unselect the current index. If it isn't red then we don't unselect the current position.
+
+							NOTE** - despite all this we will always follow the default behaviour either ctrl is pressed or not
+			*/
+
+			if (self.ctrl) {
+				var icon = self.table.getAt(self.navCoordinates.r, self.navCoordinates.i);
+				// one obvious check is before actually doing the addition to the current index is to check whether
+				// the index is of the last element in the row or not, if it is then we simply jump down a row and
+				// turn the index of the row to 0.
+				if (self.navCoordinates.i === 7) {
+					var row = self.navCoordinates.r + 1;
+					var i = 0;
+				} else {
+					var row = self.navCoordinates.r;
+					var i = self.navCoordinates.i + 1;
+				}
+
+				if (self.table.getAt(row, i).isRed()) {
+					self.unselect(icon);
+				}
+
+			}
+
 			if (self.navCoordinates.i !== 7) { // if we are not at the last index for a row array in a table
 				++self.navCoordinates.i; // increment the i of navCoordinates, to move along the x axis
 			} else {
@@ -434,10 +475,12 @@ class FileSystemLayout {
 
 			self.select(self.table.getAt(self.navCoordinates.r, self.navCoordinates.i)); // select the icon at that coordinate in the table
 
-			// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
-			var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
 
 			if (!self.ctrl) { // if the user is currently pressing down on the ctrl button we don't want to unselect the selected icons
+			
+				// we translate the table indexes into a one for loop type ish index, where one for loop can be used to iterate the entire table
+				var iterations = self.table.translateIndex(self.navCoordinates.r, self.navCoordinates.i);
+
 				// what this for loop does is it loops over the array till the point of the index that is currently being selected and simply unselects them allx
 				for (var i = 0; i < iterations; ++i) {
 					self.unselect(self.table.get(i)); // we loop over each index in a table till the selected point and unselect anything before us
