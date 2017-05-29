@@ -70,6 +70,18 @@ class FileSystem {
 
 	}
 
+	// trashes a file using the path name provided and calls in the FSTree's trashFile method - check FSTree's method for more detail
+	trashFile(path) {
+
+
+
+	}
+
+
+	// trashes a folder using the path name provided and calls in the FSTree's trashFolder method - check FSTree's method for more detail
+	trashFolder(path) {
+		this.tree.trashFolder(path);
+	}
 
 	// removes a file with a specific path given from the file system also updates the FSTree
 	removeFile() {

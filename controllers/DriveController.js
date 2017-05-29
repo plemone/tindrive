@@ -252,9 +252,26 @@ class DriveController {
 
 	// when the user presses the delete button with a bunch of selected files
 	trash(req, res) {
+		var self = this; // this key word has different meanings in different scopes
 		// query the active users database to check the username from the req.params is active or not
 		this.modelAU.query(req.params.username, function() {
+			
+			/* THIS IS JUST A TEST UNDO THIS AND IMLEMENT THIS LATER */
+			
 			// succes in finding the user in the database
+		
+			// retrieve the user's file system object using the username
+			var userFS = self.database.retrieve(req.params.username);
+
+			// trash the folder provided - just a test we don't trash folders all the time if a file
+			// needs to be trashed we trash a file
+			userFS.trashFolder(req.body.path + req.body.name + "/");
+
+
+
+
+
+
 			res.sendStatus(200);
 
 		}, function() {

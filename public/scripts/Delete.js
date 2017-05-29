@@ -10,7 +10,6 @@ class Delete extends UtilityButton {
 		this.functions = [function(self) { // self needs to be passed as a parameter and the base class will provide the keyword "this" so that base class's ids and contents can be accessed when this function is invoked inside the base class
 			$(self.id).on("click", function() {
 				for (var i = 0; i < self.contents.length; ++i) {
-				
 
 					// the important information needed for us to do our business is
 					// the path and the name of the Icon object, we have to encapsulate the
@@ -20,9 +19,9 @@ class Delete extends UtilityButton {
 
 					// encapsulating information away
 					var requestObj = {};
-					requestObj.name = self.contents.name;
-					requestObj.path = self.contents.path;
-					requestObj.type = self.contents.type;
+					requestObj.name = self.contents[i].name;
+					requestObj.path = self.contents[i].path;
+					requestObj.type = self.contents[i].type;
 
 					$.ajax({
 						url: self.route + "trash",
@@ -32,7 +31,6 @@ class Delete extends UtilityButton {
 							console.log("Trashed!");
 						}
 					})
-			
 				}
 			});
 		}];		

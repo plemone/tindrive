@@ -13,6 +13,10 @@
 // It stores away files with exact same architecture of the file system, so that files can be looked up here
 // rather than going through the entire file system.
 
+// If a folder is deleted then the value of a key, where each key is the folder name and value is an array representing
+// the folder's contents will contain a boolean false in the end indicating that the whole folder is suppose to be in the
+// trash directory. 
+
 var FileInfo = require("./FileInfo.js");
 
 class FSTree {
@@ -89,6 +93,23 @@ class FSTree {
 		// so adding it again would make no sense, path string contains the details of the folders that
 		// are being added, so when the flag is set to true, we automatically create the path
 		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
+	}
+
+
+	// using the path provided traverses the FSTree and gets the directory and from the directory extracts
+	// the file and then turns the trash flag on for the file indicating that it is trashed
+	trashFile(path) {
+
+
+	}
+
+	// using the path name provided traverses the FSTRee and gets the directory and the directory found
+	// has to be trashed, we trash the entire directory by adding a boolean true and the end of the directory
+	trashFolder(path) {
+		// calls the traverse function and returns the current working directory by starting from the root and following the path provided through the params
+		var cwd = this.traverse(this.root["ROOT"], path.slice(2), false);
+		// push true to the current working directory indicating that the folder is now trashed
+		cwd.push(true);
 	}
 
 	// removes a file object from the tree
