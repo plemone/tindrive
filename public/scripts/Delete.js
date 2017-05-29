@@ -11,6 +11,10 @@ class Delete extends UtilityButton {
 			$(self.id).on("click", function() {
 				for (var i = 0; i < self.contents.length; ++i) {
 
+					// we also remove the object deleted removed from the DOM immedietly
+					$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
+
+
 					// the important information needed for us to do our business is
 					// the path and the name of the Icon object, we have to encapsulate the
 					// path and the name in an object along with the indicator to whether its
