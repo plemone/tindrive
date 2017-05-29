@@ -263,14 +263,13 @@ class DriveController {
 			// retrieve the user's file system object using the username
 			var userFS = self.database.retrieve(req.params.username);
 
-			// trash the folder provided - just a test we don't trash folders all the time if a file
-			// needs to be trashed we trash a file
-			userFS.trashFolder(req.body.path + req.body.name + "/");
-
-
-
-
-
+			// depending on the file type we call the appropriate method accordingly
+			// if its a file we call the trashFile method, if a folder call the trash folder method
+			if (req.body.type === "folder") {
+				userFS.trashFolder(req.body.path + req.body.name + "/"); // trash the folder
+			} else {
+				userFS.trashFile(req.body.path + req.body.name + "/"); // trash the file
+			}
 
 			res.sendStatus(200);
 
