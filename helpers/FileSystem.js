@@ -70,18 +70,28 @@ class FileSystem {
 
 	}
 
-	// trashes a file using the path name provided and calls in the FSTree's trashFile method - check FSTree's method for more detail
-	trashFile(path) {
-
-
+	// Combine trashFile and trashFolder methods into one method called trash, which checks for
+	// either file or folder before calling the FSTree class to find the cwd, which is the current directory
+	// and insert the true flag indicating trashed.
+	// takes in an file/folder obj as a parameter
+	trash(obj) {
+		// trashes a file using the path name provided and calls in the FSTree's 
+		// trashFile method - check FSTree's method for more detail
+		if (obj.type === "folder") { // check if the object is a folder
+			this.tree.trashFolder(obj);
+		} else { // if its not a folder then its a file
+			this.tree.trashFile(obj);
+		}
 
 	}
 
-
-	// trashes a folder using the path name provided and calls in the FSTree's trashFolder method - check FSTree's method for more detail
-	trashFolder(path) {
-		this.tree.trashFolder(path);
+	// a wrapper function that lists the directory of the contents of a given path, file clicks on the client
+	// will never event get the opportunity to invoke this function don't worry as there are checks in the client side to
+	// prevent that, that being said, this function will not work on path that leads to a file
+	listDirectoryContents(path) {
+		return tree.lsL(path);
 	}
+
 
 	// removes a file with a specific path given from the file system also updates the FSTree
 	removeFile() {
@@ -93,7 +103,7 @@ class FileSystem {
 	removeFolder() {
 
 
-	}
+	} 
 
 	// returns the ls -l array of the directory of the file system
 	getDirectoryEnvironment(path) {

@@ -141,7 +141,7 @@ class DriveController {
 			// retrieve the file system of the user from the facade class
 			var userFS = self.database.retrieve(req.params.username);
 			// retrieve the array from the tree encapsulated inside the users file system
-			var ls = userFS.tree.lsL(req.body.path);
+			var ls = userFS.listDirectoryContents(req.body.path);
 			// create the response object
 			var responseObj = {};
 			// encapsulate the directory contents array inside the response object
@@ -211,7 +211,7 @@ class DriveController {
 			var userFS = self.database.retrieve(req.params.username);
 
 			// retrieve the list of contents in a particular directory
-			var ls = userFS.tree.lsL(req.body.path);
+			var ls = userFS.listDirectoryContents(req.body.path);
 
 			// encapsulate the diretory contents in a response object
 			var responseObj = {};
@@ -237,7 +237,7 @@ class DriveController {
 			var userFS = self.database.retrieve(req.params.username);
 
 			// retrieve the list of contents in a particular directory
-			var ls = userFS.tree.lsL(req.body.path);
+			var ls = userFS.tree.listDirectoryContents(req.body.path);
 
 			// encapsulates the directory contents in a response object
 			var responseObj = {};
@@ -255,7 +255,6 @@ class DriveController {
 		var self = this; // this key word has different meanings in different scopes
 		// query the active users database to check the username from the req.params is active or not
 		this.modelAU.query(req.params.username, function() {
-			
 			/* THIS IS JUST A TEST UNDO THIS AND IMLEMENT THIS LATER */
 			
 			// succes in finding the user in the database
@@ -263,13 +262,9 @@ class DriveController {
 			// retrieve the user's file system object using the username
 			var userFS = self.database.retrieve(req.params.username);
 
-			// depending on the file type we call the appropriate method accordingly
-			// if its a file we call the trashFile method, if a folder call the trash folder method
-			if (req.body.type === "folder") {
-				userFS.trashFolder(req.body.path + req.body.name + "/"); // trash the folder
-			} else {
-				userFS.trashFile(req.body.path + req.body.name + "/"); // trash the file
-			}
+			// Either file or folder, both their paths will be the same, which is req.body.path
+			// as req.body.path is the path of the container folder containing either the folder or file.
+			userFS.trash(req.body);
 
 			res.sendStatus(200);
 

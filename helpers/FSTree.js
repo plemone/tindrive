@@ -96,20 +96,41 @@ class FSTree {
 	}
 
 
-	// using the path provided traverses the FSTree and gets the directory and from the directory extracts
-	// the file and then turns the trash flag on for the file indicating that it is trashed
-	trashFile(path) {
+	// using the path provided from the file object attribute traverses the FSTree and gets the directory and from 
+	// the directory extracts the file using the file objects name attribute 
+	// and then turns the trash flag on for the file indicating that it is trashed.
+	trashFile(fileObj) {
 
 
 	}
 
-	// using the path name provided traverses the FSTRee and gets the directory and the directory found
-	// has to be trashed, we trash the entire directory by adding a boolean true and the end of the directory
-	trashFolder(path) {
-		// calls the traverse function and returns the current working directory by starting from the root and following the path provided through the params
-		var cwd = this.traverse(this.root["ROOT"], path.slice(2), false);
-		// push true to the current working directory indicating that the folder is now trashed
-		cwd.push(true);
+	// using the path name from the folder object attribute provided through the parameter traverses 
+	// the FSTRee and get the directory of the where the folder is contained then identify the folder from the
+	// directory using a for loop and checking with the name attribute from the folder object.
+	trashFolder(folderObj) {
+		// traversing the file system will automatically create the path as the flag is set to true
+		// so adding it again would make no sense, path string contains the details of the folders that
+		// are being added, so when the flag is set to false, we don't create the path automatically
+		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
+
+		// loop over the folder container array and look for the folder by the name of the folderObj
+		// thats the folder we have to turn the flag on
+		for (var i = 0; i < cwd.length; ++i) {
+
+			// we gotta make sure with an if statement that the element in the array is not a file, if its not a file its a folder
+			// then we simply check the name of the folder with the folder object provided
+			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === folderObj.name) { // Object.keys() is a built in JavaScript which returns all the keys that an object has all contianed in an array
+				// since we know that our object has only one key/value pair where the key is the folder and value is the array
+				// containing the contents in the folder, the first index of the returned array of keys is the name of the folder
+
+				// when we find the object we are looking for we add another attribute to the object
+				cwd[i].trashed = true;
+			}
+
+		}
+
+		console.log(cwd);
+
 	}
 
 	// removes a file object from the tree
