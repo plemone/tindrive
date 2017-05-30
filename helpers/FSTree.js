@@ -128,9 +128,6 @@ class FSTree {
 			}
 
 		}
-
-		console.log(cwd);
-
 	}
 
 	// removes a file object from the tree
@@ -241,17 +238,25 @@ class FSTree {
 		// the contents get returned as a string which can be send to the client
 		// side to populate the icons on start up or everytime a folder is clicked
 		// which is essentially cding into the folder!
+
+		// This function also does one very important thing, it filters out folders or files
+		// that are trashed, this gives back the client side a list of directories to populate
+		// where the file or folder they deleted is not there for whatever the situation may be.
+
 		for (var i = 0; i < cwd.length; ++i) {
 			var content = {};
-			if (cwd[i].constructor === FileInfo) {
-				content.name = cwd[i].name;
-				content.type = "file";
-			} else {
-				// name of the content if it is not a FileInfo object is simply the key of the first dictionary key/value pair
-				content.name = Object.keys(cwd[i])[0];
-				content.type = "folder";
+			if (cwd[i].trashed !== true) { // checks if the attribute of the object is trashed or not, deosn't matter if its a file or folder, both the object have the same trashed attribute
+				if (cwd[i].constructor === FileInfo) {
+					content.name = cwd[i].name;
+					content.type = "file";
+				} else {
+					// name of the content if it is not a FileInfo object is simply the key of the first dictionary key/value pair
+					content.name = Object.keys(cwd[i])[0];
+					content.type = "folder";
+				}
+
+				contents.push(content);
 			}
-			contents.push(content);
 		}
 
 		return contents;

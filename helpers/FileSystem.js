@@ -85,11 +85,11 @@ class FileSystem {
 
 	}
 
-	// a wrapper function that lists the directory of the contents of a given path, file clicks on the client
+	// A wrapper function that lists the directory of the contents of a given path, file clicks on the client
 	// will never event get the opportunity to invoke this function don't worry as there are checks in the client side to
-	// prevent that, that being said, this function will not work on path that leads to a file
+	// prevent that, that being said, this function will not work on path that leads to a file.
 	listDirectoryContents(path) {
-		return tree.lsL(path);
+		return this.tree.lsL(path);
 	}
 
 
