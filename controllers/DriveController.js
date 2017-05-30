@@ -237,7 +237,7 @@ class DriveController {
 			var userFS = self.database.retrieve(req.params.username);
 
 			// retrieve the list of contents in a particular directory
-			var ls = userFS.tree.listDirectoryContents(req.body.path);
+			var ls = userFS.listDirectoryContents(req.body.path);
 
 			// encapsulates the directory contents in a response object
 			var responseObj = {};
