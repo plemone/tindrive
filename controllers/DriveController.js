@@ -132,9 +132,9 @@ class DriveController {
 
 	}
 
-	// check mongodb if the active user is pressed, if they are from the database (facade class)
+	// Check mongodb if the active user is pressed, if they are from the database (facade class)
 	// grab the users file system, ls it using the path sent to you through the route and then
-	// send the array back by putting it inside a json object
+	// send the array back by putting it inside a json object.
 	init(req, res) {
 		var self = this;
 		this.modelAU.query(req.params.username, function() {

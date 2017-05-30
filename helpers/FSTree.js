@@ -96,14 +96,6 @@ class FSTree {
 	}
 
 
-	// using the path provided from the file object attribute traverses the FSTree and gets the directory and from 
-	// the directory extracts the file using the file objects name attribute 
-	// and then turns the trash flag on for the file indicating that it is trashed.
-	trashFile(fileObj) {
-
-
-	}
-
 	// using the path name from the folder object attribute provided through the parameter traverses 
 	// the FSTRee and get the directory of the where the folder is contained then identify the folder from the
 	// directory using a for loop and checking with the name attribute from the folder object.
@@ -126,7 +118,24 @@ class FSTree {
 				// when we find the object we are looking for we add another attribute to the object
 				cwd[i].trashed = true;
 			}
+		}
+	}
 
+	// using the path provided from the file object attribute traverses the FSTree and gets the directory and from 
+	// the directory extracts the file using the file objects name attribute 
+	// and then turns the trash flag on for the file indicating that it is trashed.
+	trashFile(fileObj) {
+
+		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
+
+		for (var i = 0; i < cwd.length; ++i) {
+
+			// if the element in the containing folder array is a file and the name of the file matches the name of the file object
+			// then we proceed to turning the boolean of the trashed attribute of the file object to true
+			if (cwd[i].constructor === FileInfo && cwd[i].name === fileObj.name) {
+				// when we find the object we are looking for we set the already existing trashed boolean from false to true
+				cwd[i].trashed = true;
+			}
 		}
 	}
 

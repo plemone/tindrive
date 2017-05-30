@@ -2,6 +2,12 @@
 
 var MongoClient = require("mongodb").MongoClient; // database module
 
+// NOTE** - The reason that the successCallBack and failureCallBack will work and can successfully access
+//			the variables is because the class Users has a composition releationship with the Controller,
+//          this means that because of lexical scoping the Users class can access the variables scoped 
+//          within the Controller class. I am specifying this to remind you that the function that invokes
+//          has to supply all the variables and resources for the function being passed on to do the job!
+
 class Users {
 
 	constructor() {
