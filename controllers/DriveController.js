@@ -264,7 +264,12 @@ class DriveController {
 
 			// Either file or folder, both their paths will be the same, which is req.body.path
 			// as req.body.path is the path of the container folder containing either the folder or file.
-			userFS.trash(req.body);
+			var content = userFS.trash(req.body); // we return the content (file or folder) which we will use and insert to the database
+
+			if (content) { // if and only if content exists we add it to the MongoDB database
+
+
+			}
 
 			res.sendStatus(200);
 

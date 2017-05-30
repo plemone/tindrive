@@ -27,12 +27,6 @@ class FSTree {
 		this.root = {"ROOT": []};
 	}
 
-	// inserts a file object to the tree structure
-	insertFile(fileObj) {
-		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
-		cwd.push(fileObj);
-
-	}
 	// cwd is the current folder, path are the more folders you
 	// need to traverse, createFolder is a boolean which when turned on, will
 	// create folders in a path, if they don't exist
@@ -87,12 +81,23 @@ class FSTree {
 
 	}
 
+	// inserts a file object to the tree structure
+	insertFile(fileObj) {
+		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
+		if (!cwd) { // if cwd is false we end the function as we cannot treat boolean like an array
+			return cwd;
+		}
+		cwd.push(fileObj);
+		return cwd;
+	}
+
 	// creates a folder partition in the file structure
 	insertFolder(folderObj) {
 		// traversing the file system will automatically create the path as the flag is set to true
 		// so adding it again would make no sense, path string contains the details of the folders that
 		// are being added, so when the flag is set to true, we automatically create the path
 		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
+		return cwd;
 	}
 
 
@@ -117,8 +122,11 @@ class FSTree {
 
 				// when we find the object we are looking for we add another attribute to the object
 				cwd[i].trashed = true;
+				return cwd[i]; // when we find the folder and turn the trashed to true we simply returning ending the function right there
 			}
 		}
+
+		return false; // if we reached this part of the code it means that we haven't found our object and we simply return false
 	}
 
 	// using the path provided from the file object attribute traverses the FSTree and gets the directory and from 
@@ -135,8 +143,11 @@ class FSTree {
 			if (cwd[i].constructor === FileInfo && cwd[i].name === fileObj.name) {
 				// when we find the object we are looking for we set the already existing trashed boolean from false to true
 				cwd[i].trashed = true;
+				return cwd[i]; // when we find the file and turn the trashed to true we simply returning ending the function right there
 			}
 		}
+
+		return false; // if we reached this part of the code it means that we haven't found our object and we simply return false
 	}
 
 	// removes a file object from the tree
@@ -241,6 +252,10 @@ class FSTree {
 	// list the files or folders of the current working directory
 	lsL(path) {
 		var cwd = this.traverse(this.root["ROOT"], path.slice(2), false);
+		if (!cwd) {
+			return cwd; // traverse will return false so if it does we simply end the function here
+		}
+
 		var contents = [];
 		// simply loop over and put the contents of the folder in an array
 		// if it is a file then type is file, else it is a folder string

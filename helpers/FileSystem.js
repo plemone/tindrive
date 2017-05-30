@@ -49,7 +49,7 @@ class FileSystem {
 
 		// add to the tree
 		var file = new FileInfo(fileObj.name, fileObj.lastModified, fileObj.size, fileObj.type, fileObj.path);
-		this.tree.insertFile(file);
+		return this.tree.insertFile(file); // returns false upon failure and upon success returns the array representing the directory
 	}
 
 	// folders created
@@ -62,7 +62,7 @@ class FileSystem {
 				console.log("Folder named " + folderObj.name + " successfully created...");
 
 				// insert to the the tree of the user's file system
-				self.tree.insertFolder(folderObj);
+				return self.tree.insertFolder(folderObj); // returns false upon failure and upon success returns the array representing the directory
 				
 				// all done :)
 			}
@@ -78,9 +78,9 @@ class FileSystem {
 		// trashes a file using the path name provided and calls in the FSTree's 
 		// trashFile method - check FSTree's method for more detail
 		if (obj.type === "folder") { // check if the object is a folder
-			this.tree.trashFolder(obj);
+			return this.tree.trashFolder(obj); // this.tree.trashFolder(obj) will either return false or return the trashed object
 		} else { // if its not a folder then its a file
-			this.tree.trashFile(obj);
+			return this.tree.trashFile(obj); // this.tree.trashFile(obj) will either return false or return the trashed object
 		}
 
 	}
