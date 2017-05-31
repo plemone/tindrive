@@ -82,7 +82,6 @@ class FileSystem {
 		} else { // if its not a folder then its a file
 			return this.tree.trashFile(obj); // this.tree.trashFile(obj) will either return false or return the trashed object
 		}
-
 	}
 
 	// A wrapper function that lists the directory of the contents of a given path, file clicks on the client
