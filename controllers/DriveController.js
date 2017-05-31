@@ -9,6 +9,7 @@ var Database = require("./../helpers/Database.js"); // ./../ means cd out of the
 
 var ActiveUsers = require("./../models/ActiveUsers.js"); // ActiveUsers model imported
 var Users = require("./../models/Users.js"); // Users model imported
+var Trashes = require("./../models/Trashes.js"); // Trashes model imported
 
 /* Constants */
 const SALT = 10; // salt for the bcrypt password hashing

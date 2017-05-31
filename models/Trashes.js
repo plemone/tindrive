@@ -6,10 +6,8 @@ var MongoClient = require("mongodb").MongoClient; // mongodb module
 class Trashes {
 
 	constructor() {
-
 		this.db = "mongodb://localhost:27017/TinDriveUsers"; // link which you use to connect to mongo db database
-		this.collection = "Trashes";
-
+		this.collection = "Trashes"; // name of the collection
 	}
 
 	// upsert means updating the existing document, and if the document doesn't exist it gets updated
@@ -40,7 +38,7 @@ class Trashes {
 	query(name, successCallBack, failureCallBack) {
 		var self = this; // the keyword "this" has different meaning in different scopes
 		MongoClient.connect(this.db, function(err, db) { // the logic of what happens upon success or failure gets passed on through the successCallBack and failureCallBack functions
-			if (err) {mongodb update call back
+			if (err) {
 				console.log("Error in finding the name in the database...");
 			} else {
 				db.collection(self.collection).findOne({"name": name}, function(err, doc) {
@@ -51,9 +49,10 @@ class Trashes {
 						}
 					} else {
 						if (successCallBack) { // a check to see if the user provided the successCallBack, if the user of this class didn't then it would be undefined
-							successCallBack(); // invoke the successCallBack function specified by the class using this object, when the class passes the function in
+							// successCallBack function which will be passed as a parameter when query method is invoked in the controller will be using the doc parameter supplied by the query method
+							// which gets the doc from the mongodb findOne method
+							successCallBack(doc); // invoke the successCallBack function specified by the class using this object, when the class passes the function in
 						}
-
 					}
 					db.close(); // always close the database in the end
 				});
@@ -64,4 +63,4 @@ class Trashes {
 }
 
 
-module.exports = Trashs;
+module.exports = Trashes;
