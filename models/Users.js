@@ -8,6 +8,8 @@ var MongoClient = require("mongodb").MongoClient; // database module
 //          within the Controller class. I am specifying this to remind you that the function that invokes
 //          has to supply all the variables and resources for the function being passed on to do the job!
 
+
+// Represents the collection Users
 class Users {
 
 	constructor() {

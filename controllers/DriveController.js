@@ -32,8 +32,9 @@ class DriveController {
 		// generate the database for every single user registered in the system
 		this.database = new Database();
 		this.database.generate();
-		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUser elel
-		this.modelU = new Users();
+		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUsers model which is a collection
+		this.modelU = new Users(); // composition relationship with the Users model which is a collection
+		this.modelTrahs = new Trashes(); // composition relationship with the Trashes model which is a collection
 	}
 
 	intro() {
@@ -267,6 +268,7 @@ class DriveController {
 			var content = userFS.trash(req.body); // we return the content (file or folder) which we will use and insert to the database
 
 			if (content) { // if and only if content exists we add it to the MongoDB database
+
 
 
 			}

@@ -3,6 +3,7 @@
 var Users = require("./Users.js");
 var MongoClient = require("mongodb").MongoClient; // database module
 
+// represents the collection ActiveUsers
 class ActiveUsers extends Users {
 
 	constructor() { 
