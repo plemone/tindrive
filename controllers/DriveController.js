@@ -30,16 +30,33 @@ const FSPATH = "./filesystems/user-fs/";
 class DriveController {
 	
 	constructor() {
-		// generate the database for every single user registered in the system
-		this.database = new Database();
-		this.database.generate();
 		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUsers model which is a collection
 		this.modelU = new Users(); // composition relationship with the Users model which is a collection
 		this.modelT = new Trashes(); // composition relationship with the Trashes model which is a collection
+		// generate the database for every single user registered in the system
+		this.database = new Database(); // database containing the file systems of different users
+		this.initDatabase(); // traverses each users file system, creates the file system object and populates the FSTree of the file system
+	
 	}
 
 	intro() {
 		console.log("Server is listening on port 3000...");
+	}
+
+	initDatabase() {
+		var self = this; // the keyword "this" has different meaning in different scopes
+		// we find all the items in the trash directory which is basically we find the trash director for each user 
+		// and pass it on to this.database.generate() which uses these items to filter flag the items when 
+		// generating the FSTree for each when iterating through the each user's directory in the server' file system 
+		this.modelT.queryAll(function(cursor) {
+			cursor.toArray(function(err, items) {
+				if (err) {
+					console.log("Error in turning the cursor to array of trash directoy documents...");
+				} else {
+					self.database.generate(items); // generates the database of each user
+				}
+			});
+		});
 	}
 
 	index(req, res) {
@@ -84,13 +101,29 @@ class DriveController {
 							userDetails.id = genObj.generateId(req.body.username);
 							// user registered and inserted to the database
 							self.modelU.insert(userDetails, function() {
-								console.log("User registered");
+								console.log("User " + userDetails.name + " registered...");
+								
+								// when user registration is successful we create the trash directory of the user in the Trashes collection as well
+								
+								// we create the object which will represent the trash directory of the user
+								var userTrashedDir = {};
+
+								// we assign a name attribute for the object to find the trash directory of the user by querying with the user's name
+								userTrashedDir.name = userDetails.name;
+
+								// create the empty directory which will contain the users empty files and folders
+								userTrashedDir.trashedDir = [];
+
+								// upsert the document to mongodb
+								self.modelT.upsert(userTrashedDir, function() { // to create the Trash directory we need to provide the name of the user
+									console.log("Trash directory for the user " + userDetails.name + " created....");
+								});
 							});
 							// the file system folder needs to be created for individual users
 							// each user has their own folder
 							fs.mkdir(FSPATH + req.body.username, function(err) {
 								if (err) console.log("Error in creating directory...");
-								else console.log("Directory called " + req.body.username + " created");
+								else console.log("Directory called " + req.body.username + " created...");
 							});
 							// added to the static database of users, NOTE** - on initial registration the user's FSTree is empty
 							self.database.add(req.body.username);
@@ -107,6 +140,7 @@ class DriveController {
 		}
 	}
 
+	// upon successful authentication this function is called which redirects the user by changing the url in the client side
 	redirect(req, res) {
 		this.modelAU.insert(req.body.name, function() {
 			res.sendStatus(200);
@@ -115,6 +149,8 @@ class DriveController {
 		});
 	}
 
+	// every word the user types in the registration box's username field gets checked with the server for any
+	// possible matches in the mongodb, if found "0" is send if not found "1" is send back to the client
 	nameCheck(req, res) {
 		this.modelU.query(req.body.val, function() {
 			res.status(200).send("0"); // if it is found in the database then red light
@@ -153,6 +189,7 @@ class DriveController {
 		}, function() { res.status(200).render("404"); });
 	}
 
+	// files dropped into the dropzone from the client side gets written into the server's file system
 	uploadFiles(req, res) {
 		var self = this;
 		// check for the username provided is found in the collection of active users in the database
@@ -333,8 +370,7 @@ class DriveController {
 
 	}
 
-
-
+	// removes the user from the ActiveUsers collection
 	logout(req, res) {
 		this.modelAU.remove(req.body.name, function() { 
 			res.sendStatus(200); 

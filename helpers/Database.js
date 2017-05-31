@@ -51,7 +51,7 @@ class Database {
 
 	// loop over all the contents of user-fs folder and populate the trees in 
 	// each object inside the collection
-	generate() {
+	generate(trashDirectories) {
 		var self = this;
 		// reads the contents in a directory and returns an array of all the conents
 		// of the directory
