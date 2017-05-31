@@ -274,12 +274,48 @@ class DriveController {
 				self.modelT.query(req.params.username, function(doc) {
 
 					if (doc === null) {
+						// if doc is null it means that the object we were looking for in the mongo db collection couldn't be found
+						
+						// object created to store the user's name and the directory of files or folders that are trashed
+						// since its the first time we are deleting a file or folder we need to create the objects which represents
+						// a directory of trashed files and folders
+						var userTrashedDir = {};
 
-						console.log("No trash found!");
+						// Add the name of the user to the object as an attribute to the object, because each object needs 
+						// to be identified using the name when the query method of the modelT is called. Each user will
+						// have their own individual trash folder and to access it the user's name should be used as an identifier.
+						userTrashedDir.name = req.params.username;
+
+						// trashedDir is the attribute which stores the files or folders with their trashed boolean set to true
+						userTrashedDir.trashedDir = [];
+
+						// push the folder or file object that we just deleted into the trashedDir array
+						userTrashedDir.trashedDir.push(content); 
+
+						// upsert the created object into the Trashed collection for that individual user
+						self.modelT.upsert(userTrashedDir);
+
+						console.log("Trashed directory for the user " + req.params.username + " created...");
 
 					} else {
+						// if doc is not null that means doc has successfully returned the object that we were looking for and we can now
+						// successfully update the object that we found
 
-						console.log("Trash found");
+						// we access the trashedDir attribute from the object retrieved from mongodb
+						var trashedDir = doc.trashedDir;
+
+						// push the folder or file object that we just deleted into the trashedDir array
+						trashedDir.push(content);
+
+						// we create the new updated object which will be used to be updated back into mongodb
+						var newUserTrashedDir = {};
+						newUserTrashedDir.name = doc.name;
+						newUserTrashedDir.trashedDir = trashedDir;
+
+						// now with the new trashedDir array filled with more deleted objects we insert it back into the mongodb, by updating our prexisting object
+						self.modelT.upsert(newUserTrashedDir);
+
+						console.log("Trashed directory for the user " + req.params.username + " updated...");
 
 					}
 
