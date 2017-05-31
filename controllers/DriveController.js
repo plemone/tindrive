@@ -35,7 +35,7 @@ class DriveController {
 		this.database.generate();
 		this.modelAU = new ActiveUsers(); // composition relationship with the ActiveUsers model which is a collection
 		this.modelU = new Users(); // composition relationship with the Users model which is a collection
-		this.modelTrahs = new Trashes(); // composition relationship with the Trashes model which is a collection
+		this.modelT = new Trashes(); // composition relationship with the Trashes model which is a collection
 	}
 
 	intro() {
@@ -270,11 +270,25 @@ class DriveController {
 
 			if (content) { // if and only if content exists we add it to the MongoDB database
 
+				// query() method of modelT object will take three parameters, the name, a successcall back and the failure call back
+				self.modelT.query(req.params.username, function(doc) {
 
+					if (doc === null) {
+
+						console.log("No trash found!");
+
+					} else {
+
+						console.log("Trash found");
+
+					}
+
+					
+					res.sendStatus(200); // successCallBack should always return a positive response
+					
+				}, function() { res.status(200).render("404"); }); // failureCallBack should always return a 404 page
 
 			}
-
-			res.sendStatus(200);
 
 		}, function() {
 			// failure to find the user in the database
