@@ -59,7 +59,7 @@ class Database {
 			if (err) console.log("Error in reading contents of the directory...");
 			else {
 				for (var i = 0; i < files.length; ++i) { 
-					// delegates responsibilities to the generateHelper function
+					// delegates responsibilities to the traverse function
 					var fileSystem = new FileSystem(files[i], self.root); // creates each users file system
 					self.traverse(fileSystem, fileSystem.path);
 					self.collection.push(fileSystem);
@@ -72,8 +72,12 @@ class Database {
 		// specific user
 	}
 
-	// recursively adds all the contents of all the nested folders to the fileSystem (helper function)
-	traverse(fsObj, path, containerFolder) {
+	// Recursively adds all the contents of all the nested folders in each users fileSystem (helper function).
+	// Traverse function will take the file system object, the path to the user's filesystem in the server's 
+	// file system, the containerFolder folder when incase we are not dealing with a file anymore and want to insert a folder
+	// and finally the array of trash folders trash Directory and files which gets whos elements get checked up with the file or folder
+	// about to be added to the FSTree in the user's file system object.
+	traverse(fsObj, path, containerFolder, trashDirectory) {
 		console.log("cding... " + path);
 		var self = this;
 
@@ -94,6 +98,8 @@ class Database {
 			var folderObj = {};
 			folderObj.name = containerFolder;
 			folderObj.path = path;
+			// tree.insertFolder makes the folder as it traverses the path name, therefore we need to specifiy
+			// which folder's flag we need to turn to false
 			fsObj.tree.insertFolder(folderObj);
 		}
 
@@ -140,7 +146,7 @@ class Database {
 				// folder in the loop
 				// visualize the recursion in your head, or draw it out if you get confused, check old notebook
 				// files[i] should be a folder in this case
-				self.traverse(fsObj, path + files[i] + "/", files[i]); // files[i] is the name of the folder that we are about to cd in 
+				self.traverse(fsObj, path + files[i] + "/", files[i], trashDirectory); // files[i] is the name of the folder that we are about to cd in 
 			}
 		}
 	}

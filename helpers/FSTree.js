@@ -1,5 +1,8 @@
 'use strict';
 
+// ISSUE - FIX THE FSTREE, travers() SHOULD NOT BE RESPONSIBLE FOR CREATING FOLDER OBJECTS!!!
+
+
 // literelly mimics the file system, except that it only contains file information
 // rather then the actual file contents
 
@@ -99,7 +102,6 @@ class FSTree {
 		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
 		return cwd;
 	}
-
 
 	// using the path name from the folder object attribute provided through the parameter traverses 
 	// the FSTRee and get the directory of the where the folder is contained then identify the folder from the

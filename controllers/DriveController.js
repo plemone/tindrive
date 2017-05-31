@@ -231,6 +231,7 @@ class DriveController {
 			// retrieve the file system of the user from the facade class
 			var userFS = self.database.retrieve(req.params.username);
 			// delegate the responsibilities to the userFS
+			console.log(req.body.path);
 			userFS.uploadFolder(req.body);
 			res.sendStatus(200);						
 		}, function() { res.status(200).render("404"); });
