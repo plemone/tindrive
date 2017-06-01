@@ -17,12 +17,12 @@ class FileSystem {
 		// this.self = this; // recursive call, CONTAINS A REFERENCE TO SELF WHICH IN TURN CONTAINS A REFERENCE TO SELF AND SO ON AND ON
 		this.username = username; // the username of the collection in the TinDriveFS
 		this.path = path + username + "/"; // the path for which the file system exists
-		this.tree = new FSTree(); // contains a composition relationship with the FSTree which is a collection class holding file system informations
+		this.tree = new FSTree(this.path); // contains a composition relationship with the FSTree which is a collection class holding file system informations
+										  // the path that needs to be provieded to FSTree must be the path to the users unique directory which is the ROOT for the user
 	}
 
 
 	/* build nice and proper member functions to add the JSON files representing your files */
-
 
 	// folders must be created first before file can be inserted
 	uploadFile(fileObj) {

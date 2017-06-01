@@ -20,35 +20,92 @@
 // the folder's contents will contain a boolean false in the end indicating that the whole folder is suppose to be in the
 // trash directory. 
 
-var FileInfo = require("./FileInfo.js");
+var FileInfo = require("./FileInfo.js"); // needed to check element type 
+var FolderInfo = require("./FolderInfo.js"); // needed to check element type
 
 class FSTree {
 	// basic idea is to have nested single key value pair where a key is a string
 	// containing the folder name and a value is an array containing the folder file
 	// system structure
-	constructor() {
-		this.root = {"ROOT": []};
+	constructor(path) {
+		// we make the root folder object with the name "ROOT", this directory will contain all other folders and files
+		// and is the first view on the drag and drop zone upon load, path is the path of the directory that it exists in the server
+		// and false indicates that the folder is not trashed
+		this.root = new FolderInfo("ROOT", path, false);
+	
+		this.initTree(path);
+
 	}
 
-	// cwd is the current folder, path are the more folders you
-	// need to traverse, createFolder is a boolean which when turned on, will
-	// create folders in a path, if they don't exist
-	traverse(cwd, path, createFolder) {
-		// NOTE** - cwd is a reference pointer to the specific array inside the nested object
-		//          in the data structure, modifying cwd will modify the specific parts of the FSTree directly
-		//          reassigning cwd will change the pointer of cwd to point to something else!
+	// responsible for taking the base path and creating the files needed to mimic the fs tree
+	// as the fs tree will always follow the same spefic path to insert folders and files
+	// for example every file will follow something like ./filesystems/user-fs/username/
+	// so these folders need to exist to be traversed!
+	initTree(path) {
+		var preExistingFolders = [];
+
+		// We remove the the ./ as we don't really need them as our algorithm starts extracting
+		// each word and assins them into a string until it encounters a "/". This allows us to 
+		// successfully get folder names from a large path. Therefore including ./ would make a folder
+		// called .
+		path = path.slice(2);
+
+		// using the path we extract the folders using the path string and store them in an array called preExistingFolders
+		var i = 0;
+		var folderName = "";
+
+		// we loop till i reaches the length of the path
+		while (i !== path.length) {
+
+			// when we hit "/" we add the folderName to the array of folders and add it array of folders 
+			if (path[i] === "/") {
+				// add the folder name to the array
+				preExistingFolders.push(folderName);
+				// reset the folderName to extract another folder name in the path after the "/"
+				folderName = "";
+				// we increment the i and skip anything below this if statement inside the while loop
+				++i;
+				continue;
+			}
+
+			// we add every word in the path to the folderName string until we encounter a "/"
+			folderName += path[i];
+			
+			// increment the i to proceed the loop
+			++i;
+		}
+
+		// next step is to iterate over the array of folder names and create folder objects out of them and insert them into the FSTree
+		// to create a chain of directories that lead to the user's unique root folder
+
+		console.log(preExistingFolders);
+
+
+
+	}
+
+	// cwd is the current folder, path are the more folders you need to traverse,
+	traverse(cwd, path) {
+		/*
+			NOTE** - cwd is a reference pointer to the specific array inside the nested object
+			         in the data structure, modifying cwd will modify the specific parts of the FSTree directly
+			         reassigning cwd will change the pointer of cwd to point to something else!
+		*/
 
 		// if path is an empty string we are done! no more folders to traverse
 		if (path === "") {
 			return cwd;
 		}
 
-		var nextFolder = ""; // will be containing the folder to cd in 
-		var index = 0; // index to traverse the path string
+		// will be containing the folder to cd in 
+		var nextFolder = ""; 
+		// index to traverse the path string
+		var index = 0;
 
 		// we traverse till we hit the first forward slash ("/")
 		while (path[index] !== "/") {
-			nextFolder += path[index++]; // and as we traverse the string we keep adding each letter to the nextFolder which helps us successfully add letters of the folder name
+			// and as we traverse the string we keep adding each letter to the nextFolder which helps us successfully add letters of the folder name			
+			nextFolder += path[index++];
 		}
 
 		// now check to see if the folder exists or not, if it doesn't then
@@ -59,47 +116,42 @@ class FSTree {
 		// but this time passing in the value of the cwd key
 		for (var i = 0; i < cwd.length; ++i) {
 			// this if statement checks if the folder already exists or not
-			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
+			if (cwd[i].constructor !== FileInfo && cwd[i].name === nextFolder) {
 				// cd into the folder if it already exists and then proceed in the next recursive call
-				return this.traverse(cwd[i][nextFolder], path.slice(++index), true);
+				return this.traverse(cwd[i].directory, path.slice(++index), true);
 			}
 		}
 
-		// if the for loop part was crossed it means that we have not found the folder
-		// in the current directory/folder
-
-		// then make another folder object and push it onto the the current folder
-		if (createFolder) {
-			var obj = {};
-			obj[nextFolder] = [];
-			cwd.push(obj);
-
-			// slice(index) slice literelly slices of a string array from and including the current index
-			
-			// and make a recursive call which cds you into the newly pushed folder
-			return this.traverse(cwd[cwd.length - 1][nextFolder], path.slice(++index), true);
-		}
-
+		// If we passed all the code above this line it means we haven't found the correct folder name with which
+		// we can cd into and since we cannot find the correct folder we simply return false. Reasons that we might
+		// end up returning false would be because the sequence of folder that the path asks us to follow doesn't exist.
 		return false;
 
 	}
 
 	// inserts a file object to the tree structure
 	insertFile(fileObj) {
-		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), true);
 		if (!cwd) { // if cwd is false we end the function as we cannot treat boolean like an array
 			return cwd;
 		}
+		// Insert the file to the directory, don't worry making changes to this cwd will directly change the value in the FSTree object itself
+		// because of the object being globally scoped within the class and all these functions has direct access to them.
 		cwd.push(fileObj);
 		return cwd;
 	}
 
-	// creates a folder partition in the file structure
+	// creates a folder in the directory specified in the path attribute of the folderObj provided through the parameter
 	insertFolder(folderObj) {
-		// traversing the file system will automatically create the path as the flag is set to true
-		// so adding it again would make no sense, path string contains the details of the folders that
-		// are being added, so when the flag is set to true, we automatically create the path
-		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
+		// store the array represents the folder directory of the given path and store it in the variable cwd
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), true);
+
+		if (!cwd) { // if cwd is false we end the function as we cannot treat a boolean like an array
+			return cwd;
+		}
+		// Insert the folder to the directory, don't worry making changes to this cwd will directly change the value in the FSTree object itself
+		// because of the object being globally scoped within the class and all these functions has direct access to them.		
+		cwd.push(folderObj);
 		return cwd;
 	}
 
@@ -110,7 +162,7 @@ class FSTree {
 		// traversing the file system will automatically create the path as the flag is set to true
 		// so adding it again would make no sense, path string contains the details of the folders that
 		// are being added, so when the flag is set to false, we don't create the path automatically
-		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), true);
 
 		// loop over the folder container array and look for the folder by the name of the folderObj
 		// thats the folder we have to turn the flag on
@@ -118,7 +170,7 @@ class FSTree {
 
 			// we gotta make sure with an if statement that the element in the array is not a file, if its not a file its a folder
 			// then we simply check the name of the folder with the folder object provided
-			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === folderObj.name) { // Object.keys() is a built in JavaScript which returns all the keys that an object has all contianed in an array
+			if (cwd[i].constructor !== FileInfo && cwd[i].name === folderObj.name) { // Object.keys() is a built in JavaScript which returns all the keys that an object has all contianed in an array
 				// since we know that our object has only one key/value pair where the key is the folder and value is the array
 				// containing the contents in the folder, the first index of the returned array of keys is the name of the folder
 
@@ -127,7 +179,6 @@ class FSTree {
 				return cwd[i]; // when we find the folder and turn the trashed to true we simply returning ending the function right there
 			}
 		}
-
 		return false; // if we reached this part of the code it means that we haven't found our object and we simply return false
 	}
 
@@ -136,7 +187,7 @@ class FSTree {
 	// and then turns the trash flag on for the file indicating that it is trashed.
 	trashFile(fileObj) {
 
-		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), true);
 
 		for (var i = 0; i < cwd.length; ++i) {
 
@@ -148,14 +199,13 @@ class FSTree {
 				return cwd[i]; // when we find the file and turn the trashed to true we simply returning ending the function right there
 			}
 		}
-
 		return false; // if we reached this part of the code it means that we haven't found our object and we simply return false
 	}
 
 	// removes a file object from the tree
 	removeFile(fileObj) {
 		// similar to insertFile method where we simply return the array where we are going to insert
-		var cwd = this.traverse(this.root["ROOT"], fileObj.path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), false);
 		// checks to see if cwd exists and is not false
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
@@ -173,13 +223,12 @@ class FSTree {
 		// if all fails then cwd will be false because traverse would return false
 		// and traverse return value gets stored in as cwd
 		return cwd;
-
 	}
 
 	// removes all the file objects contained within a folder scope
 	removeFolder(folderObj) {
 		// similar to insertFile method where we simply return the array where we are going to insert
-		var cwd = this.traverse(this.root["ROOT"], folderObj.path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), false);
 		// if cwd doesn't return false 
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
@@ -191,7 +240,7 @@ class FSTree {
 				// Object.keys(cwd[i]) returns an array of all the keys of a dictionary in Javascript
 				// since each folder has only one key/value pair, the first index of the array will be the key
 				// which is the name of our folder!
-				if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === folderObj.name) {
+				if (cwd[i].constructor !== FileInfo && cwd[i].name === folderObj.name) {
 					// similarly we splice again, when we find the folder
 					cwd.splice(i, 1);
 					return true;
@@ -202,58 +251,9 @@ class FSTree {
 		return cwd;
 	}
 
-	// finds the given file query
-	query(fileObj) {
-		// search should begin from the root therefore cwd = this.root["ROOT"]
-		// also always remember to slice the initial path that you use to call the queryHelper
-		// as it contains "./" by default and we need to get rid of that
-		return this.queryHelper(fileObj.name, this.root["ROOT"], fileObj.path.slice(2));
-	}
-
-	queryHelper(name, cwd, path) {
-		// base case, that means we are out of path to traverse and have successfully landed
-		// in our path, now lets loop through the array of folder contents if we find out file
-		// then boom good job! return true, else return false
-		if (path === "") {
-			for (var i = 0; i < cwd.length; ++i) {
-				// we have to make sure the object in the contents is a file before trying
-				// to access it
-				if (cwd[i].constructor === FileInfo && cwd[i].name === name) {
-					return true;
-				}
-			}
-			// if we got out of the for loop it simply means we couldn't find the file
-			// in the current directory
-			return false;
-		}
-
-		var nextFolder = "";
-		var index = 0;
-
-		// while we don't hit the backslash extract the letters and put them in the nextFolder variable
-		// this variable will be used to cd into the next folder our destination sets!
-		while (path[index] != "/") {
-			nextFolder += path[index++];
-		}
-
-
-		// now we cd into the folder by looping in the contents inside the folder we are in
-		// if we find it then recursively call yourself changing the current directory and the new path!
-		// else we simply return false!
-
-		for (var i = 0; i < cwd.length; ++i) {
-			if (cwd[i].constructor !== FileInfo && Object.keys(cwd[i])[0] === nextFolder) {
-																// ++ because we don't want to include the "/", slice includes the number you slice with
-				return this.queryHelper(name, cwd[i][nextFolder], path.slice(++index));
-			}
-		}
-
-		return false;
-	}
-
 	// list the files or folders of the current working directory
 	lsL(path) {
-		var cwd = this.traverse(this.root["ROOT"], path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, path.slice(2), false);
 		if (!cwd) {
 			return cwd; // traverse will return false so if it does we simply end the function here
 		}
@@ -277,10 +277,9 @@ class FSTree {
 					content.type = "file";
 				} else {
 					// name of the content if it is not a FileInfo object is simply the key of the first dictionary key/value pair
-					content.name = Object.keys(cwd[i])[0];
+					content.name = cwd[i].name;
 					content.type = "folder";
 				}
-
 				contents.push(content);
 			}
 		}
@@ -293,11 +292,9 @@ class FSTree {
 	// this is mostly for debugging purposes only
 	lsR() {
 		// pass in the empty string to recurseToString where you keep shoving everything in
-		var outStr = this.rToString("", this.root["ROOT"], "", 0);
+		var outStr = this.rToString("", this.root.directory, "", 0);
 		console.log(outStr);
 	}
-
-
 
 	// we use cwd to traverse by recursively calling the function
 	// in a for loop as we traverse the folder contents, if a content is
@@ -323,50 +320,23 @@ class FSTree {
 				// you don't need to do outStr += name, because we want to replace the orginal outStr
 				// with the newly added outStr, we don't want to add whatever was before with the new one
 				// this keeps adding duplicates on top of each other
-				outStr += spaces + "Folder: " + Object.keys(cwd[i]) + "\n";					  // increment the iter so that we increment the space everytime we cd into a folder to have a nice format
-																							 //  iter variable needs to be there because we need to make sure that the first folder should not have any spaces
-																							 //  but as we cd into more and more folders the spaces increase as we are going deeper and deeper
-				outStr = this.rToString(outStr, cwd[i][Object.keys(cwd[i])[0]], spaces, ++iter);
+				outStr += spaces + "Folder: " + cwd[i].name + "\n";					  // increment the iter so that we increment the space everytime we cd into a folder to have a nice format
+																					 //  iter variable needs to be there because we need to make sure that the first folder should not have any spaces
+																					//  but as we cd into more and more folders the spaces increase as we are going deeper and deeper
+				outStr = this.rToString(outStr, cwd[i].directory, spaces, ++iter);
 			} else {
 				outStr += spaces + "--> File: " + cwd[i].name + "\n";
 			}
 		}
-
 		return outStr;
 	}
-
 }
 
 function test() {
-	var tree = new FSTree();
 
-	var file = new FileInfo("file1", "", "", "", "./blah/");
-	tree.insertFile(file);
 
-	var file2 = new FileInfo("file2", "", "", "", "./blah/moreblahs/");
-	tree.insertFile(file2);
 
-	var folder = {};
-	folder.name = "archive";
-	folder.path = "./asdxc/ooo/";
 
-	tree.insertFolder(folder);
-
-	tree.lsR();
-
-	var file3 = new FileInfo("file3", "", "", "", "./blah/asdasd/");
-
-	console.log(tree.query(file3));
-
-	tree.removeFile(file2);
-
-	tree.lsR();
-
-	tree.removeFolder(folder);
-
-	tree.lsR();
-
-	console.log(tree.lsL("./"));
 }
 
 // main to test the tree implementation

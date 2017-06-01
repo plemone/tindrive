@@ -2,7 +2,8 @@
 
 var fs = require("fs");
 var FileSystem = require("./FileSystem.js");
-var FileInfo = require("./FileInfo.js");
+var FileInfo = require("./FileInfo.js"); // to create file objects when generating user's file system upon server start
+var FolderInfo = require("./FolderInfo.js"); // to create folder objects when generating user's file system upon server start
 var mime = require("mime");
 
 // This database self generates automatically everytime the server is launched!
@@ -74,40 +75,22 @@ class Database {
 
 	// Recursively adds all the contents of all the nested folders in each users fileSystem (helper function).
 	// Traverse function will take the file system object, the path to the user's filesystem in the server's 
-	// file system, the containerFolder folder when incase we are not dealing with a file anymore and want to insert a folder
-	// and finally the array of trash folders trash Directory and files which gets whos elements get checked up with the file or folder
-	// about to be added to the FSTree in the user's file system object.
-	traverse(fsObj, path, containerFolder, trashDirectory) {
+	// file system and want to insert a folder and finally the array of trash folders trash Directory and files 
+	// which gets whos elements get checked up with the file or folder about to be added to the FSTree in the user's file system object.
+	traverse(fsObj, path, trashDirectory) {
 		console.log("cding... " + path);
 		var self = this;
 
 		// NOTE** - reader HAS to be synchronouse, because if it is asynchronous event in a loop
 		// it will it will maintain its asynchronous property, which is it will always be the last
 		// thing to be executed, even if it is nested away in another function!
-		var files = fs.readdirSync(path);
+		var directoryContents = fs.readdirSync(path);
 
-		// this will only happen if we have a folder with contents inside, also known as
-		// an empty folder, empty folders are still important for users using the device
-		// they can make a folder and keep it without putting things inside, and therefore
-		// the empty folders should still be added and generated as well!
-		// container folder will be undefined at start, if and only if we are at root
-		// and the folder is empty, or whenever the has no files to start in the root folder
-		// and this traverse function will be called containerFolder will be uninitialized as nothing
-		// is passed inside the containerFolder when this function is invoked, hence it is undefined
-		if (files.length === 0 && containerFolder !== undefined) {
-			var folderObj = {};
-			folderObj.name = containerFolder;
-			folderObj.path = path;
-			// tree.insertFolder makes the folder as it traverses the path name, therefore we need to specifiy
-			// which folder's flag we need to turn to false
-			fsObj.tree.insertFolder(folderObj);
-		}
+		for (var i = 0; i < directoryContents.length; ++i) {
 
-		for (var i = 0; i < files.length; ++i) {
+			var stats = fs.statSync(path + directoryContents[i]);
 
-			var stats = fs.statSync(path + files[i]);
-
-			if (stats.isFile()) {
+			if (stats.isFile()) { // if the element is a file
 				// Required information
 				// this.name = n;
 				// this.lastModified = lM;
@@ -132,21 +115,20 @@ class Database {
 					}
 
 				*/
-				var file = new FileInfo(files[i], stats.mtime, stats.size, mime.lookup(files[i]), path);
-				fsObj.tree.insertFile(file);
-			} else {
-				// sometimes if a directory is simply empty the folder will never get added
-				// to the list, so it is important to make sure that the empty folder should
-				// be accounted for as well
+				var fileObj = new FileInfo(directoryContents[i], stats.mtime, stats.size, mime.lookup(directoryContents[i]), path);
+			
+				fsObj.tree.insertFile(fileObj);
+			
+			} else { // if element is a folder
 
+				// folder object created which gets added to the FSTree
+				var folderObj = new FolderInfo(directoryContents[i], path);
 
-				// we shouldn't return this as we need to finish
-				// the current loop to take care of the rest of the files or folders
-				// in the current folder, and not just be done when we find the first
-				// folder in the loop
-				// visualize the recursion in your head, or draw it out if you get confused, check old notebook
-				// files[i] should be a folder in this case
-				self.traverse(fsObj, path + files[i] + "/", files[i], trashDirectory); // files[i] is the name of the folder that we are about to cd in 
+				// add the folder object to the FSTree of the user's file system
+				fsObj.tree.insertFolder(folderObj);
+
+				// cd into the folder that we just created and scan its contents
+				self.traverse(fsObj, path + directoryContents[i] + "/", trashDirectory); // directoryContents[i] is the name of the folder that we are about to cd in 
 			}
 		}
 	}
