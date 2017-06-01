@@ -33,10 +33,7 @@ class Delete extends UtilityButton {
 					$.ajax({
 						url: self.route + "trash",
 						type: "POST",
-						data: requestObj,
-						success: function(data) {
-							console.log("Trashed!");
-						}
+						data: requestObj
 					})
 				}
 			});

@@ -389,7 +389,7 @@ class DriveController {
 				var responseObj = {};
 
 				// we encapsulare the document object's trashedDir attribute which is an array containing the contents of the trashed directory
-				responseObj.ls = doc.trashedDir;
+				responseObj.ls = doc.trashedDir;  
 
 				// and we send this response object to the client now
 				res.status(200).send(responseObj);

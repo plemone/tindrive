@@ -51,34 +51,10 @@ class FileSystemLayout {
 
 		this.deleteComponent = new Delete(this.route); // composition releationship with the delete button component
 
-		this.trashComponent = new Trash(this.route, this.trashButtonClick); // creates the trashComponent passing function this.trashButton as the parameter which handles the event for clicks on the trash component
+		this.trashComponent = new Trash(); // composition relationship with the trash button component
+
+		this.trashDirEntry = {"entry": false, "firstDir": ""}; // an object indicating whether we entered the trashed and the firstDir we entered from trashed directory
 	}
-
-	// event handler for when the trash button is clicked
-	trashButtonClick(self) {
-		// when trash button is clicked we want to make an ajax request for the directory
-		// of files and folders that were trashed to the server
-
-		$.ajax({
-			url: self.route + "cdTrash",
-			type: "GET",
-			success: function(data) {
-
-				for (var i = 0 ; i < data.ls.length; ++i) {
-
-					console.log(data.ls[i]);
-
-				}	
-
-
-
-			}
-		})
-
-
-
-	}
-
 
 	// basic create() method that comes in with every component
 	create() {
@@ -88,6 +64,7 @@ class FileSystemLayout {
 		this.downloadComponent.create();
 		this.deleteComponent.create();
 		this.trashComponent.create();
+		this.trashButtonClick();
 	}
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed
@@ -692,8 +669,8 @@ class FileSystemLayout {
 	// back space event handler for the window
 	backSpace(event, self) {
 
-		// if statement to prevent cding out of the root folder
-		if (self.path.get === "./filesystems/user-fs/" + $("#username").text() + "/") return;
+		// if statement to prevent cding out of the root folder, we don't want to return if we are inside the trash directory hence the inclusion of !self.transhedDirEntry
+		if (self.path.get === "./filesystems/user-fs/" + $("#username").text() + "/" && !self.trashDirEntry.entry) return;
 
 		/*
 			event that handles backspace, which is basically when you hit backspace you go back to the
@@ -707,8 +684,24 @@ class FileSystemLayout {
 
 			// we empty out the selected downloads when we enter another folder environment
 
-			// shorten the path and back up a folder
-			self.path.shorten();
+			// shorten the path and back up a folder, we also don't want the path to shorten if we are inside the trash directory
+			// as the path.get is the same as the home path when we are inside the trash directory
+			if (!self.trashDirEntry.entry) { // if we are not inside the trash directory then we shorten the path
+				self.path.shorten();
+			} else { // else it means that we are inside the trash directory environment, and when we return back to our root folder
+
+				// if the firstDir is empty it means we are at the root of trash directory and we are heading back that means
+				// this backspace will make us go to the root directory of TinDrive, so as we are leaving we set the trashDirEntry's entry attribute to false
+				// inidicating that we are leaving the trash directory
+				if (self.trashDirEntry.firstDir === "") {
+
+					self.trashDirEntry.entry = false;
+
+				}
+
+			}
+
+
 
 			// encapulate the path string in a request object
 			var requestObj = {};
@@ -888,6 +881,45 @@ class FileSystemLayout {
 		}
 
 	}
+
+
+		// event handler for when the trash button is clicked
+	trashButtonClick() {
+		//	this.trashDirEntry = {"entry": false, "firstDir": ""}; // an object indicating whether we entered the trashed and the firstDir we entered from trashed directory
+
+		// when trash button is clicked we want to make an ajax request for the directory
+		// of files and folders that were trashed to the server
+
+		var self = this; // the keyword "this" has different meaning in different scopes
+
+		// we target the trashComponent div and attach the click event handler to it
+		$(this.trashComponent.id).on("click", function() {
+			// when we are in the trash directory we have to turn the entry attribute of the this.trashDirEntry to true indicating that we are indeed in trash directory
+			self.trashDirEntry.entry = true;
+
+			$.ajax({
+				url: self.route + "cdTrash",
+				type: "GET",
+				success: function(data) {
+
+					for (var i = 0 ; i < data.ls.length; ++i) {
+
+						// we know format the array of objects that we received so that it works properly with populateDropZone function
+						if (data.ls[i].type !== "folder") {
+							data.ls[i].type = "file";
+						}
+
+					}
+
+					self.populateDropZone(data.ls);
+
+				}
+			})
+
+		});
+
+	}
+
 
 	// turns a selected icon blue, its a wrapper function with some underlying functionalities
 	unselect(icon) {
