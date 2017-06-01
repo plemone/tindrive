@@ -384,7 +384,15 @@ class DriveController {
 				var responseObj = {};
 
 				// we encapsulare the document object's trashedDir attribute which is an array containing the contents of the trashed directory
-				responseObj.ls = doc.trashedDir;  
+				responseObj.ls = doc.trashedDir;
+				
+				// we know format the array of objects that we will send so that it works properly with populateDropZone function	
+				for (var i = 0 ; i < responseObj.ls.length; ++i) {
+					if (responseObj.ls[i].type !== "folder") {
+						responseObj.ls[i].type = "file";
+					}
+				}
+
 
 				// and we send this response object to the client now
 				res.status(200).send(responseObj);

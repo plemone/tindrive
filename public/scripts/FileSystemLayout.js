@@ -701,10 +701,33 @@ class FileSystemLayout {
 				// this backspace will make us go to the root directory of TinDrive, so as we are leaving we set the trashDirEntry's entry attribute to false
 				// inidicating that we are leaving the trash directory
 				if (self.trashDirEntry.dir.get === "./trash/") {
+				
+					// we don't want to shorten the path at root of the trashed diretory
 					self.trashDirEntry.entry = false;
-				} else { // if sel.trashDirEntry.dir.get is not "./trash/" it means we have to shorten that path! as we are backspacing
 
+				} else { // if sel.trashDirEntry.dir.get is not "./trash/" it means we have to shorten that path! as we are backspacing, as we shorten the trash path
+						 // we also should shorten the actual path too, because thats how we keep track of what folder we are visiting, not using the trash path but the actual path
+				
+					self.path.shorten();
+				
 					self.trashDirEntry.dir.shorten();
+
+					// After we shorten the path, if the self.trashDirEntry.dir.get is "/trash/" it means that
+					// the path we are suppose to be is "./trash/" which indicates the root directory and not the
+					// path that the self.path.get is telling us to visit. So when we check this and it turns out to be true
+					// we just ask the server to send us the contents of the trash directory like we do everytime we click the trash button
+
+					if (self.trashDirEntry.dir.get === "./trash/") {
+						$.ajax({
+							url: self.route + "cdTrash",
+							type: "GET",
+							success: function(data) {
+								self.populateDropZone(data.ls);
+							}
+						})
+
+						return;
+					}
 
 				}
 
@@ -911,15 +934,7 @@ class FileSystemLayout {
 				url: self.route + "cdTrash",
 				type: "GET",
 				success: function(data) {
-					for (var i = 0 ; i < data.ls.length; ++i) {
-						// we know format the array of objects that we received so that it works properly with populateDropZone function
-						if (data.ls[i].type !== "folder") {
-							data.ls[i].type = "file";
-						}
-					}
-
 					self.populateDropZone(data.ls);
-
 				}
 			})
 
