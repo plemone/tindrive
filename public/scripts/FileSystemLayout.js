@@ -227,9 +227,8 @@ class FileSystemLayout {
 		var self = this;
 		var folderObj = {};
 		folderObj.name = folderName;
-		// must follow the convention of ending with a backslash, it is very crucial as the
-		// server follows the conention of the path string always ending with "/"
-		folderObj.path = this.path.get + folderName + "/";
+		// folderObj.path contains the path to the current working directory that the folder object will exist in
+		folderObj.path = this.path.get;
 		$.ajax({
 			url:  self.route + "uploadFolders",
 			type: "POST",

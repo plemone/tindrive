@@ -4,7 +4,8 @@
 
 var fs = require("fs"); // used to manipulate the file system
 var FSTree = require("./FSTree.js"); // dot slash is very important when importing files created by self
-var FileInfo = require("./FileInfo.js");
+var FileInfo = require("./FileInfo.js"); // required to create FileInfo objects when uploading a file
+var FolderInfo = require("./FolderInfo.js"); // required to create FolderInfo objects when uploading a folder
 
 // This class will provide a foundation for the REST API.
 
@@ -21,8 +22,8 @@ class FileSystem {
 										  // the path that needs to be provieded to FSTree must be the path to the users unique directory which is the ROOT for the user
 	}
 
-
-	/* build nice and proper member functions to add the JSON files representing your files */
+	// both fileObj and folderObj contains objects sent from the client side which we
+	// need to turn into server side FileInfo and FolderInfo objects
 
 	// folders must be created first before file can be inserted
 	uploadFile(fileObj) {
@@ -55,9 +56,14 @@ class FileSystem {
 	// folders created
 	uploadFolder(folderObj) {
 		var self = this;
-		fs.mkdir(folderObj.path, function(err) {
+		// folderObj.path contains the path to the current working directory that the folder object will exist in
+		// we do folderObj.path + folderObj.name to specify the actual directory that the fs module needs to create
+		fs.mkdir(folderObj.path + folderObj.name, function(err) {
 			if (err) console.log("Error in creating the folder requested...");
 			else {
+				// create the FolderInfo object from folderObj object provided through the param
+				folderObj = new FolderInfo(folderObj.name, folderObj.path);
+
 				// folder creation successful
 				console.log("Folder named " + folderObj.name + " successfully created...");
 
