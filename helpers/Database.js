@@ -52,6 +52,7 @@ class Database {
 
 	// loop over all the contents of user-fs folder and populate the trees in 
 	// each object inside the collection
+	// trashDirectories is an array of trashDirectory mongodb objects with an attribute name and trashedDir
 	generate(trashDirectories) {
 		var self = this;
 		// reads the contents in a directory and returns an array of all the conents
@@ -62,7 +63,16 @@ class Database {
 				for (var i = 0; i < files.length; ++i) { 
 					// delegates responsibilities to the traverse function
 					var fileSystem = new FileSystem(files[i], self.root); // creates each users file system
-					self.traverse(fileSystem, fileSystem.path);
+					// we iterate the array of mongodb documents passed on to the function
+					for (var j = 0; j < trashDirectories.length; ++j) {
+						// this if statement checks if the name of the element in the trashDirectories array of mongodb object matches the folder name which should be the users name also the name of the users root directory
+						if (trashDirectories[j].name === files[i]) {
+							// if so then we pass the trashed directory containing folders or files which are trashed to the traverse method which recursively traverses the servers file system for a given user
+							self.traverse(fileSystem, fileSystem.path, trashDirectories[j].trashedDir);
+							break;
+						}
+					}
+					// we push the file system object to the collection of file systems 
 					self.collection.push(fileSystem);
 				}
 			}
@@ -115,14 +125,41 @@ class Database {
 					}
 
 				*/
+
 				var fileObj = new FileInfo(directoryContents[i], stats.mtime, stats.size, mime.lookup(directoryContents[i]), path);
-			
+
+				// iterate over the trashDirectory array and check if the fileObj is in it
+				for (var j = 0; j < trashDirectory.length; ++j) {
+
+					// we check using the fileObj name attribute and path attribute with the trashDirectory element's name attribute and path attribute
+					// if both matches then the fileObj has been trashed
+					if (trashDirectory[j].name === fileObj.name && trashDirectory[j].path === fileObj.path) {
+						fileObj.trashed = true;
+						// we break to prevent loop from progressing further as we have successfully found what we were looking for
+						break;
+					}
+
+				}
+
 				fsObj.tree.insertFile(fileObj);
 			
 			} else { // if element is a folder
 
 				// folder object created which gets added to the FSTree
 				var folderObj = new FolderInfo(directoryContents[i], path);
+				
+				// iterate over the trashDirectory array and check if the folderObj is in it
+				for (var j = 0; j < trashDirectory.length; ++j) {
+					// we check using the folderObj name attribute and path attribute with the trashDirectory element's name attribute and path attribute
+					// if both matches then the folderObj has been trashed
+					if (trashDirectory[j].name === folderObj.name && trashDirectory[j].path === folderObj.path) {
+						folderObj.trashed = true;
+						// we break to prevent loop from progressing further as we have successfully found what we were looking for
+						break;
+					}
+				
+				}
+
 
 				// add the folder object to the FSTree of the user's file system
 				fsObj.tree.insertFolder(folderObj);
