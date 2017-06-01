@@ -28,13 +28,9 @@ class FSTree {
 	// containing the folder name and a value is an array containing the folder file
 	// system structure
 	constructor(path) {
-		// we make the root folder object with the name "ROOT", this directory will contain all other folders and files
-		// and is the first view on the drag and drop zone upon load, path is the path of the directory that it exists in the server
-		// and false indicates that the folder is not trashed
-		this.root = new FolderInfo("ROOT", path, false);
-	
+		// we make the root directory folder which will always start at "./" and will contain the name "ROOT"
+		this.root = new FolderInfo("ROOT", "./");
 		this.initTree(path);
-
 	}
 
 	// responsible for taking the base path and creating the files needed to mimic the fs tree
@@ -42,6 +38,7 @@ class FSTree {
 	// for example every file will follow something like ./filesystems/user-fs/username/
 	// so these folders need to exist to be traversed!
 	initTree(path) {
+		// preExistingFolders contain the folders that were already there in the users file system
 		var preExistingFolders = [];
 
 		// We remove the the ./ as we don't really need them as our algorithm starts extracting
@@ -53,16 +50,27 @@ class FSTree {
 		// using the path we extract the folders using the path string and store them in an array called preExistingFolders
 		var i = 0;
 		var folderName = "";
+		// we include the "./" in the newPath as we removed the "./" from the path earlier, 
+		// and "./" is path of the root which is the root that the first folder will be in
+		var newPath = "./";
 
 		// we loop till i reaches the length of the path
 		while (i !== path.length) {
-
 			// when we hit "/" we add the folderName to the array of folders and add it array of folders 
 			if (path[i] === "/") {
-				// add the folder name to the array
-				preExistingFolders.push(folderName);
+				// we create the folder object that we are going to add to the FSTree
+				var folderObject = new FolderInfo(folderName, newPath);
+				
+				// add the folder object to the array
+				this.insertFolder(folderObject);
+
+				// each folder will have their own unique path, so the newPath is the variable which will hold each each folders unique path
+				// newPath's string will get extended with the current folder's name plus a backslash because the next folder will be inside the previous folder
+				newPath += folderObject.name + "/"; 
+
 				// reset the folderName to extract another folder name in the path after the "/"
 				folderName = "";
+				
 				// we increment the i and skip anything below this if statement inside the while loop
 				++i;
 				continue;
@@ -70,18 +78,10 @@ class FSTree {
 
 			// we add every word in the path to the folderName string until we encounter a "/"
 			folderName += path[i];
-			
+
 			// increment the i to proceed the loop
 			++i;
 		}
-
-		// next step is to iterate over the array of folder names and create folder objects out of them and insert them into the FSTree
-		// to create a chain of directories that lead to the user's unique root folder
-
-		console.log(preExistingFolders);
-
-
-
 	}
 
 	// cwd is the current folder, path are the more folders you need to traverse,
