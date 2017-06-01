@@ -357,18 +357,13 @@ class DriveController {
 
 					}
 
-					
 					res.sendStatus(200); // successCallBack should always return a positive response
 					
 				}, function() { res.status(200).render("404"); }); // failureCallBack should always return a 404 page
 
 			}
 
-		}, function() {
-			// failure to find the user in the database
-			res.status(200).render("404");
-		});
-
+		}, function() { res.status(200).render("404"); }); // failure to find the user in the database
 	}
 
 	cdTrash(req, res) {

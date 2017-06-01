@@ -55,6 +55,7 @@ class FileSystemLayout {
 
 		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
 																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
+	}
 
 	// basic create() method that comes in with every component
 	create() {
@@ -334,6 +335,12 @@ class FileSystemLayout {
 		
 			// otherwise the path needs to be extended as we are now visiting a new folder	
 			self.path.extend(self.selections[0].name);
+
+			// if we are inside the trashedDirEntry environment the self.trashDirEntry.entry will turn true
+			if (self.trashDirEntry.entry) {
+				// if it is true we simply extend the dir attribute which is a path object itself
+				self.trashDirEntry.dir.extend(self.selections[0].name);
+			}
 
 			/*
 				now we need to remove all the current contents from the drop zone
@@ -814,6 +821,14 @@ class FileSystemLayout {
 				// the path needs to be extended as we are now visiting a new folder
 				self.path.extend(icon.name);
 				
+				// if we are inside the trashedDirEntry environment the self.trashDirEntry.entry will turn true
+				if (self.trashDirEntry.entry) {
+					// if it is true we simply extend the dir attribute which is a path object itself
+					self.trashDirEntry.dir.extend(icon.name);
+
+				}
+
+
 				/*
 					now we need to remove all the current contents from the drop zone
 					and get the conents inside the folder that we just double clicked
@@ -880,11 +895,8 @@ class FileSystemLayout {
 
 	}
 
-
-		// event handler for when the trash button is clicked
+	// event handler for when the trash button is clicked
 	trashButtonClick() {
-		//	this.trashDirEntry = {"entry": false, "dir": ""}; // an object indicating whether we entered the trashed and the dir we entered from trashed directory
-
 		// when trash button is clicked we want to make an ajax request for the directory
 		// of files and folders that were trashed to the server
 
@@ -899,14 +911,11 @@ class FileSystemLayout {
 				url: self.route + "cdTrash",
 				type: "GET",
 				success: function(data) {
-
 					for (var i = 0 ; i < data.ls.length; ++i) {
-
 						// we know format the array of objects that we received so that it works properly with populateDropZone function
 						if (data.ls[i].type !== "folder") {
 							data.ls[i].type = "file";
 						}
-
 					}
 
 					self.populateDropZone(data.ls);
@@ -917,7 +926,6 @@ class FileSystemLayout {
 		});
 
 	}
-
 
 	// turns a selected icon blue, its a wrapper function with some underlying functionalities
 	unselect(icon) {
