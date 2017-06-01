@@ -28,12 +28,12 @@ class FSTree {
 	// containing the folder name and a value is an array containing the folder file
 	// system structure
 	constructor(path) {
-		// we make the root directory folder which will always start at "./" and will contain the name "ROOT"
+		// we make the root directory folder which will always start at "./" and will contain the name "ROOT", it really doesn't matter but its a good practice
 		this.root = new FolderInfo("ROOT", "./");
 		this.initTree(path);
 	}
 
-	// responsible for taking the base path and creating the files needed to mimic the fs tree
+	// responsible for taking the base path (./filesystems/user-fs/username) and creating the files needed to mimic the fs tree
 	// as the fs tree will always follow the same spefic path to insert folders and files
 	// for example every file will follow something like ./filesystems/user-fs/username/
 	// so these folders need to exist to be traversed!
@@ -70,7 +70,7 @@ class FSTree {
 
 				// reset the folderName to extract another folder name in the path after the "/"
 				folderName = "";
-				
+
 				// we increment the i and skip anything below this if statement inside the while loop
 				++i;
 				continue;
@@ -84,7 +84,7 @@ class FSTree {
 		}
 	}
 
-	// cwd is the current folder, path are the more folders you need to traverse,
+	// recurisvely breaks down the path string
 	traverse(cwd, path) {
 		/*
 			NOTE** - cwd is a reference pointer to the specific array inside the nested object
@@ -118,7 +118,7 @@ class FSTree {
 			// this if statement checks if the folder already exists or not
 			if (cwd[i].constructor !== FileInfo && cwd[i].name === nextFolder) {
 				// cd into the folder if it already exists and then proceed in the next recursive call
-				return this.traverse(cwd[i].directory, path.slice(++index), true);
+				return this.traverse(cwd[i].directory, path.slice(++index));
 			}
 		}
 
@@ -131,7 +131,7 @@ class FSTree {
 
 	// inserts a file object to the tree structure
 	insertFile(fileObj) {
-		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2));
 		if (!cwd) { // if cwd is false we end the function as we cannot treat boolean like an array
 			return cwd;
 		}
@@ -143,8 +143,8 @@ class FSTree {
 
 	// creates a folder in the directory specified in the path attribute of the folderObj provided through the parameter
 	insertFolder(folderObj) {
-		// store the array represents the folder directory of the given path and store it in the variable cwd
-		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), true);
+		// store the array which represents the folder directory of the given path and store it in the variable cwd
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2));
 
 		if (!cwd) { // if cwd is false we end the function as we cannot treat a boolean like an array
 			return cwd;
@@ -162,7 +162,7 @@ class FSTree {
 		// traversing the file system will automatically create the path as the flag is set to true
 		// so adding it again would make no sense, path string contains the details of the folders that
 		// are being added, so when the flag is set to false, we don't create the path automatically
-		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2));
 
 		// loop over the folder container array and look for the folder by the name of the folderObj
 		// thats the folder we have to turn the flag on
@@ -187,7 +187,7 @@ class FSTree {
 	// and then turns the trash flag on for the file indicating that it is trashed.
 	trashFile(fileObj) {
 
-		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), true);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2));
 
 		for (var i = 0; i < cwd.length; ++i) {
 
@@ -202,10 +202,53 @@ class FSTree {
 		return false; // if we reached this part of the code it means that we haven't found our object and we simply return false
 	}
 
+	untrashFolder(folderObj) {
+
+		// traverses the FSTree following the folder objects path and get the current working directory that folderObj is currently in
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2)); // slice(2) because we want to exclude "./" in the path name
+
+		for (var i = 0; i < cwd.length; ++i) {
+
+			// if the element at index i is not a file and the name matches the folder name provided
+			if (cwd[i].constructor !== FileInfo && cwd[i].name === folderObj.name) {
+				// then we set the trashed to false
+				cwd[i].trashed = false;
+				return cwd[i];
+			}
+
+		}
+
+		// if we reach this line of code in the function it means we haven't found the folder were looking for in the FSTree so return false
+		return false;
+	}
+
+
+	untrashFile(fileObj) {
+
+		// traverse the FSTree following te file objects path name and get the current working directory of the file
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2));
+
+		for (var i = 0; i < cwd.length; ++i) {
+
+			// if the element at index i is a file and the name matches the file name provided then we set the trashed property of the file to false
+			if (cwd[i].constructor === FileInfo && cwd[i].name === fileObj.name) {
+				cwd[i].trashed = false;
+				return cwd[i];
+			}
+
+		}
+
+		// if we reach this line of code in the function it means we haven't found the file we were looking for in the FSTree so return false
+		return false;
+
+
+	}
+
+
 	// removes a file object from the tree
 	removeFile(fileObj) {
 		// similar to insertFile method where we simply return the array where we are going to insert
-		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, fileObj.path.slice(2));
 		// checks to see if cwd exists and is not false
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
@@ -228,7 +271,7 @@ class FSTree {
 	// removes all the file objects contained within a folder scope
 	removeFolder(folderObj) {
 		// similar to insertFile method where we simply return the array where we are going to insert
-		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, folderObj.path.slice(2));
 		// if cwd doesn't return false 
 		if (cwd) {
 			for (var i = 0; i < cwd.length; ++i) {
@@ -253,7 +296,7 @@ class FSTree {
 
 	// list the files or folders of the current working directory
 	lsL(path) {
-		var cwd = this.traverse(this.root.directory, path.slice(2), false);
+		var cwd = this.traverse(this.root.directory, path.slice(2));
 		if (!cwd) {
 			return cwd; // traverse will return false so if it does we simply end the function here
 		}
