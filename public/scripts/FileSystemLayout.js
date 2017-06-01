@@ -23,19 +23,13 @@
 class FileSystemLayout {
 
 	constructor() {
-		this.x = 15;
+		this.x = 15; // x-axis of the component
 
-		this.y = 7;
+		this.y = 7; // y-axis of the component
 
 		this.dropZoneId = "#dnd"; // main focus variable
 
 		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
-
-		this.downloadComponent = new Download(this.route = "/" + $("#username").text() + "/"); // composition relationship with the download component
-
-		this.deleteComponent = new Delete(this.route = "/" + $("#username").text() + "/");
-
-		this.trashComponent = new Trash();
 
 		this.path = new Path(); // composition relationsip with Path
 
@@ -52,7 +46,39 @@ class FileSystemLayout {
 		this.ctrl = false; // keeps track of whether control button is pressed or not
 
 		this.navCoordinates = {r: -1, i: -1, init: true}; // dictionary contains 3 key value pairs, x coordinate, y coordinate and init which indicates if this is the first movement or not
+
+		this.downloadComponent = new Download(this.route); // composition relationship with the download button component
+
+		this.deleteComponent = new Delete(this.route); // composition releationship with the delete button component
+
+		this.trashComponent = new Trash(this.route, this.trashButtonClick); // creates the trashComponent passing function this.trashButton as the parameter which handles the event for clicks on the trash component
 	}
+
+	// event handler for when the trash button is clicked
+	trashButtonClick(self) {
+		// when trash button is clicked we want to make an ajax request for the directory
+		// of files and folders that were trashed to the server
+
+		$.ajax({
+			url: self.route + "cdTrash",
+			type: "GET",
+			success: function(data) {
+
+				for (var i = 0 ; i < data.ls.length; ++i) {
+
+					console.log(data.ls[i]);
+
+				}	
+
+
+
+			}
+		})
+
+
+
+	}
+
 
 	// basic create() method that comes in with every component
 	create() {

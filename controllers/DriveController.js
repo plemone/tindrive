@@ -371,6 +371,40 @@ class DriveController {
 
 	}
 
+	cdTrash(req, res) {
+		var self = this; // the "this" keyword has different meaning in different scopes
+
+		// As always any kind of request made from the client side needs to be under the username itself
+		// and the username under which requests are sent should always be checked with mongodb ActiveUsers
+		// collection before proceeding with sending back any information, because un authorized users who
+		// have not currently logged in can never send or receive information from the server. We can select
+		// parts of the route we want to extract and store it as a variable using req.params.
+		this.modelAU.query(req.params.username, function() {
+
+			// it is assumed that modelT.query will provide the anonymous function we are providing
+			// through the param with the doc object returned from mongodb and it DOES!
+			self.modelT.query(req.params.username, function(doc) {
+
+				// object created which will contain the attribute ls which will contain the array of directories
+				var responseObj = {};
+
+				// we encapsulare the document object's trashedDir attribute which is an array containing the contents of the trashed directory
+				responseObj.ls = doc.trashedDir;
+
+				// and we send this response object to the client now
+				res.status(200).send(responseObj);
+
+			});
+
+
+		}, function() {
+			res.status(200).render("404");
+		});
+
+
+
+	}
+
 	// removes the user from the ActiveUsers collection
 	logout(req, res) {
 		this.modelAU.remove(req.body.name, function() { 
