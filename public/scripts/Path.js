@@ -10,9 +10,10 @@
 */
 
 class Path {
-	constructor() {
+	// constructor takes the path specified by the composition class through the argument
+	constructor(path) {
 		// keeps track of the path, folders gets added on to this
-		this.get = "./filesystems/user-fs/" + $("#username").text() + "/";
+		this.get = path;
 		// contains the current directory that the user is currently in
 		this.cwd = "";
 		// everytime you visit a folder it will get added in this array, it will

@@ -397,9 +397,7 @@ class DriveController {
 			});
 
 
-		}, function() {
-			res.status(200).render("404");
-		});
+		}, function() { res.status(200).render("404"); });
 
 
 

@@ -31,7 +31,7 @@ class FileSystemLayout {
 
 		this.table = new Table(8); // datastructure that structures the icon in a table like manner, 8 indicates how many elements each row array will have
 
-		this.path = new Path(); // composition relationsip with Path
+		this.path = new Path("./filesystems/user-fs/" + $("#username").text() + "/"); // composition relationsip with Path
 
 		this.selections = []; // will contain the DOM element currently selected either by click or key navigations
 
@@ -53,8 +53,8 @@ class FileSystemLayout {
 
 		this.trashComponent = new Trash(); // composition relationship with the trash button component
 
-		this.trashDirEntry = {"entry": false, "firstDir": ""}; // an object indicating whether we entered the trashed and the firstDir we entered from trashed directory
-	}
+		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
+																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
 
 	// basic create() method that comes in with every component
 	create() {
@@ -690,18 +690,18 @@ class FileSystemLayout {
 				self.path.shorten();
 			} else { // else it means that we are inside the trash directory environment, and when we return back to our root folder
 
-				// if the firstDir is empty it means we are at the root of trash directory and we are heading back that means
+				// if the dir is empty it means we are at the root of trash directory and we are heading back that means
 				// this backspace will make us go to the root directory of TinDrive, so as we are leaving we set the trashDirEntry's entry attribute to false
 				// inidicating that we are leaving the trash directory
-				if (self.trashDirEntry.firstDir === "") {
-
+				if (self.trashDirEntry.dir.get === "./trash/") {
 					self.trashDirEntry.entry = false;
+				} else { // if sel.trashDirEntry.dir.get is not "./trash/" it means we have to shorten that path! as we are backspacing
+
+					self.trashDirEntry.dir.shorten();
 
 				}
 
 			}
-
-
 
 			// encapulate the path string in a request object
 			var requestObj = {};
@@ -778,8 +778,6 @@ class FileSystemLayout {
 					self.select(self.table.get(i));
 
 				} else { // blue - unselected
-				
-
 					/*
 						ctrl algorithm - When keydown event and the event.which happens to be the ctrl key then
 										 we simply set the boolean attribute this.ctrl to true, we alsokeep an array of icons
@@ -885,7 +883,7 @@ class FileSystemLayout {
 
 		// event handler for when the trash button is clicked
 	trashButtonClick() {
-		//	this.trashDirEntry = {"entry": false, "firstDir": ""}; // an object indicating whether we entered the trashed and the firstDir we entered from trashed directory
+		//	this.trashDirEntry = {"entry": false, "dir": ""}; // an object indicating whether we entered the trashed and the dir we entered from trashed directory
 
 		// when trash button is clicked we want to make an ajax request for the directory
 		// of files and folders that were trashed to the server
