@@ -105,9 +105,9 @@ class FileSystemLayout {
 		var fileIcon = new FileIcon(fileName, this.x, this.y, this.path.get); // name of the file, x and y coordinate and path the icon belongs to
 
 		if (this.table.contains(fileIcon, function(x, y) { // an anonymous function being passed which gets called inside table, and table passed on the parameters to the functions inside tables function
-			if (x.name === y.name) return true;
+			if (x.name === y.name && x.path === y.path) return true;
 			else return false;
-		})) { // checks if the file that got created already exists in the table
+		})) { // checks if the file that got created already exists in the table, this if statement actually calls a function which returns true or false
 			alert("File with that name already exists!");
 			return;
 		}
@@ -134,9 +134,9 @@ class FileSystemLayout {
 		var folder = new FolderIcon(folderName, this.x, this.y, this.path.get); // name of the folder, x and y coordinate and path the icon belongs to
 
 		if (this.table.contains(folder, function(x, y) { // an anonymous function being passed which gets called inside table, and table passed on the parameters to the functions inside tables function
-			if (x.name === y.name) return true;
+			if (x.name === y.name && x.path === y.path) return true;
 			else return false;
-		})) {
+		})) { // this if statement actually calls a function which returns true or false
 			alert("Folder with that name already exists!");
 			return;
 		}

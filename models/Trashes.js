@@ -11,7 +11,7 @@ class Trashes {
 	}
 
 	// upsert means updating the existing document, and if the document doesn't exist it gets updated
-	upsert(userTrash, successCallBack, failureCallBack) {		
+	upsert(userTrash, successCallBack, failureCallBack) {
 		var self = this; // the keyword "this" has different meaning in different scopes
 		MongoClient.connect(this.db, function(err, db) {
 			if (err) {
