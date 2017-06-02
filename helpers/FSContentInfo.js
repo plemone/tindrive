@@ -7,7 +7,7 @@ class FSContentInfo {
 			throw Error("Abstract class cannot be constructed...");
 		}
 		this.name = n;
-		this.path = p;
+		this.path = p; // path is like the address of a file or folder, it will always lead you to a folder (container folder) containing the current file or folder
 		if (!tr) {
 			this.trashed = false;
 		} else {

@@ -21,7 +21,7 @@ class Icon {
 		this.tableCoordinates = [];
 		this.red = false; // red color indicator
 		this.blue = true; // blue color indicator
-		this.path = path; // path the icon is currently in
+		this.path = path; // path is like the address of a file or folder, it will always lead you to a folder (container folder) containing the current file or folder
 		this.type = ""; // type of icon
 	}
 
