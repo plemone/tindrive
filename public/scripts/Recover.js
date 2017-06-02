@@ -11,6 +11,20 @@ class Recover extends UtilityButton {
 
 				console.log("Recoved....");
 
+				function f(i) {
+					if (i === 10) {
+						return;
+					}
+					++i;
+					console.log("printing...")
+					setTimeout(function() {
+						f(i);
+					}, 1000);
+				}
+
+				f(0);
+
+
 			})
 
 		}];

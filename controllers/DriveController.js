@@ -311,6 +311,7 @@ class DriveController {
 				// query() method of modelT object will take three parameters, the name, a successcall back and the failure call back
 				self.modelT.query(req.params.username, function(doc) {
 
+					// this scenario might never really happen, but its still good to error check
 					if (doc === null) {
 
 						console.log("Unable to find the user " + req.params.username + "'s trash directory...");
