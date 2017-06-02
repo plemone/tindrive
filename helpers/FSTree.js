@@ -1,7 +1,6 @@
 'use strict';
 
-// ISSUE - FIX THE FSTREE, travers() SHOULD NOT BE RESPONSIBLE FOR CREATING FOLDER OBJECTS!!!
-
+// This data structure will only deal with FileInfo or FolderInfo
 
 // literelly mimics the file system, except that it only contains file information
 // rather then the actual file contents
@@ -293,6 +292,30 @@ class FSTree {
 		// else we simply return cwd which is false if we have reached this stage at this function
 		return cwd;
 	}
+
+
+	query(content) {
+		// we return the array of files or folders which represents the directory of the path to the folder provided
+		// as each contents path will always lead to a folder
+		var cwd = this.traverse(this.root.directory, content.path.slice(2));
+
+		// we make sure that the folder returned is not false, it will only be false if the folder was not found in the FSTree
+		if (cwd) {
+			// we loop over the contents of the folder
+			for (var i = 0; i < cwd.length; ++i) {
+				// each element's name attribute in the folder is compared with our content's name
+				if (content.name === cwd[i].name) {
+					// if found then we simply return the content
+					return cwd[i];
+				}
+			}
+		}
+		// If we reached this part of the code it means that cwd has returned false which means the 
+		// file or folder we were looking for does not exist in the FSTree and hence cwd returns false and we
+		// return cwd which is false indicating that the function has failed to find the file or folder in FSTree.
+		return cwd;
+	}
+
 
 	// list the files or folders of the current working directory
 	lsL(path) {
