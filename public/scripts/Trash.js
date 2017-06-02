@@ -3,8 +3,8 @@
 
 class Trash extends UtilityButton {
 
-	constructor() {
-		super("trash");
+	constructor(route) {
+		super("trash", route);
 	}
 
 

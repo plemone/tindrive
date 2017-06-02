@@ -11,18 +11,14 @@ class Delete extends UtilityButton {
 			// so us providing self would just alias the event object with "self"
 			$(self.id).on("click", function() {
 
-				// We have to send all the requests for files/folders to be deleted with an interval
-				// this is because both express server and mongodb is asyncrhonous and this means that 
-				// even if the files/folders would get sent in order in a for loop without an interval
-				// express would get the request for one file and then dispatch the query to mongodb and then
-				// while mongodb returned the document to be updated it started processing the request for another
-				// file in the mean time which also asks mongodb to dispatch, this irregularity would update two
-				// items first and then complete overrite the changes made to the other one as the doc returned
-				// are two different docs from mongodb over time!
+				/*	
+					ASYNCHRONOUS FUNCTIONS DOES NOT WORK WITH FOR LOOPS.
 
-				// Thats why we have to send the files/folders with an interval so that express and mongodb, can
-				// get time to synchronize the receiving the request. The time will allow one request (one file or folder)
-				// to be processed completely before dealing with the next
+					This is because the for loop does not wait for an asynchronous operation to complete before continuing on 
+					to the next iteration of the loop and because the async callbacks are called some time in the future. 
+					Thus, the loop completes its iterations and THEN the callbacks get called when those async operations finish. 
+					As such, the loop index is "done" and sitting at its final value for all the callbacks.
+				*/
 
 				// a recursive function which takes i and will keep calling it self until i becomes equal to the self.contents.length
 				function sendTrash(i) {

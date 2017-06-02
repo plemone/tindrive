@@ -51,7 +51,7 @@ class FileSystemLayout {
 
 		this.deleteComponent = new Delete(this.route); // composition releationship with the delete button component
 
-		this.trashComponent = new Trash(); // composition relationship with the trash button component
+		this.trashComponent = new Trash(this.route); // composition relationship with the trash button component
 
 		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
 																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
@@ -893,6 +893,7 @@ class FileSystemLayout {
 	populateDropZone(ls) {
 		this.downloadComponent.empty(); // we empty out the contents to be downloaded as we discarded our selection
 		this.deleteComponent.empty(); //  we empty our contents to be downlownloaded as we discarded our selection
+		this.recoverComponent.empty(); // we empty our contents to be recovered as we discarded our selection
 
 		// we reset the navigation coordinates as well, because we are entering a new folder
 		this.navCoordinates.r = -1;
@@ -956,9 +957,10 @@ class FileSystemLayout {
 	unselect(icon) {
 		icon.turnBlue();
 
-		// any icon turned blue will be removed from the download contents and delete contents
+		// any icon turned blue will be removed from the download contents, delete contents and recover contents
 		this.downloadComponent.remove(icon);
 		this.deleteComponent.remove(icon);
+		this.recoverComponent.remove(icon);
 
 
 		// remove an item from the selections array, usually one element will be selected and one element will be unselected, so we will be most likely removing from an array which consists of only one element
@@ -980,9 +982,10 @@ class FileSystemLayout {
 
 			icon.turnRed();
 
-			// any red icon selected will be added to the download components contents and delete contents
+			// any red icon selected will be added to the download components contents, delete contents and recover contents
 			this.downloadComponent.add(icon);
 			this.deleteComponent.add(icon);
+			this.recoverComponent.add(icon);
 
 
 			// add to the selections array the icon currently selected

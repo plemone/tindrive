@@ -353,6 +353,22 @@ class DriveController {
 		}, function() { res.status(200).render("404"); }); // failure to find the user in the database
 	}
 
+	untrash(req, res) {
+		var self = this; // the this keyword has different meaning in different scopes
+
+		this.modelAU.query(req.params.username, function() {
+
+
+			res.sendStatus(200);
+
+
+
+
+		}, function() { res.status(200).render("404"); });
+
+
+	}
+
 	cdTrash(req, res) {
 		var self = this; // the "this" keyword has different meaning in different scopes
 
@@ -388,8 +404,6 @@ class DriveController {
 
 
 		}, function() { res.status(200).render("404"); });
-
-
 
 	}
 

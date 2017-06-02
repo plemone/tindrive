@@ -50,8 +50,8 @@ class Table {
 
 
 
-	}
 
+	}
 
 	// takes in an object through the param and returns true if the object exists in the table, false if the object doesn't exist
 	contains(content, comparison) { // takes in a function comparison, which does the comparison, depending on object to object, this function gets invoked inside contains
@@ -66,8 +66,6 @@ class Table {
 		}
 
 		return false; // if we passed through all the loops then we haven't found any object which matches any element in the table
-
-
 	}
 
 
@@ -85,7 +83,6 @@ class Table {
 		--this.i; // decrease the i
 
 		return returnObject;
-
 	}
 
 
