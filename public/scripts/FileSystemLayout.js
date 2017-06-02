@@ -55,6 +55,8 @@ class FileSystemLayout {
 
 		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
 																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
+	
+		this.recoverComponent = new Recover(this.route); // composition relationship with the recover button component
 	}
 
 	// basic create() method that comes in with every component
@@ -62,10 +64,12 @@ class FileSystemLayout {
 		this.generateInitialFS();
 		this.attachGlobalClickEH();
 		this.attachWindowEH();
-		this.downloadComponent.create();
-		this.deleteComponent.create();
 		this.trashComponent.create();
 		this.trashButtonClick();
+		this.downloadComponent.create();
+		this.deleteComponent.create();
+		this.recoverComponent.create();
+
 	}
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed
@@ -756,16 +760,19 @@ class FileSystemLayout {
 		var self = this;
 		// target the drop zone for clicks only
 		$(this.dropZoneId).on("click", function() {
-			// global click should also reset the navCoordinates, so that key movement will allow it to start from the beginning
-			self.navCoordinates.r = -1;
-			self.navCoordinates.i = -1;
-			self.navCoordinates.init = true;
-
 			if (self.counter > 0) { // first check, makes sure that the self counter is active, if it is not then we go on to the second check
 				var tableSize = self.table.size(); // for more optimized performance, this prevents the for loop from calculating the size each iteration
 				for (var i = 0; i < tableSize; ++i) {
 					self.unselect(self.table.get(i));	
-				}		
+				}
+
+				// global click should also reset the navCoordinates, so that key movement will allow it to start from the beginning
+				// NOTE** - we have to make sure that we reset the navCoordinates only on the global click which is when the self.counter will be greater than 0
+				// 			as a single click enables globalClick to true and then self.counter gets incremented automatically from 0 and also
+				//			whenver we press any key self.counter gets incremented from 0 automatically
+				self.navCoordinates.r = -1;
+				self.navCoordinates.i = -1;
+				self.navCoordinates.init = true;				
 			} 		
 			else if (self.globalClick) { // this check, checks only if first check is not fulfilled, if globalClick gets turned on
 				++self.counter; // then we simply increment the counter so that if another drop zone click is made we can loop through the
@@ -786,7 +793,7 @@ class FileSystemLayout {
 		var self = this; // this in each scope is different in JavaScript
 		/* Single click on the icon, deals with both file icons and folder icons */
 		// on click the color of the highlight changes
-		$("#" + icon.id).on("click", function () {		
+		$("#" + icon.id).on("click", function() {		
 			/*
 				each file icon has an event handler which loops through the all the file icons
 				then checks if the click is on the current icon and if the icon is not
@@ -804,8 +811,11 @@ class FileSystemLayout {
 					only then can we select it, we can't select something that is unselected
 				*/
 				if (self.table.get(i) === icon && !self.table.get(i).isRed()) { // red - selected
-			
-					self.select(self.table.get(i));
+					
+					self.select(icon);
+					self.navCoordinates.r = icon.tableCoordinates[0]; // first index returned from the tableCoordinates is the y-axis coordinate in the table
+					self.navCoordinates.i = icon.tableCoordinates[1]; // second index returned from the tableCoordinates is the x-axis coordinate in the table
+					self.navCoordinates.init = false; // we turn the init to false indicating that an item has been selected and navigation can start from the point of current coordinates and not form the start
 
 				} else { // blue - unselected
 					/*

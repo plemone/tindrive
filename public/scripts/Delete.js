@@ -4,9 +4,7 @@
 class Delete extends UtilityButton {
 
 	constructor(route) {
-		super("delete"); // initializes the base class or super class, this is the base class initializer syntax
-		this.contents = [];
-		this.route = route; // contains the route with which the ajax request is going to be made
+		super("delete", route); // initializes the base class or super class, this is the base class initializer syntax
 		this.functions = [function(self) { // self needs to be passed as a parameter and the base class will provide the keyword "this" so that base class's ids and contents can be accessed when this function is invoked inside the base class
 			// you can't provide $(self.id).on("click", function(self) {}); with self here because the .on
 			// call back function actually provides a argument to its call back which is an event object
@@ -39,25 +37,5 @@ class Delete extends UtilityButton {
 			});
 		}];		
 	}
-
-	add(content) {
-		this.contents.push(content);
-	}
-
-	remove(content) {
-		// loop over the contents array and try to match the name of the content with the content provided
-		for (var i = 0; i < this.contents.length; ++i) {
-			if(this.contents[i].name === content.name) {
-				this.contents.splice(i, 1); // remove the elements starting from index i and remove 1 element
-				return; // when element is found exit the function
-			}
-		}
-	}
-
-
-	empty() {
-		this.contents = []; // empty out the contents array
-	}
-
 
 }

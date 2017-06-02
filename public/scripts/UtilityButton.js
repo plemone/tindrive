@@ -2,7 +2,7 @@
 
 class UtilityButton {
 
-	constructor(name) {
+	constructor(name, route) {
 		// this disallows the construction of the Icon objects, that means the class is abstract!
 		if (this.constructor === UtilityButton) {
 			throw Error("Abstract class cannot be constructed");
@@ -12,11 +12,12 @@ class UtilityButton {
 		this.y = -600; // contains y ccoordinate
 		this.width = 174; // width of the button
 		this.height = 45; // height of the button
-		this.id = "#" + name; // id of the object
+		this.id = "#" + name ; // id of the object
 		this.descriptionId = "#" + name + "-description"; // unique description id is needed for each component that inherits this abstract class
 		this.element = "<div id = " + name + "><h4 id = " + name + "-description >" + name + "</h4></div>"; // contains the DOM information
 		this.functions = []; // stores an array of functions that gets iterated and called when the create() method is invoked
-		this.route = ""; // some buttons may require a variable route, which stores away the route to make ajax requests
+		this.route = route; // some buttons may require a variable route, which stores away the route to make ajax requests
+		this.contents = []; // contains the contents that need to be downloaded, deleted, recovered, etc
 	}
 
 	create() { // allow it to take a list of functions that it can call upon creation as well!
@@ -80,6 +81,25 @@ class UtilityButton {
 		$(p).css("top", "10px");
 		$(p).css("color", "#262626"); // same color as the background
 		$(p).css("text-shadow", "1px 1px 1px white"); //text-shadow: h-shadow v-shadow blur-radius color|none|initial|inherit;
+	}
+
+	add(content) {
+		this.contents.push(content);
+	}
+
+	remove(content) {
+		// loop over the contents array and try to match the name of the content with the content provided
+		for (var i = 0; i < this.contents.length; ++i) {
+			if(this.contents[i].name === content.name) {
+				this.contents.splice(i, 1); // remove the elements starting from index i and remove 1 element
+				return; // when element is found exit the function
+			}
+		}
+	}
+
+
+	empty() {
+		this.contents = []; // empty out the contents array
 	}
 
 

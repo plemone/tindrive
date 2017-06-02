@@ -2,7 +2,7 @@
 
 
 class Trash extends UtilityButton {
-	
+
 	constructor() {
 		super("trash");
 	}
