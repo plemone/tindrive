@@ -384,7 +384,7 @@ class DriveController {
 					var trashedDir = doc.trashedDir;
 
 					// retrieve the unique file system of the user from the static database generated on run time using the username provided from the route string
-					var userFS = database.retrieve(req.params.username);
+					var userFS = self.database.retrieve(req.params.username);
 
 					// we have to loop over the trashedDir find the content that matches the object that the user sent and remove it from the trashDir
 					for (var i = 0; i < trashedDir.length; ++i) {
@@ -404,7 +404,7 @@ class DriveController {
 							newUserTrashedDir.name = doc.name;
 							newUserTrashedDir.trashedDir = trashedDir;
 
-							// now we get the model object responsible for updating the trashed directory and we use the method upsert to update the object
+							// now we use the model object responsible for updating the trashed directory and we use the method upsert to update the old object with the new one
 							self.modelT.upsert(newUserTrashedDir);
 						}
 
