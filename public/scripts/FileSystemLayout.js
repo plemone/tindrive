@@ -51,7 +51,7 @@ class FileSystemLayout {
 
 		this.deleteComponent = new Delete(this.route); // composition releationship with the delete button component
 
-		this.trashComponent = new Trash(this.route); // composition relationship with the trash button component
+		this.trashComponent = new Trash(); // composition relationship with the trash button component
 
 		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
 																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
@@ -64,12 +64,11 @@ class FileSystemLayout {
 		this.generateInitialFS();
 		this.attachGlobalClickEH();
 		this.attachWindowEH();
-		this.trashComponent.create();
-		this.trashButtonClick();
 		this.downloadComponent.create();
 		this.deleteComponent.create();
 		this.recoverComponent.create();
-
+		this.trashComponent.create();
+		this.trashButtonClick();
 	}
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed

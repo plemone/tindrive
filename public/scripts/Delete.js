@@ -34,8 +34,6 @@ class Delete extends UtilityButton {
 					// path and the name in an object along with the indicator to whether its
 					// a file or not, if its a folder the server should ls everything and turn the
 					// flags inside all the files recursively to false!
-
-					// encapsulating information away
 					var requestObj = {};
 					requestObj.name = self.contents[i].name;
 					requestObj.path = self.contents[i].path;
@@ -51,13 +49,16 @@ class Delete extends UtilityButton {
 						}
 					})
 
-					// increment i to progress the recursion
-					++i;
+					// ++i;
 
 					// makes the recursive call with an interval and the recursive call is the last line in the function 
 					// so the function call stack will never get expanded, so this is not an expand and collapse situation
 					return setTimeout(function() {
-						sendTrash(i);
+						// IT IS VERY IMPORTANT TO INCREMENT THE i HERE AND NOT ABOVE because the ajax request is asynchronous
+						// meaning that no matter what the last thing in the function before the return statement which is a second order
+						// asynchronous function, setTimout, will be the ajax function. This means that even tho the ajax request 
+						// would be before the ++i in line 52 the ajax function would still be executed after line 52 and before setTimeout. 
+						return sendTrash(++i);
 					}, 20);
 
 				}
