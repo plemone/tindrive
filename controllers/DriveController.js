@@ -462,6 +462,34 @@ class DriveController {
 
 	}
 
+
+	trashDirSize(req, res) {
+
+		var self = this; // the keyword this has different meaning in different scopes
+
+		// as always we have to check whether the request made to the server is by a user who is currently
+		// authenticated by checking the ACtiveUsers collection in mongodb and check if the object with the user's name exists
+		this.modelAU.query(req.params.username, function() {
+
+
+			// We query mongodb collection of trashed directories to find the object where the array of trashed files/folder is encapsulated. The object also has an attribute
+			// called name which is the user's name and thats what we use to find the object
+			self.modelT.query(req.params.username, function(doc) {
+
+				// we encapsulate the length of the trashedDir array in an object and send the object
+				var responseObj = {};
+				responseObj.size = doc.trashedDir.length;
+				res.status(200).send(responseObj);
+
+			}, function() { res.status(200).render("404"); }); // failure to find the user's trashed object with the user's name will render the 404 page
+
+
+		}, function() {res.status(200).render("404"); }); // failure to find the user renders the 404 page
+
+	}
+
+
+
 	// removes the user from the ActiveUsers collection
 	logout(req, res) {
 		this.modelAU.remove(req.body.name, function() { 

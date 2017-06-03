@@ -51,7 +51,7 @@ class FileSystemLayout {
 
 		this.deleteComponent = new Delete(this.route); // composition releationship with the delete button component
 
-		this.trashComponent = new Trash(); // composition relationship with the trash button component
+		this.trashComponent = new Trash(this.trashDirSize()); // composition relationship with the trash button component, calls the trashDir's size function which returns the size of the trash directory for the current user, the returned value gets passed inside the constructor of Trash
 
 		this.trashDirEntry = {"entry": false, "dir": new Path("./trash/")}; // an object indicating whether we entered the trashed and dir is the path or path of the folders we visited from the current trash directory
 																			// each folder you click will get added to Path like this path + "folder/", this path gets shorter when we press backspace or go out of the folder
@@ -70,6 +70,26 @@ class FileSystemLayout {
 		this.trashComponent.create();
 		this.trashButtonClick();
 	}
+
+
+	trashDirSize() {
+		// variable made where size gets stored
+		var size = 0;
+		var self = this; // the keyword this has different meaning in different scopes
+		$.ajax({
+			url: self.route + "trashDirSize",
+			type: "GET",
+			async: false, // We turn the flag false as we want our ajax request to not be synchronous and we want this function to return 
+						 // the data on callback as the return value will be assigned to a variable which exists inside the function body
+						 // which gets returned. Remember an async function even inside the actual function body which has a return statement
+						 // will still return after the enclosing function has eneded.
+			success: function(data) {
+				size = data.size;
+			}
+		})
+		return size;
+	}
+
 
 	// on initial page load this function gets invoked, so that the contents in the root directory can be displayed
 	generateInitialFS() {

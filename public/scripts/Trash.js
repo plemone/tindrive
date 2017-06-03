@@ -2,12 +2,15 @@
 
 class Trash {
 
-	constructor() {
+	constructor(trashLength) {
 		this.x = 860; // contains x coordinate
 		this.y = -280; // contains y ccoordinate
 		this.width = 100; // width of the button
 		this.height = 70; // height of the button
-		this.name = "trash-folder";
+		this.trashLength = trashLength;
+		this.full = "url(public/images/trash-1.png)";
+		this.empty = "url(public/images/trash-2.png)";
+		this.name = "trash-folder"; // name of the id
 		this.id = "#" + this.name; // id of the object
 		this.descriptionId = "#" + this.name + "-description"; // unique description id is needed for each component that inherits this abstract class
 		this.element = "<div id = " + this.name + "></div>"; // contains the DOM information
@@ -45,7 +48,17 @@ class Trash {
 		$(id).css("position", "relative");
 		$(id).css("top", this.y);
 		$(id).css("left", this.x);
-		$(id).css("background-image", "url(public/images/trash-2.png)");
+
+		// Initial generation of the bin needs to be decided by the array of files/folder mongodb
+		// has on the server size, when the server provides us with the length of trashDir in mongodb
+		// we can decide to put empty trash can or full trash can. Length of 0 will have an empty trash can
+		// and legnth more than 0 means we have atleast one item in our trash can.
+		if (this.trashLength > 0) {
+			$(id).css("background-image", this.full);
+		} else {
+			$(id).css("background-image", this.empty);
+		}
+
 		$(id).css("background-repeat", "no-repeat");
 		$(id).css("background-size", "30%");
 		$(id).css("background-position", "center");
