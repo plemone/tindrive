@@ -18,6 +18,8 @@ class Delete extends UtilityButton {
 					to the next iteration of the loop and because the async callbacks are called some time in the future. 
 					Thus, the loop completes its iterations and THEN the callbacks get called when those async operations finish. 
 					As such, the loop index is "done" and sitting at its final value for all the callbacks.
+			
+					To solve this problem I am using recursion with a slight interval.
 				*/
 
 				// a recursive function which takes i and will keep calling it self until i becomes equal to the self.contents.length
@@ -26,9 +28,6 @@ class Delete extends UtilityButton {
 					if (i === self.contents.length) {
 						return;
 					}
-
-					// we also remove the object deleted removed from the DOM immedietly
-					$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
 
 					// the important information needed for us to do our business is
 					// the path and the name of the Icon object, we have to encapsulate the
@@ -45,7 +44,11 @@ class Delete extends UtilityButton {
 					$.ajax({
 						url: self.route + "trash",
 						type: "POST",
-						data: requestObj
+						data: requestObj,
+						success: function() {
+							// only on success we remove the icon that we are deleting from the file system and putting it inside the trashed directory
+							$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
+						}
 					})
 
 					// increment i to progress the recursion

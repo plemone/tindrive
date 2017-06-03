@@ -19,6 +19,8 @@ class Recover extends UtilityButton {
 					to the next iteration of the loop and because the async callbacks are called some time in the future. 
 					Thus, the loop completes its iterations and THEN the callbacks get called when those async operations finish. 
 					As such, the loop index is "done" and sitting at its final value for all the callbacks.
+
+					To solve this problem I am using recursion with a slight interval.
 				*/
 
 
@@ -44,6 +46,8 @@ class Recover extends UtilityButton {
 						type: "POST",
 						data: requestObj,
 						success: function() {
+							// only on successful ajax request we remove the icon that we are recovering from trashed directory
+							// the trashed directory
 							$("#wrapper-" + self.contents[i].id).remove();
 						}
 					})

@@ -319,7 +319,7 @@ class DriveController {
 						// render the 404 page upon failure
 						res.status(200).render("404");
 
-						// we return the function to prevent further code below the
+						// we return the function to prevent the code below from running
 						return;
 
 					} else {
@@ -344,7 +344,9 @@ class DriveController {
 
 					}
 
-					res.sendStatus(200); // successCallBack should always return a positive response
+					// if we have reached this part of the code it means we have successfully passed all the error checks
+					// and we simply respond with a 200 status, which indicates that all went well
+					res.sendStatus(200); 
 					
 				}, function() { res.status(200).render("404"); }); // failureCallBack should always return a 404 page
 
@@ -356,13 +358,66 @@ class DriveController {
 	untrash(req, res) {
 		var self = this; // the this keyword has different meaning in different scopes
 
+		// we query the collection of active users with the username from the username provided in the route string
 		this.modelAU.query(req.params.username, function() {
 
+			// after user has been found in the active users collection it means that the user was correctly authenticated
+			// and we can proceed in finding the users trashed directory contents by querying the Trashed collection
+			self.modelT.query(req.params.username, function(doc) {
 
-			res.sendStatus(200);
+				// if doc is null that means mongodb failed to return a document by the username provided
+				// that can only mean one thing that an object with that name attribute being queried doesn't exist
+				// in that case we send an error indicator to the client side
+				if (doc === null) {
+
+					console.log("Unable to find the user " + req.params.username + "'s trash directory...");
+
+					// render the 404 page upon failure
+					res.status(200).render("404");
+
+					// we return the function to prevent further code below from running
+					return
+
+				} else {
+
+					// if do isn't null we have found the object which contains the directory of trash as its attriubte
+					var trashedDir = doc.trashedDir;
+
+					// retrieve the unique file system of the user from the static database generated on run time using the username provided from the route string
+					var userFS = database.retrieve(req.params.username);
+
+					// we have to loop over the trashedDir find the content that matches the object that the user sent and remove it from the trashDir
+					for (var i = 0; i < trashedDir.length; ++i) {
+
+						// if both the name and the path of the contents of the element being checked in the directory and the content that the client side provided is the same
+						if (trashedDir[i].name === req.body.name && trashedDir[i].path === req.body.path) {
+							
+							// the file/folder that is to be untrashed gets found in the user's FSTree and the flag of the folder/file indicating trashed or untrashed gets set to false indicating that the file is untrashed
+							userFS.untrash(trashedDir[i]);
+
+							// then we remove one item from that index including that index
+							trashedDir.splice(i, 1);
+
+							// the newly modified directory now needs to be updated to mongodb
+							// to do that we need to create a new object encapsulating new data to be updated in the mongodb replacing the older object
+							var newUserTrashedDir = {};
+							newUserTrashedDir.name = doc.name;
+							newUserTrashedDir.trashedDir = trashedDir;
+
+							// now we get the model object responsible for updating the trashed directory and we use the method upsert to update the object
+							self.modelT.upsert(newUserTrashedDir);
+						}
 
 
+					}
 
+				}
+
+				// if we have reached this part of the code it means we have successfully passed all the error checks
+				// and we simply respond with a 200 status, which indicates that all went well
+				res.sendStatus(200);
+
+			}, function() { res.status(200).render("404"); });
 
 		}, function() { res.status(200).render("404"); });
 

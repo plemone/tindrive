@@ -82,8 +82,8 @@ class FileSystem {
 	// in the tree to true
 	// takes in a file/folder obj as a parameter
 	trash(obj) {
-		// trashes a file using the path (remember the path of a file or folder will always lead to the folder containing the file or folder) 
-		// name provided and calls in the FSTree's trashFile method - check FSTree's method for more detail
+		// trashes a file or folder using the path (remember the path of a file or folder will always lead to the folder containing the file or folder) 
+		// name provided and calls in the FSTree's trashFile/trashFolder method - check FSTree's method for more detail
 		if (obj.type === "folder") { // check if the object is a folder
 			return this.tree.trashFolder(obj); // this.tree.trashFolder(obj) will either return false or return the trashed object
 		} else { // if its not a folder then its a file
@@ -97,12 +97,14 @@ class FileSystem {
 	// in the tree to fakse
 	// takes in a file/folder obj as a parameter
 	untrash(obj) {
-
-
-
-
+		// untrashes a file or folder using the path (remember the path of a file or folder will always lead to the folder containing the file or folder) 
+		// name provided and calls in the FSTree's untrashFile/untrashFolder method - check FSTree's method for more detail
+		if (obj.type === "folder") { // check if the object is a folder
+			return this.tree.untrashFolder(obj); // this.tree.untrashFolder(obj) will either return false or return the just untrashed object
+		} else { // if its not a folder then its a file
+			return this.tree.untrashFile(obj); // this.tree.untrashFile(obj) will either return false or return the just untrashed object
+		}
 	}
-
 
 	// A wrapper function that lists the directory of the contents of a given path, file clicks on the client
 	// will never event get the opportunity to invoke this function don't worry as there are checks in the client side to
