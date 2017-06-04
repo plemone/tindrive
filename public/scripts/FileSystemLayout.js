@@ -66,9 +66,105 @@ class FileSystemLayout {
 		this.attachWindowEH();
 		this.downloadComponent.create();
 		this.deleteComponent.create();
+		this.utilityButtonClick(this.deleteComponent);
 		this.recoverComponent.create();
+		this.utilityButtonClick(this.recoverComponent);
 		this.trashComponent.create();
 		this.trashButtonClick();
+	}
+
+
+	utilityButtonClick(self) {
+
+		var that = this;
+
+		// you can't provide $(self.id).on("click", function(self) {}); with self here because the .on
+		// call back function actually provides a argument to its call back which is an event object
+		// so us providing self would just alias the event object with "self"
+		$(self.id).on("click", function() {
+
+			// we need to determine with what object is this function being called with
+			// if the object is deleteComponent we set the ajaxRoute to "trash", if its
+			// recoverComponent we set the ajaxRoute to untrash
+			if (self.constructor === Delete) {
+				var ajaxRoute = "trash";
+				// If we are deleting with the delete button it means that we are shoving 
+				// files or folders in the trash directory and that means the length of the trash
+				// directory increases, and hence we must show the trash icon having papers inside
+				// if length is greater than one, which is automatically done inside incrTrashLength method
+				// of trashComponent object.
+
+				// It has to be this.trashComponent because this refers to this object which is FileSystemLayout object
+				that.trashComponent.incrTrashLength();
+			} else if (self.constructor === Recover) {
+				var ajaxRoute = "untrash";
+				// If we are recovering with the delete button it means that we are removing files or folders
+				// out of the trash directory and that means that the length of the trash directory decreases
+				// decrTrashLength method of trashComponent object automatically will change the icon of the 
+				// trash directory button from trash to  no trash if the length hits 0.
+				
+				// It has to be that.trashComponent because this referes to that is an alias variable for "this" object which is FileSystemLayout object
+				that.trashComponent.decrTrashLength();
+			}
+
+			// the checks above has to be within the event click because we must decrement and increment the length attribute
+			// inside the trash function upon every click on the buttons
+
+			/*	
+				ASYNCHRONOUS FUNCTIONS DOES NOT WORK WITH FOR LOOPS.
+
+				This is because the for loop does not wait for an asynchronous operation to complete before continuing on 
+				to the next iteration of the loop and because the async callbacks are called some time in the future. 
+				Thus, the loop completes its iterations and THEN the callbacks get called when those async operations finish. 
+				As such, the loop index is "done" and sitting at its final value for all the callbacks.
+		
+				To solve this problem I am using recursion with a slight interval.
+			*/
+
+			// a recursive function which takes i and will keep calling it self until i becomes equal to the self.contents.length
+			function makeAjax(i) {
+				// base case
+				if (i === self.contents.length) {
+					return;
+				}
+
+				// the important information needed for us to do our business is
+				// the path and the name of the Icon object, we have to encapsulate the
+				// path and the name in an object along with the indicator to whether its
+				// a file or not, if its a folder the server should ls everything and turn the
+				// flags inside all the files recursively to false!
+				var requestObj = {};
+				requestObj.name = self.contents[i].name;
+				requestObj.path = self.contents[i].path;
+				requestObj.type = self.contents[i].type;
+
+				$.ajax({
+					url: self.route + ajaxRoute,
+					type: "POST",
+					data: requestObj,
+					success: function() {
+						// only on success we remove the icon that we are deleting from the file system and putting it inside the trashed directory
+						$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
+					}
+				})
+
+				// ++i;
+
+				// makes the recursive call with an interval and the recursive call is the last line in the function 
+				// so the function call stack will never get expanded, so this is not an expand and collapse situation
+				return setTimeout(function() {
+					// IT IS VERY IMPORTANT TO INCREMENT THE i HERE AND NOT ABOVE because the ajax request is asynchronous
+					// meaning that no matter what the last thing in the function before the return statement which has a timeout
+					// which means beccause of the timeout it will always get returned last. This means that even tho the ajax request 
+					// would be before the ++i in line 121 the ajax function would still be executed after line 121 and before setTimeout. 
+					return makeAjax(++i);
+				}, 50);
+
+			}
+
+			makeAjax(0);
+
+		});		
 	}
 
 

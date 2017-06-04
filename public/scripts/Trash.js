@@ -26,15 +26,33 @@ class Trash {
 	// increments the attribute trashLength which keeps track of the number of contents in the trash directory 
 	incrTrashLength() {
 		++this.trashLength;
+		// So the idea is to prevent the css to change everytime when this incrTrashLength function is invoked
+		// we just change it once when trashBinWithPaper is 1, the reason this plan is full proof is because
+		// the trashLength attribute can never be greater than 1 without becoming 1 first.
+		if (this.trashLength === 1) {
+			this.trashBinWithPaper();
+		}
 	}
 
 	// decrements the attribute trashLength which keeps track of the number of contents in the trash directory
-	decrTrashLength() {
-		// if trashLength is not 0 we decrement the trashLength
-		if (this.trashLength !== 0) {
-			--this.trashLength;
+	decrTrashLength() {	
+		// As we are decreasing the trashLength if the trashLength becomes 0 we change the icon of the
+		// trash from with paper to without paper and then make sure to set the trashLength back to 0.
+		// --this.trashLength === 0 kill multiple birds with one stone
+		if (--this.trashLength === 0) {
+			this.trashBinWithoutPaper();
+			this.trashLength = 0;
 		}
 	}
+
+	trashBinWithPaper() {
+		$(this.id).css("background-image", this.full);
+	}
+
+	trashBinWithoutPaper() {
+		$(this.id).css("background-image", this.empty);
+	}
+
 
 	attachEH(clickAction) {
 		var self = this;
@@ -71,7 +89,6 @@ class Trash {
 		} else {
 			$(id).css("background-image", this.empty);
 		}
-
 		$(id).css("background-repeat", "no-repeat");
 		$(id).css("background-size", "30%");
 		$(id).css("background-position", "center");
