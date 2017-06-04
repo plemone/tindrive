@@ -74,6 +74,13 @@ class FileSystemLayout {
 	}
 
 
+	// This method basically uses multiple composition classes depending on what gets passed on through the
+	// parameters. It focuses on the derived class objects of the utilityButton base classes. Using the 
+	// this.constructor method the function determines what derived object of the utility class its dealing with
+	// based on that it passes on the functions necessary! This function also utilizes the trashComponent object
+	// as well which is another class that has a composition relationship with this class. Its a function which
+	// does alot of things all in one and is not a good practice for software engineering. The goal to improve this
+	// would be to make things way more modular and abstract.
 	utilityButtonClick(self) {
 
 		var that = this;
@@ -87,15 +94,29 @@ class FileSystemLayout {
 			// if the object is deleteComponent we set the ajaxRoute to "trash", if its
 			// recoverComponent we set the ajaxRoute to untrash
 			if (self.constructor === Delete) {
-				var ajaxRoute = "trash";
-				// If we are deleting with the delete button it means that we are shoving 
-				// files or folders in the trash directory and that means the length of the trash
-				// directory increases, and hence we must show the trash icon having papers inside
-				// if length is greater than one, which is automatically done inside incrTrashLength method
-				// of trashComponent object.
 
-				// It has to be this.trashComponent because this refers to this object which is FileSystemLayout object
-				that.trashComponent.incrTrashLength();
+				// if we are in the trash directory then that.trashDirEntry.entry attribute will be true
+				if (that.trashDirEntry.entry) {
+					console.log("we are in the trash directory...");
+
+
+					var ajaxRoute = "deleteTrash";
+
+					
+
+					return;
+				} else { // if we are not in the trash directory then do our notmal thing
+					var ajaxRoute = "trash";
+					// If we are deleting with the delete button it means that we are shoving 
+					// files or folders in the trash directory and that means the length of the trash
+					// directory increases, and hence we must show the trash icon having papers inside
+					// if length is greater than one, which is automatically done inside incrTrashLength method
+					// of trashComponent object.
+
+					// It has to be this.trashComponent because this refers to this object which is FileSystemLayout object
+					that.trashComponent.incrTrashLength();
+				}
+
 			} else if (self.constructor === Recover) {
 				var ajaxRoute = "untrash";
 				// If we are recovering with the delete button it means that we are removing files or folders

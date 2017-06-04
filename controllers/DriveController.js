@@ -451,16 +451,60 @@ class DriveController {
 					}
 				}
 
-
 				// and we send this response object to the client now
 				res.status(200).send(responseObj);
 
 			});
 
-
 		}, function() { res.status(200).render("404"); });
 
 	}
+
+
+	// checks if the route contains authenticated user name, then deletes file/folder object form mongodb,
+	// then from the FSTree and finally deletes the file/folder from the server's file system as well.
+	deleteTrash(req, res) {
+
+		var self = this; // the keyword "this" has different meaning in different scopes
+
+		// as usual we query the collection of ActiveUsers in mongodb with the username extracted from the route
+		this.modelAU.query(req.params.username, function() {
+
+			// The first callback function is the success callback function, this means that we have
+			// found the user's object in the ActiveUser's collection by querying the collection with the
+			// atttribute and value of "name: req.params.username".
+
+			// Next step for us is to find the object from the Trashes collection using the req.params.username
+			// to query the object encapsulating the trashDir
+			self.modelT.query(req.params.username, function(doc) {
+
+				// we extract the value of the trashedDir attribute from the doc object returned by mongodb and store it in a variable
+				var trashedDir = doc.trashedDir;
+
+				// Next step is to loop over the trashedDir array which contains the directory of trashed files/folders for the user
+				// and find the file/folder's name which matches the file/folder's name provided from the client side.
+				for (var i = 0; i < trashedDir.length; ++i) {
+
+					if (trashedDir[i].name === req.body.name) {
+
+
+
+
+					}
+
+
+				}
+
+
+			}, function() { res.status(200).render("404"); }); // if the trashes object by the name attribute doesnt match the username specified in the route string then we render the 404 page indicating error
+
+		}, function() { res.status(200).render("404"); }); // upon an error in authenticating the user we render the 404 page
+
+
+
+
+	}
+
 
 
 	trashDirSize(req, res) {

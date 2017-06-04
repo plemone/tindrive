@@ -67,6 +67,8 @@ module.exports = function() { // just a lambda
 
 	app.get("/:username/cdTrash", function(req, res) { CONTROLLER.cdTrash(req, res); });
 
+	app.post("/:username/deleteTrash", function(req, res) { CONTROLLER.deleteTrash(req, res); });
+
 	app.get("/:username/trashDirSize", function(req, res) { CONTROLLER.trashDirSize(req, res) });
 
 	app.post("/logout", function(req, res) { CONTROLLER.logout(req, res); })
