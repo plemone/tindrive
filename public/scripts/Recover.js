@@ -57,11 +57,11 @@ class Recover extends UtilityButton {
 					// call to setTimeout which invokes the trashRecovery as its call back making the process recursive
 					return setTimeout(function() {
 						// IT IS VERY IMPORTANT TO INCREMENT THE i HERE AND NOT ABOVE because the ajax request is asynchronous
-						// meaning that no matter what the last thing in the function before the return statement which is a second order
-						// asynchronous function, setTimout, will be the ajax function. This means that even tho the ajax request 
+						// meaning that no matter what the last thing in the function before the return statement which has a timeout
+						// which means beccause of the timeout it will always get returned last. This means that even tho the ajax request 
 						// would be before the ++i in line 55 the ajax function would still be executed after line 55 and before setTimeout.
 						return trashRecovery(++i); // increment the i and then make the function call which gets called by setTimeout function as its call back, no function call stack is expanded as it is the last function call
-					}, 20);
+					}, 50);
 
 				}
 

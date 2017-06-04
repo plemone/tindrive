@@ -15,16 +15,30 @@ class Trash {
 		this.descriptionId = "#" + this.name + "-description"; // unique description id is needed for each component that inherits this abstract class
 		this.element = "<div id = " + this.name + "></div>"; // contains the DOM information
 	}
-
-	create() { // allow it to take a list of functions that it can call upon creation as well!
+	
+	// allow it to take a list of functions that it can call upon creation as well!
+	create() {
 		$("#main-div").append(this.element);
 		this.generateCSS();
 		this.attachEH();
 	}
 
+	// increments the attribute trashLength which keeps track of the number of contents in the trash directory 
+	incrTrashLength() {
+		++this.trashLength;
+	}
+
+	// decrements the attribute trashLength which keeps track of the number of contents in the trash directory
+	decrTrashLength() {
+		// if trashLength is not 0 we decrement the trashLength
+		if (this.trashLength !== 0) {
+			--this.trashLength;
+		}
+	}
+
 	attachEH(clickAction) {
 		var self = this;
-
+		
 		// this event is responsible for when a button is being pressed, as the button is being pressed
 		// you can change the design to make it look like its being pressed
 		$(this.id).on("mousedown", function() {
@@ -39,7 +53,6 @@ class Trash {
 			$(self.id).css("bottom", "+4px"); // moves the positiion back to normal on focus
 
 		});
-
 	}
 
 	generateCSS() {
