@@ -142,7 +142,21 @@ class FileSystem {
 
 	// removes all files in a specific folder from the file system also updates the FSTree
 	removeFolder(folderObj) {
+		// boolean indicating if an error has taken place, true if error has taken place
+		// false if no error has taken place, so by default it is false
+		var errorIndicator = false;
+
+
+
 		return this.tree.removeFolder(folderObj);
+	}
+
+
+	removeFolderHelper(obj) {
+
+		var files = fs.readdirSync(obj.path + obj.name);
+
+
 	} 
 
 	// returns the ls -l array of the directory of the file system
