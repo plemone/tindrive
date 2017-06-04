@@ -406,6 +406,9 @@ class DriveController {
 
 							// now we use the model object responsible for updating the trashed directory and we use the method upsert to update the old object with the new one
 							self.modelT.upsert(newUserTrashedDir);
+							
+							// we break the loop as we don't want any more information from the rest of the array, since we have found our information already
+							break;
 						}
 
 
@@ -421,6 +424,79 @@ class DriveController {
 
 		}, function() { res.status(200).render("404"); });
 
+
+	}
+	// checks if the route contains authenticated user name, then deletes file/folder object form mongodb,
+	// then from the FSTree and finally deletes the file/folder from the server's file system as well.
+	deleteTrash(req, res) {
+
+		var self = this; // the keyword "this" has different meaning in different scopes
+
+		// as usual we query the collection of ActiveUsers in mongodb with the username extracted from the route
+		this.modelAU.query(req.params.username, function() {
+
+			// The first callback function is the success callback function, this means that we have
+			// found the user's object in the ActiveUser's collection by querying the collection with the
+			// atttribute and value of "name: req.params.username".
+
+			// we retrieve the user from the facade class which gives acces to each user's file system object
+			var userFS = self.database.retrieve(req.params.username);
+
+			// we query the trashes collection with the username provided from the route string
+			self.modelT.query(req.params.username, function(doc) {
+
+				// we extract the value of the trashedDir attribute from the doc object returned by mongodb and store it in a variable
+				var trashedDir = doc.trashedDir;
+
+				// Next step is to loop over the trashedDir array which contains the directory of trashed files/folders for the user
+				// and find the file/folder's name which matches the file/folder's name provided from the client side.
+				for (var i = 0; i < trashedDir.length; ++i) {
+
+					if (trashedDir[i].name === req.body.name) {
+
+						// userFS's removeFile and removeFolder method will take care of both deleting
+						// from the file system and deleting from the 
+
+						// if the type of content sent to us by the client to be deleted is the file
+						// then we call the appropriate FileSystem class's removeFile method
+						if (req.body.type === "file") {
+							userFS.removeFile(req.body); // req.body is the file object
+
+						} else { // if the type is not file it has to be a folder so we call
+								 // the appropriate FileSystem class's removeFolder method
+							userFS.removeFolder(req.body); // req.body is the folder object
+						}
+
+						// Next step for us is to find the object from the Trashes collection using the req.params.username
+						// to query the object encapsulating the trashDir
+
+						// we remove an element at starting at i and we remove one element from i
+						trashedDir.splice(i, 1);
+
+						// create the new object encapsulating the users trashed directory which will be updated
+						// replacing the old directory
+
+						var newUserTrashedDir = {};
+						newUserTrashedDir.name = req.params.username;
+						newUserTrashedDir.trashedDir = trashedDir;
+
+						// now that the object encapsulating the user's trashed directory is created we update the
+						// old trashed directory
+						self.modelT.upsert(newUserTrashedDir);
+
+						// we break the loop as we don't want any more information from the rest of the array, since we have found our information already
+						break;
+					}
+
+				}
+
+				// if we have reached this part of the code it means we have successfully passed all the error checks
+				// and we simply respond with a 200 status, which indicates that all went well
+				res.sendStatus(200);
+
+			}, function() { res.status(200).render("404"); }); // if the trashes object by the name attribute doesnt match the username specified in the route string then we render the 404 page indicating error
+
+		}, function() { res.status(200).render("404"); }); // upon an error in authenticating the user we render the 404 page
 
 	}
 
@@ -459,53 +535,6 @@ class DriveController {
 		}, function() { res.status(200).render("404"); });
 
 	}
-
-
-	// checks if the route contains authenticated user name, then deletes file/folder object form mongodb,
-	// then from the FSTree and finally deletes the file/folder from the server's file system as well.
-	deleteTrash(req, res) {
-
-		var self = this; // the keyword "this" has different meaning in different scopes
-
-		// as usual we query the collection of ActiveUsers in mongodb with the username extracted from the route
-		this.modelAU.query(req.params.username, function() {
-
-			// The first callback function is the success callback function, this means that we have
-			// found the user's object in the ActiveUser's collection by querying the collection with the
-			// atttribute and value of "name: req.params.username".
-
-			// Next step for us is to find the object from the Trashes collection using the req.params.username
-			// to query the object encapsulating the trashDir
-			self.modelT.query(req.params.username, function(doc) {
-
-				// we extract the value of the trashedDir attribute from the doc object returned by mongodb and store it in a variable
-				var trashedDir = doc.trashedDir;
-
-				// Next step is to loop over the trashedDir array which contains the directory of trashed files/folders for the user
-				// and find the file/folder's name which matches the file/folder's name provided from the client side.
-				for (var i = 0; i < trashedDir.length; ++i) {
-
-					if (trashedDir[i].name === req.body.name) {
-
-
-
-
-					}
-
-
-				}
-
-
-			}, function() { res.status(200).render("404"); }); // if the trashes object by the name attribute doesnt match the username specified in the route string then we render the 404 page indicating error
-
-		}, function() { res.status(200).render("404"); }); // upon an error in authenticating the user we render the 404 page
-
-
-
-
-	}
-
-
 
 	trashDirSize(req, res) {
 

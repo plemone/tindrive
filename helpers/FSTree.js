@@ -258,7 +258,7 @@ class FSTree {
 					// array of the elements targeted, except splice modifies the original array, when
 					// the method is invoked and slice does not
 					cwd.splice(i, 1);
-					return true;
+					return cwd[i];
 				}
 			}
 		}
@@ -285,7 +285,7 @@ class FSTree {
 				if (cwd[i].constructor !== FileInfo && cwd[i].name === folderObj.name) {
 					// similarly we splice again, when we find the folder
 					cwd.splice(i, 1);
-					return true;
+					return cwd[i];
 				}
 			}
 		}

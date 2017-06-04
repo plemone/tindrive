@@ -115,15 +115,34 @@ class FileSystem {
 
 
 	// removes a file with a specific path given from the file system also updates the FSTree
-	removeFile() {
+	removeFile(fileObj) {
+		// boolean indicating if an error has taken place, true if error has taken place
+		// false if no error has taken place, so by default it is false
+		var errorIndicator = false;
+		fs.unlink(fileObj.path + fileObj.name, function(err) {
+			// if we encounter an error we turn the errorIndicator to true
+			if (err) {
+				console.log("Error in deleting the file specified from the server's file system...");
+				errorIndicator = true;
+			} else {
+				console.log("File successfully removed from the server's file system...");
+			}
+		});
 
+		// we check the errorIndicator variable for any possible errors that might have occured
+		// if its true we return false as there was an error and this ends the function body right there
+		// without ever going to this.tree.removeFile(fileObj);
+		if (errorIndicator) {
+			return false;
+		}
+
+		return this.tree.removeFile(fileObj);
 
 	}
 
 	// removes all files in a specific folder from the file system also updates the FSTree
-	removeFolder() {
-
-
+	removeFolder(folderObj) {
+		return this.tree.removeFolder(folderObj);
 	} 
 
 	// returns the ls -l array of the directory of the file system

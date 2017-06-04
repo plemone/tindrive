@@ -97,14 +97,17 @@ class FileSystemLayout {
 
 				// if we are in the trash directory then that.trashDirEntry.entry attribute will be true
 				if (that.trashDirEntry.entry) {
-					console.log("we are in the trash directory...");
 
-
+					// when we are in the trash directory we make a different ajax request
+					// instead of treating it like a normal directory where we just delete the file and sent it
+					// to trash folder we make the ajax request to delete the content permanently from the trash
+					// directory, FSTree in the serverside, mongodb's object which encapsulates the trashed directory
+					// and the file system in the server side as well!
 					var ajaxRoute = "deleteTrash";
 
-					
+					// since we are removing icon the from the trash directory we decrement the length
+					that.trashComponent.decrTrashLength();
 
-					return;
 				} else { // if we are not in the trash directory then do our notmal thing
 					var ajaxRoute = "trash";
 					// If we are deleting with the delete button it means that we are shoving 
