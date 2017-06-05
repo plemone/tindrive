@@ -43,7 +43,8 @@ class Icon {
 			// so if an id was "i am an id" it will change to "i-am-an-id"
 			// since the id is saved inside each object accessing each object's id to attach
 			// the event handler on creation will do the trick
-			if (this.name[i] === " ") {
+			// DOM id's cannot have characters like blank spaces, parenthesis and curly braces
+			if (this.name[i] === " " || this.name[i] === "(" || this.name[i] === ")" || this.name[i] === "{" || this.name[i] === "}") {
 				// absolutely random id is generated to avoid conflicts with similar named ids
 				// needs to be rounded to ceiling as well as jquery doesn't like decimal values as ids
 				var rand = (Math.ceil((Math.random() * Math.random() * Math.random() * 100)).toString() + Math.ceil((Math.random() * Math.random() * Math.random() * 100)).toString());

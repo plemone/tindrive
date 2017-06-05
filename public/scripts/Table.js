@@ -48,6 +48,7 @@ class Table {
 	// takes in a content by value and tries to match that content in the table and removes it
 	remove(content) {
 
+		// THIS SHOULD BE IMPLEMENTED ITS A MUST
 
 
 

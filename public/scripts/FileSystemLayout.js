@@ -434,7 +434,41 @@ class FileSystemLayout {
 			*/
 			if (self.keyStack[0] === 16 && self.keyStack[1] === 78 || self.keyStack[0] == 78 && self.keyStack[1] === 16) {
 				var folderName = prompt("Please enter the folder name");
-				self.addFolder(folderName);
+				// when we prompt for the folder name when the user hits cancel no folder should be created
+				// and when the user hits cancel folderName will be null so we simply have a check for that
+				// to make sure that a folder name with null value for a name is not created
+				// NOTE** - exists operator and ! (not) operator is implemented for empty strings
+				if (folderName) {
+					self.addFolder(folderName);
+				} else if (folderName === "") {
+					// If the folder name is empty it means that the user has pressed ok and hasn't
+					// provided any default name for the folder to be made. In that case we have to
+					// provide the name ourselves. We have to make sure that the name we provide is unique
+					// meaning the folder with the same name does NOT exists in the directory already.
+					// To do this we keep making up folder names and check each name we create by
+					// querying up our table datastructure which holds our current working directory file
+					// contents'name. We keep looping and adding numbers to our folder name - New Folder(<number>)
+					// till we find a unique name that doesn't match with anything in the table datastructure's content.
+
+					var defaultName = "New Folder";
+					var i = 1;
+
+
+					while (self.table.contains(defaultName, function(contentA, contentB) {
+						if (contentA === contentB.name) {
+							return true;
+						} else {
+							return false;
+						}
+					})) {
+
+						defaultName = "New Folder" + " (" + i.toString() + ")";
+						++i;
+					}
+
+					self.addFolder(defaultName);
+
+				}
 			}
 			/*
 				always pop the array by at the end if length becomes greater than 2 as we want to hold a maximum of 2 digits
