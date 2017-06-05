@@ -437,7 +437,12 @@ class FileSystemLayout {
 				and then 78 gets released therefore n gets released first and then 78
 				same thing might happen the opposite way where you may release the shift key first and then the n key, which is also valid
 			*/
-			if (self.keyStack[0] === 16 && self.keyStack[1] === 78 || self.keyStack[0] == 78 && self.keyStack[1] === 16) {
+
+			// both these statements need to be true in order for the entire statement to be true
+			// the first statement contains several statements inside making one giant statement and the second statement is just !self.trashDirEntry.entry
+			// this means that we cannot be inside the trash directory as being inside the trash directory would result in self.trashDirEntry to be true
+			// if we are not inside the trash directory self.trashDirEntry.entry would always be false and negating the false would result in true
+			if ((self.keyStack[0] === 16 && self.keyStack[1] === 78 || self.keyStack[0] == 78 && self.keyStack[1] === 16) && !self.trashDirEntry.entry) { // !self.trashDirEntry.entry makes sure that we are not inside the trash directory, so when we are in the trash directory we cant make new folders inside it
 				var folderName = prompt("Please enter the folder name");
 				// when we prompt for the folder name when the user hits cancel no folder should be created
 				// and when the user hits cancel folderName will be null so we simply have a check for that
@@ -518,7 +523,7 @@ class FileSystemLayout {
 			// otherwise the path needs to be extended as we are now visiting a new folder	
 			self.path.extend(self.selections[0].name);
 
-			// if we are inside the trashedDirEntry environment the self.trashDirEntry.entry will turn true
+			// if we are inside the trashDirEntry environment the self.trashDirEntry.entry will turn true
 			if (self.trashDirEntry.entry) {
 				// if it is true we simply extend the dir attribute which is a path object itself
 				self.trashDirEntry.dir.extend(self.selections[0].name);
@@ -858,7 +863,7 @@ class FileSystemLayout {
 	// back space event handler for the window
 	backSpace(event, self) {
 
-		// if statement to prevent cding out of the root folder, we don't want to return if we are inside the trash directory hence the inclusion of !self.transhedDirEntry
+		// if statement to prevent cding out of the root folder, we don't want to return if we are inside the trash directory hence the inclusion of !self.trashDirEntry
 		if (self.path.get === "./filesystems/user-fs/" + $("#username").text() + "/" && !self.trashDirEntry.entry) return;
 
 		/*
@@ -1032,7 +1037,7 @@ class FileSystemLayout {
 				// the path needs to be extended as we are now visiting a new folder
 				self.path.extend(icon.name);
 				
-				// if we are inside the trashedDirEntry environment the self.trashDirEntry.entry will turn true
+				// if we are inside the trashDirEntry environment the self.trashDirEntry.entry will turn true
 				if (self.trashDirEntry.entry) {
 					// if it is true we simply extend the dir attribute which is a path object itself
 					self.trashDirEntry.dir.extend(icon.name);
