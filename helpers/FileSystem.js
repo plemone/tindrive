@@ -119,6 +119,11 @@ class FileSystem {
 		// boolean indicating if an error has taken place, true if error has taken place
 		// false if no error has taken place, so by default it is false
 		var errorIndicator = false;
+
+		// we now remove the file specified from the server's file system
+
+		// fs.unlinkSync takes the path name which leads to the folder that contains the file + the file name itself
+		console.log("File is being removed...");
 		fs.unlink(fileObj.path + fileObj.name, function(err) {
 			// if we encounter an error we turn the errorIndicator to true
 			if (err) {
@@ -128,7 +133,6 @@ class FileSystem {
 				console.log("File successfully removed from the server's file system...");
 			}
 		});
-
 		// we check the errorIndicator variable for any possible errors that might have occured
 		// if its true we return false as there was an error and this ends the function body right there
 		// without ever going to this.tree.removeFile(fileObj);
@@ -146,15 +150,69 @@ class FileSystem {
 		// false if no error has taken place, so by default it is false
 		var errorIndicator = false;
 
+		// we now remove the folder from the servers file system
+		// NOTE** - When you delete a folder from the servers file system all the contents
+		//          inside the folder including files awnd event more nested folders need to be
+		//          recursively traversed and deleted.
+		// to do this we use a helper function which recursively traverses all the contents of the
+		// provided directory and delete all the contents inside recursively by taking the path of the folder
+		// plus the folder name itself, we do this because the fs module only deals with path names
 
+		// we now call the helper function which recursively traverses the folder contents, delets each
+		// and every file or folder inside it and then delets the folder itself
 
+		this.removeFolderHelper(folderObj.path + folderObj.name);
+
+		// and finally we remove the folderObj from the FSTree itself for the user 
 		return this.tree.removeFolder(folderObj);
 	}
 
+	// helper function for removeFolder method
+	removeFolderHelper(path) {
+		// everything in the recursive function needs to be synchronous as asynchronous functions would
+		// mess up the order in which they get invoked in recursion
 
-	removeFolderHelper(obj) {
+		// we first check if the path provided is a file or folder
+		if (fs.statSync(path).isFile()) {
+			// if it is a file we simply delete the file
+			// fs.unlinkSync takes the path name which leads to the folder that contains the file + the file name itself
+			console.log("File is being removed...");
+			fs.unlinkSync(path);
+		} else {
+			// If its a folder then we ls the folder and put all its contents in an array
+			// using that array we use a for loop to traverse the array and each element
+			// in the index will be cded into using recursion by joining the current pathname
+			// and file/folder name. The function will check again if the path is a file or folder
+			// if it is then it gets deleted, if not then the steps repeat again and again
 
-		var files = fs.readdirSync(obj.path + obj.name);
+			// we read the contents of the directory synchronously if its a folder and store it in an array
+			var contents = fs.readdirSync(path);
+
+			// we traverse the array of contents that we got and as we are traversing each element we make a recursive
+			// call on each element in the array, and each content (or the path which leads to either a folder or file) 
+			// will go through all the same steps that this object has gone through file or folder doesn't matter the 
+			// content will be dealt accordint to whatever it is in the function
+			for (var i = 0; i < contents.length; ++i) {
+
+				// we make the recursive call by passing the new path to an file or folder by attaching the current
+				// path to the directory we are in plus the content in the directory content
+				this.removeFolderHelper(path + "/" + contents[i]);
+				// NOTE** - We don't return with the expression above as we are expanding the stack when we make 
+				//          the recursive call and waiting for the stack to collapse and the loop will go over its
+				//          next iteration. 
+
+				// the for loop itself expands the stack as it is waiting for more iterations to be completed
+
+				// the for loop itself expands the stack as more instructions are pending after the recursive call
+				// or more iterations are pending after each recursive call unless you are in the last iteration of the for loop
+
+			}
+
+			// after expanding and collapsing of the stack on each recursive call we have successfully
+			// removed all the contents inside the folder so now we delete the folder itself
+			console.log("Folder is being removed...");
+			fs.rmdirSync(path);
+		}
 
 
 	} 

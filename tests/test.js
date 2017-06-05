@@ -21,12 +21,13 @@ function removeFolder(path) {
 		for (var i = 0; i < files.length; ++i) {
 			// this recursive call expands the stack
 			removeFolder(path + "/" + files[i]);
+
+			// the for loop itself expands the stack as more instructions are pending after the recursive call
+			// or more iterations are pending after each recursive call unless you are in the last iteration of the for loop
 		}
 
-		// The stacks expand because of this expression, which is asking for the folder in the current working directory
-		// to be deleted this path will only be executed only when all the files inside the current directory are recursively deleted
-		// as the function call gets extended in deleting the internal files and folder structure of the current working directory
-		// and will only collapse after all the internal files and folder of the folder is deleted.
+		// after expanding and collapsing of the stack on each recursive call we have successfully
+		// removed all the contents inside the folder so now we delete the folder itself
 		fs.rmdirSync(path);
 	}
 }
