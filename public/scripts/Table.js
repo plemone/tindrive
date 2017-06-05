@@ -45,10 +45,30 @@ class Table {
 		++this.i; // increments i as we just added a content to the row array
 	}
 
-	// takes in a content by value and tries to match that content in the table and removes it
+	// Takes in a content by value and tries to match that content in the table and removes it.
+	// This method will typically be invoked when a content is removed from the current working directory,
+	// for trash directory when we recover we are still removing the content form the table and we have to invoke
+	// this method when we do.
 	remove(content) {
+		// one thing which is very important to do is decrease the i which
+		// indicates the index of the element we are at in the current row
 
-		// THIS SHOULD BE IMPLEMENTED ITS A MUST
+		// if as we decrease the index i of the current row and it happens to be -1
+		// we can't allow that to happen, so as we decrease and the index happens to be -1
+		// we simply make it 0 and decrease the row we are at as we have jumped back up a level
+		if (--this.i === -1) {
+			// If we are on the first row (this.row === 0) and the index (this.i) is -1 we can't decrement the 
+			// row any further as the row always needs to be 0 meaning there must always be atleast one row in the 
+			// table. 
+			// If this.i is -1 and the this.row is 0 it means we can't make the this.i = maxRowLength - 1 index as
+			// we are no longer jumping up a level as we have removed the one and only element from the table.
+			if (this.row !== 0) {
+				// when i is -1 it means we have removed the first index and we have jumped up a level 
+				// in along the y-axis
+				this.i = this.maxRowLength - 1;
+				--this.row;
+			}
+		}
 
 		// loop over each row in a table
 		for (var i = 0; i < this.table.length; ++i) {

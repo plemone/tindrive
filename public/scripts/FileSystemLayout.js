@@ -1,5 +1,10 @@
 'use strict'; // to avoid JavaScript weirdness
 
+
+// TO-DO - Everytime we remove something from the current working directory to the trash folder
+//         we have to remove the item from the table as well!
+
+
 /*
 	Responsible for managing the #dnd div which is basically the drop box zone
 	should contain some sort of data structure which allows it to keep a track
