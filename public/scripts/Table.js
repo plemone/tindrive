@@ -50,8 +50,22 @@ class Table {
 
 		// THIS SHOULD BE IMPLEMENTED ITS A MUST
 
+		// loop over each row in a table
+		for (var i = 0; i < this.table.length; ++i) {
 
+			// loop over each element in a row
+			for (var j = 0; j < this.table[i].length; ++j) {
 
+				// As we are looping over each element in a row array we check if the content object's name 
+				// attribute matches the currently element we are iterating in a particular row in a table
+				// and a particular index of a row in a table. If the name matches we have found our element
+				// and hence we remove it
+				if (content.name === this.table[i][j].name) {
+					// we remove 1 element starting from index j
+					this.table[i][j].splice(j, 1);
+				}
+			}
+		}
 	}
 
 	// takes in an object through the param and returns true if the object exists in the table, false if the object doesn't exist
