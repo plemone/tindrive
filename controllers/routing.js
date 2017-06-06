@@ -26,10 +26,9 @@ module.exports = function() { // just a lambda
 
 	/*
 		Due to the limit set by the body parser module, in order to send data via HTTP
-		post request I had to use the req.on data asynchronous function, where data is
-		accumulated asynchronously and recursively and stored inside a variable.
-		To avoid body parser from handling the request I bounded the bodyparser middleware
-		after the request.
+		post request I had to use the req.on data asynchronous accumulated asynchronously and 
+		recursively and stored inside a variable. To avoid body parser from handling the request 
+		I bounded the bodyparser middleware after the request.
 	*/
 	app.post("/:username/uploadFiles", function(req, res) { CONTROLLER.uploadFiles(req, res); });
 

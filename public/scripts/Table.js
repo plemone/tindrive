@@ -70,6 +70,11 @@ class Table {
 			}
 		}
 
+		// holds the index of the row and the index of the element at the row from which
+		// the removal took place in
+		var removedRow = 0;
+		var removedIndex = 0;
+
 		// loop over each row in a table
 		for (var i = 0; i < this.table.length; ++i) {
 
@@ -82,10 +87,89 @@ class Table {
 				// and hence we remove it
 				if (content.name === this.table[i][j].name) {
 					// we remove 1 element starting from index j
-					this.table[i][j].splice(j, 1);
+					this.table[i].splice(j, 1);
+
+					// NOW REMOVING FROM THE position leaves a gap between the tables
+					// we cannot jump down a row ever without having all the space in the current
+					// row being filled to maxRowLength numbers. The gap is not in between the array 
+					// but from the back actually, as we remove elements the array representing the row shrinks
+
+					// NOTE** - EACH ROW MUST AND MUST HAVE 8 elements before we can populate create a new
+					// row for elements to be stored in
+
+					// Close your eyes and imagine the table, no matter where you remove the element from
+					// the back will always have an empty space. To remedy this situation we should always
+					// splice the element from the first index in the row beneath and push it to the back
+					// of the previous row.
+
+
+					// we now calculate the number of rows in the table
+					var numRows = this.table.length;
+
+					// we now loop over rows starting after our current row and remove
+					// the first element of each row array and push it to the back of the previous row array
+					// we do this throughout all the remaining rows
+					for (var k = i + 1; k < numRows; ++k) {
+						// we grab the first element from the current row array
+						var temp = this.table[k][0];
+
+						// push it to the row array above the current row array
+						this.table[k - 1].push(temp);
+
+						// then we simply remove the element that we just pushed to the back of the
+						// row array in the row above us
+						this.table[k].splice(0, 1); // remove element starting at index 0 and remove 1 element, this is what splice(0, 1) means
+
+						// After we remove the first element from the row array the row array is empty
+						// then we simply remove the empty array.
+						// But we have to make sure that the if the table has only one row and we removed
+						// the only element from the row then we must NOT remove the empty row if its just the
+						// only row in the table.
+						if (this.table[k].length === 0 && this.table.length !== 0) {
+							this.table.pop();
+						}
+					}
+
+					removedRow = i;
+					removedIndex = j;
 				}
 			}
 		}
+
+		// We have one more thing to do which is to loop over the indexes of all the elements starting from
+		// the current index and the row that we removed till the end of the table we shift the coordinates
+		// of all the elements in the array by 1 index, if row needs to be changed because of the shifting
+		// we change the row coordinates as well!
+
+		// we need to traslate the removedRow and removedIndex to a sibgle modulo index to loop over all the
+		// contents in the table using a single for loop
+
+		// we find the total size of the table
+		var tableLength = this.size();
+
+		// we translate the row and index of the row to modulo index
+		var translatedIndex = this.translateIndex(removedRow, removedIndex);
+
+		// now using the table length and traslated index using a for loop we loop over the contents of the table
+		for (var i = translatedIndex; i < tableLength; ++i) {
+
+			// we have to use this.get(i) method to get the element in the array using modulo index
+			// as get(i) traslates the i values to actual row and i value of the table
+
+				var content = this.get(i);
+
+				// the second element of the tableCoordinate attribute array is the this.i index for a row in the table
+				// and the first elemenet of the tableCoordinate attribute array is the this.row index in the table
+				// so we decrease the this.i index which is the index of the current row that the element exists in the table
+				if (--content.tableCoordinates[1] === -1) {
+					// we jump up a level in the y-axis meaning we shift up a row
+					--content.tableCoordinates[0];
+					// and since its -1 it means that we are actually the last element in the new row we are in
+					// so we change the this.i to the last element of the row
+					content.tableCoordinates[1] = this.maxRowLength - 1; 
+				}
+		}
+
 	}
 
 	// takes in an object through the param and returns true if the object exists in the table, false if the object doesn't exist

@@ -174,6 +174,11 @@ class FileSystemLayout {
 					success: function() {
 						// only on success we remove the icon that we are deleting from the file system and putting it inside the trashed directory
 						$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
+					
+						// we also adjust the table by removing the content from the table for the file or folder that is
+						// not in the current working directory
+						that.table.remove(self.contents[i]);				
+					
 					}
 				})
 
