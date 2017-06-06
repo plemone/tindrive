@@ -95,6 +95,12 @@ class FileSystemLayout {
 		// so us providing self would just alias the event object with "self"
 		$(self.id).on("click", function() {
 
+			// if nothing is selected we simply just return, when nothing is selected
+			// the attribute of the class which is an array will have length of 0
+			if (that.selections.length === 0) {
+				return;
+			}
+
 			// we need to determine with what object is this function being called with
 			// if the object is deleteComponent we set the ajaxRoute to "trash", if its
 			// recoverComponent we set the ajaxRoute to untrash
@@ -174,7 +180,6 @@ class FileSystemLayout {
 					success: function() {
 						// only on success we remove the icon that we are deleting from the file system and putting it inside the trashed directory
 						$("#wrapper-" + self.contents[i].id).remove(); // we target it by wrapper because wrapper contains both the file icon and the file name!
-					
 						// we also adjust the table by removing the content from the table for the file or folder that is
 						// not in the current working directory
 						that.table.remove(self.contents[i]);				
@@ -510,8 +515,8 @@ class FileSystemLayout {
 	// return key event handler for the window
 	returnKey(event, self) {
 
-		// return key code is 13
-		if (event.which === 13 && self.selections.length !== 0 && self.selections.length < 2) { // all these statement need to be true for the entire statement to be evaluated to true
+		// return key code is 13 and selection has to only be 1 to enter a folder multiple selected folders cannot be entered all at once
+		if (event.which === 13 && self.selections.length === 1) { // all these statement need to be true for the entire statement to be evaluated to true
 			// enter key has a default behaviour equal to the left click, so we prevent the mixups as
 			// out left click is special
 			event.preventDefault();
