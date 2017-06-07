@@ -10,6 +10,7 @@ var Database = require("./../helpers/Database.js"); // ./../ means cd out of the
 var ActiveUsers = require("./../models/ActiveUsers.js"); // ActiveUsers model imported
 var Users = require("./../models/Users.js"); // Users model imported
 var Trashes = require("./../models/Trashes.js"); // Trashes model imported
+var archiver = require("archiver"); // module to zip files and folders
 
 /* Constants */
 const SALT = 10; // salt for the bcrypt password hashing
@@ -568,18 +569,99 @@ class DriveController {
 
 		var self = this; // the keyword "this" has different meaning in different scopes
 
-
 		// as always we have to check whether the request made to the server is by a user who is currently
 		// authenticated by checking the ActiveUsers collection in mongodb and check if the object with the user's name exists
 		this.modelAU.query(req.params.username, function() {
 
+			// lets generate a random name to avoid naming conflicts
+			let folderName = function() {
 
-			// loop over the array of selected files/folders and zip the selected items and send
-			// it over to the client side
+				// variable to store the letters in
+				let name = "";
+
+				// we want to generate a number between 10 to 30 
+				// start 									end
+				// [10 ----------------------------------- +10]
+				// [max - min ............................ +min]
+				let numLetters = Math.random() * (20 - 10) + 10;
+
+				// using the randomly generated number in the range of 20 to 30
+				// we loop that many times, and the number will be atleast 20 to atleast 30 in between any of the number
+				for (let i = 0; i < numLetters; ++i) {
+
+					// In the ASCII table the letter "A" starts at code 65 and the letter z ends at letter 65 + 57 = 122
+					// and so we want to generate a number in between 65 and 122
+					// Although the characters from 90 to 97 are not letters of english alphabet so any number
+					// between 91 and 96 (the condition is that they have to be both 90 and 97 for the entire statement
+					// to evaluate to true) need to be excluded. So remedy the situation we simply scheck how close the
+					// number is to 97 and we just help the number get to 97 by adding how many numbers its missing to
+					// itself. This makes any number between 91 to 96 into 97.
+					let randomNum = 65 + Math.round((Math.random() * 57));
+					if (randomNum > 90 && randomNum < 97) {
+						let toAdd = 97 - randomNum;
+						randomNum += toAdd;
+					}
+
+					// now we add the randomly generated alphabet to the string variable
+					name += String.fromCharCode(randomNum);
+
+				}
+
+				// at the very end of the function we return the name
+				return name;
+			}(); // at the end of the function body we invoke it, from the "()" parenthesis you can see the function being invoked and the function being invoked returns the name string which gets saved righ away by the variable folderName
 
 
+			// we have to modify the folder name slightly to add the .zip at the end of the random string
+			folderName = folderName + ".zip";
 
-			res.status(200).sendFile("git.py", {root: "./"});
+			// we create the object that will be used to zip files or folders
+			let archive = archiver("zip");
+
+			// we create a write stream where bytes will get piped to
+			let output = fs.createWriteStream("./" + folderName);
+
+			// archive object .on close event takes a callback where you can log to the screen
+			output.on("close", function() {
+				console.log(archive.pointer() + " bytes in total zipped...");
+				console.log("Archiver has been finalized and the output file descriptor has been closed...");
+			});
+
+			archive.on("error", function(err) {
+				console.log(err);
+				console.log("Error occured in zipping files...");
+			})
+
+			// loop over the array of selected files/folders and zip the selected items and send it over to the client side
+			for (let i = 0; i < req.body.selections.length; ++i) {
+
+				// We deal with two type of content either a file or a folder
+				// archive object has two methods called archive.directory and archive.file
+				// these two methods will be used to actually zipping the file or folder into one
+				// zip file. These methods shoves the files/folders into the object and when we call
+				// the pipe method the data stream gets dumped into our write stream called output.
+				// when the finalize method is called the close event is triggered and we end the whole process
+				// of zipping.
+				if (req.body.selections[i].type === "folder") {
+
+					// if we are dealing with a folder we call the directory method of the archive object
+					archive.directory(req.body.selections[i].path.slice(2) + req.body.selections[i].name);
+
+				} else {
+
+					// if we are dealing with a file we call the file method of the archive object
+					archive.file(req.body.selections[i].path.slice(2) + req.body.selections[i].name);
+				}
+
+			}
+
+			// here we pipe the data to the write stream
+			archive.pipe(output);
+
+			// then we finalize the archive triggering the close event
+			archive.finalize();
+
+			res.status(200).sendFile(folderName, {root: "./"});
 
 		}, function() { res.status(200).render("404"); }); // failure to find the user renders the 404 page
 

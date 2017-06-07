@@ -20,11 +20,11 @@ function main() {
 		throw err;
 	})
 
+	archive.directory("../public");
+	archive.file("../git.py");
+
 	// pipes the streamed data of zip file into the writeable stream aliased by ouput variable
 	archive.pipe(output);
-
-	archive.directory("testfolder");
-	archive.file("10");
 
 	archive.finalize();
 
