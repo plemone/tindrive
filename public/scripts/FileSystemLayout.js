@@ -160,6 +160,18 @@ class FileSystemLayout {
 			function makeAjax(i) {
 				// base case
 				if (i === self.contents.length) {
+
+					// When we hit the base case, we have to empty out the FileSystemLayour selection array
+					// and the selection array of the object that this event handler deals with.
+
+					// we simply empty out arrays of all possible component that self might be
+					that.downloadComponent.empty();
+					that.deleteComponent.empty();
+					that.recoverComponent.empty();
+
+					// we also empty out the FileSystemLayour class's selection array
+					that.selections = [];
+
 					return;
 				}
 
@@ -184,6 +196,53 @@ class FileSystemLayout {
 						// not in the current working directory
 						that.table.remove(self.contents[i]);				
 					
+
+						// remove the deleted, recovered and download components selections
+
+						// NOTE** - Suppose lets say we are clicking the delete button and when we click delete 
+						// that.deleteComponent.remove(self.contents[i]) will remove the deleteComponents's collection
+						// of selected item. Now this loop actually loops over the collection of the selected item of
+						// deleteComponent and stops only when the index value is greater than the length of the selected
+						// items in the delete component. If actually remove the item as we are looping and then calculate
+						// the length of the array at the end of each iteration we will see that the i which we use to loop
+						// will actually exceed the length as we remove elements from the selected array we decrease the 
+						// selected arrays length and at the same time we increment i's value with which we are looping over
+						// the array in the first place. Thats why we need to make sure that we don't remove the selected array's
+						// contents for the component that we are actually looping over.
+
+
+						// We need three seperate if statements because we need to invoke the code inside
+						// the if statement body if the conditions are true no matter what and none of the 
+						// if statements are dependent on each other, where in else if statements its like
+						// if one doesn't work try the other, then another, then another untill you find the 
+						// best solution. But here we need to try all these conditions to see if any of it works.
+						
+						// These if statements simply check whether if self is the class that the event
+						// handler is attached to. We don't remove the selection array for the class that we are
+						// looping over. So we have to be careful and make sure about that so we check each time.
+
+						// NOTE** - Two out of the three if statements will always execute
+
+						if (self.constructor !== Download) {
+
+							that.downloadComponent.remove(self.contents[i]);
+
+						} 
+
+						if (self.constructor !== Delete) {
+
+							that.deleteComponent.remove(self.contents[i]);
+
+						}
+
+						if (self.constructor !== Recover) {
+
+							that.recoverComponent.remove(self.contents[i]);
+
+
+						}
+
+
 					}
 				})
 
