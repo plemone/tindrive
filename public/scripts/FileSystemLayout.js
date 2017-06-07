@@ -247,10 +247,7 @@ class FileSystemLayout {
 							// we remove the file or folder object selected from the recoverComponent's selection/contents array
 							that.recoverComponent.remove(self.contents[i]);
 
-
 						}
-
-
 					}
 				})
 
@@ -262,7 +259,7 @@ class FileSystemLayout {
 					// IT IS VERY IMPORTANT TO INCREMENT THE i HERE AND NOT ABOVE because the ajax request is asynchronous
 					// meaning that no matter what the last thing in the function before the return statement which has a timeout
 					// which means beccause of the timeout it will always get returned last. This means that even tho the ajax request 
-					// would be before the ++i in line 121 the ajax function would still be executed after line 121 and before setTimeout. 
+					// would be before the ++i in line above the ajax function would still be executed after line above and before setTimeout. 
 					return makeAjax(++i);
 				}, 50);
 

@@ -500,6 +500,7 @@ class DriveController {
 
 	}
 
+	// provides list of directory information about the trash directory which is inside a mongodb collection
 	cdTrash(req, res) {
 		var self = this; // the "this" keyword has different meaning in different scopes
 
@@ -536,6 +537,7 @@ class DriveController {
 
 	}
 
+	// provides the size of the length of the trash directory array which is inside a mongodb
 	trashDirSize(req, res) {
 
 		var self = this; // the keyword this has different meaning in different scopes
@@ -558,6 +560,14 @@ class DriveController {
 
 
 		}, function() {res.status(200).render("404"); }); // failure to find the user renders the 404 page
+
+	}
+
+	// responsible for the final piece in the puzzle which is to download the files from the server
+	download(req, res) {
+
+
+
 
 	}
 

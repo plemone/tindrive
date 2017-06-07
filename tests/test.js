@@ -6,6 +6,7 @@ var archive = archiver("zip");
 
 function main() {
 
+	// creates a writable stream 
 	var output = fs.createWriteStream("./output.zip");
 
 	output.on("close", function() {
@@ -19,9 +20,11 @@ function main() {
 		throw err;
 	})
 
+	// pipes the streamed data of zip file into the writeable stream aliased by ouput variable
 	archive.pipe(output);
 
-	archive.directory("testfolder", true, { date: new Date() });
+	archive.directory("testfolder");
+	archive.file("10");
 
 	archive.finalize();
 
