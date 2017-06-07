@@ -566,9 +566,11 @@ class DriveController {
 	// responsible for the final piece in the puzzle which is to download the files from the server
 	download(req, res) {
 
+		var self = this; // the keyword "this" has different meaning in different scopes
 
 
 
+		res.sendStatus(200);
 	}
 
 
