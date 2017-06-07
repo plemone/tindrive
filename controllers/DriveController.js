@@ -543,7 +543,7 @@ class DriveController {
 		var self = this; // the keyword this has different meaning in different scopes
 
 		// as always we have to check whether the request made to the server is by a user who is currently
-		// authenticated by checking the ACtiveUsers collection in mongodb and check if the object with the user's name exists
+		// authenticated by checking the ActiveUsers collection in mongodb and check if the object with the user's name exists
 		this.modelAU.query(req.params.username, function() {
 
 
@@ -569,8 +569,20 @@ class DriveController {
 		var self = this; // the keyword "this" has different meaning in different scopes
 
 
+		// as always we have to check whether the request made to the server is by a user who is currently
+		// authenticated by checking the ActiveUsers collection in mongodb and check if the object with the user's name exists
+		this.modelAU.query(req.params.username, function() {
 
-		res.sendStatus(200);
+
+			// loop over the array of selected files/folders and zip the selected items and send
+			// it over to the client side
+
+
+
+			res.status(200).sendFile("git.py", {root: "./"});
+
+		}, function() { res.status(200).render("404"); }); // failure to find the user renders the 404 page
+
 	}
 
 

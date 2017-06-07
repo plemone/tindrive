@@ -48,8 +48,8 @@ class Download extends UtilityButton {
 					url: self.route + "download",
 					type: "POST",
 					data: requestObj,
-					success: function() {
-						console.log("Gotem!");
+					success: function(data) {
+						console.log(data);
 					}
 				})
 
