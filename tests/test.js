@@ -1,21 +1,29 @@
 'use strict'
 
+var fs = require("fs");
+var archiver = require("archiver");
+var archive = archiver("zip");
 
 function main() {
 
-	var i = 0; 
+	var output = fs.createWriteStream("./output.zip");
 
+	output.on("close", function() {
 
-	function anonymous() {
+		console.log(archive.pointer() + " total bytes");
+		console.log("Archiver has been finalized and the output file descriptor has been closed")
 
-		console.log(i);
+	});
 
-		var i = 44;
+	archive.on("error", function(err) {
+		throw err;
+	})
 
-	}
+	archive.pipe(output);
 
-	anonymous();
+	archive.directory("testfolder", true, { date: new Date() });
 
+	archive.finalize();
 
 }
 

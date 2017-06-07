@@ -1,8 +1,16 @@
 'use strict'; // to avoid JavaScript weirdness
 
 
-// TO-DO - Everytime we remove something from the current working directory to the trash folder
-//         we have to remove the item from the table as well!
+/*
+
+	todo - we need to download contents from the server
+
+	Basic idea is to package everything up and zip it and then send it over to the client side.
+	The client side will dynnamically create and anchor tag, attach the href to the achor tag
+	then the download attribute and then automatically lick the anchor tag using .click() on it and then
+	remove the anchor tag.
+
+*/
 
 
 /*
@@ -87,9 +95,7 @@ class FileSystemLayout {
 	// does alot of things all in one and is not a good practice for software engineering. The goal to improve this
 	// would be to make things way more modular and abstract.
 	utilityButtonClick(self) {
-
 		var that = this;
-
 		// you can't provide $(self.id).on("click", function(self) {}); with self here because the .on
 		// call back function actually provides a argument to its call back which is an event object
 		// so us providing self would just alias the event object with "self"
@@ -225,18 +231,20 @@ class FileSystemLayout {
 
 						if (self.constructor !== Download) {
 
+							// we remove the file or folder object selected from the downloadComponent's selection/contents array
 							that.downloadComponent.remove(self.contents[i]);
 
 						} 
 
 						if (self.constructor !== Delete) {
-
+							// we remove the file or folder object selected from the deleteComponent's selection/contents array
 							that.deleteComponent.remove(self.contents[i]);
 
 						}
 
 						if (self.constructor !== Recover) {
 
+							// we remove the file or folder object selected from the recoverComponent's selection/contents array
 							that.recoverComponent.remove(self.contents[i]);
 
 
