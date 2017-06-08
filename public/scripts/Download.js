@@ -49,7 +49,21 @@ class Download extends UtilityButton {
 					type: "POST",
 					data: requestObj,
 					success: function(data) {
-						console.log(data);
+
+						console.log(data.data);
+
+						// with the data that we received from the client side, our goal is to now
+						// create an anchor tag attach that data as an href and click on that anchor tag
+						// to prompt the user to save the file
+
+						// the problem that we encounter is that the file being sent is not base64 encoded
+
+						$("body").append("<a id = dl>CLICK ME!!!</a>");
+
+						$("#dl").attr("href", "data:application/zip;base64," + data.data);
+
+						$("#dl").attr("download", data.name);
+
 					}
 				})
 

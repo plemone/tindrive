@@ -625,22 +625,34 @@ class DriveController {
 			output.on("close", function() {
 				console.log(archive.pointer() + " bytes in total zipped...");
 				console.log("Archiver has been finalized and the output file descriptor has been closed...");
-				
-				// we send the zipped file back to the client
-				// NOTE** - VERY IMPORTANT! res.sendFile() method for the object res is asynchronous.
-				//          This means that we have to handle the function with caution!
-				res.status(200).sendFile(folderName, {root: "./"}, function() {
+
+				// Next step is to read the zip file created from the server, and convert it from a buffer
+				// to a base64 encoded string. The next step is to simply encapsulate the base64 string data
+				// in a response object along with a name attribute, delete the .zip file from the server side
+				// and on the callback when we check for success we send the file to client only if we succeed!				
+				fs.readFile("./" + folderName, function(err, data) {
+
+					// convert the buffer into base64 string
+					let base64 = data.toString("base64");
+
+					// create the response object to encapulate the data as a value of an attribute along with the name attribute
+					let responseObj = {};
+					responseObj.name = folderName;
+					responseObj.data = base64;
+
 					console.log("File has been sent to the client side...");
 					// and final step is to delete the zip file that we created
 					fs.unlink("./" + folderName, function(err) {
 						if (err) { 	// on error log the error notification
 							console.log("Error in removing the zipped file...");
-						} else { // on success log the success notification
+						} else { // on success log the success notification and most importantly send the responseObj back to the client
+
+							// send the response object to the client
+							res.status(200).send(responseObj);
+
 							console.log("Zipped file called" + folderName + " removed...");
 						}
 					});
-
-
 				});
 				
 			});
