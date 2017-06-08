@@ -1,3 +1,5 @@
+'use strict'; // to enable ES6 syntax
+
 class LoginRegistration {
 	constructor() {
 		this.expanded = false;

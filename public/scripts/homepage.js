@@ -8,5 +8,7 @@ $(document).ready(function() {
 
 function main() {
 	var mainComponent = new LoginRegistration();
+	var logoComponent = new Logo();
+	logoComponent.create();
 	mainComponent.create();
 }

@@ -36,11 +36,11 @@ class Logout {
 		$("#l-name").on("mouseover", function() {
 			$("#l-name").css("color", "white");
 			$("#l-name").css("text-shadow", "1px 0 black, 0 0px black, 0px 0 black, 0 1px black");
-		})
+		});
 		$("#l-name").on("mouseout", function() {
 			$("#l-name").css("color", "black");
 			$("#l-name").css("text-shadow", "1px 0 white, 0 0px black, 0px 0 black, 0 1px white");
 	
-		})	
+		});	
 	}
 }
