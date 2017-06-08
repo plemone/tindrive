@@ -83,7 +83,7 @@ class DriveController {
 						res.status(200).send("login-password-error"); // 0 means not a success
 					}
 				});
-			}, function() { res.status(200).send("loging-name-error"); }); // when user cannot be found in the database
+			}, function() { res.status(200).send("login-name-error"); }); // when user cannot be found in the database
 	
 		} else { // handles registration
 			// object which will hold the user details to be added to the database
