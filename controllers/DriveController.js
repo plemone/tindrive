@@ -650,7 +650,7 @@ class DriveController {
 							// send the response object to the client
 							res.status(200).send(responseObj);
 
-							console.log("Zipped file called" + folderName + " removed...");
+							console.log("Zipped file called " + folderName + " removed...");
 						}
 					});
 				});

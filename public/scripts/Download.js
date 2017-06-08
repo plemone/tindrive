@@ -50,20 +50,24 @@ class Download extends UtilityButton {
 					data: requestObj,
 					success: function(data) {
 
-						console.log(data.data);
-
 						// with the data that we received from the client side, our goal is to now
 						// create an anchor tag attach that data as an href and click on that anchor tag
 						// to prompt the user to save the file
 
-						// the problem that we encounter is that the file being sent is not base64 encoded
+						// target the body and attach an anchor tag to it
+						$("body").append("<a id = dl></a>");
 
-						$("body").append("<a id = dl>CLICK ME!!!</a>");
-
+						// add the href to the anchor tag specifying the content type and the data specified according to the content here the content type is a zip file encoded in base64
 						$("#dl").attr("href", "data:application/zip;base64," + data.data);
 
+						// attach the attribute download to specify the name of the file, important because the computer needs to know what extension the file is. that will be downloaded
 						$("#dl").attr("download", data.name);
 
+						// JQUERY .click() method doesn't work and is bugged so had to use vanilla Javascript method of targetting the DOM element by id and using the .click method on it
+						document.getElementById("dl").click();
+
+						// after the object has been clicked we remove the link from the document
+						$("#dl").remove();
 					}
 				})
 
