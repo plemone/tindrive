@@ -625,6 +625,16 @@ class DriveController {
 			output.on("close", function() {
 				console.log(archive.pointer() + " bytes in total zipped...");
 				console.log("Archiver has been finalized and the output file descriptor has been closed...");
+				
+				// and final step is to delete the zip file that we created
+				fs.unlink("./" + folderName, function(err) {
+					if (err) { 	// on error log the error notification
+						console.log("Error in removing the zipped file...");
+					} else { // on success log the success notification
+						console.log("Zipped file called" + folderName + " removed...");
+					}
+				});
+				
 			});
 
 			archive.on("error", function(err) {
@@ -661,6 +671,7 @@ class DriveController {
 			// then we finalize the archive triggering the close event
 			archive.finalize();
 
+			// we send the zipped file back to the client
 			res.status(200).sendFile(folderName, {root: "./"});
 
 		}, function() { res.status(200).render("404"); }); // failure to find the user renders the 404 page
