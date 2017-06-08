@@ -9,8 +9,11 @@ $(document).ready(function() {
 function main() {
 	var logoutComponent = new Logout();
 	var dropBoxComponent = new DropBox();
+	// when created the logo component will be placed on the bottom left
+	var logoComponent = new Logo("bottom-left");
 	logoutComponent.create();
 	dropBoxComponent.create();
+	logoComponent.create();
 }
 
 
