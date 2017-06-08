@@ -28,6 +28,8 @@ class Logo {
 		$(nId).css("top", -30);
 		$(containerId).css("position", "absolute");
 
+		// depending on what the position the user provides through the constructor
+		// our css will change accordingly
 		if (this.position === "top-left") { // if the user specified the position to be top-left then the logo will apear on the top left
 
 			$(containerId).css("left", "2%");
@@ -51,7 +53,6 @@ class Logo {
 		$(containerId).css("width", 100);
 		$(containerId).css("height", 100);
 		$(containerId).css("clear", "both");
-
 	}
 
 }
