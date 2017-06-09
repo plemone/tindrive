@@ -27,6 +27,7 @@ class LoginRegistration {
 		// if expanded is false it means we have not clicked on the div yet so expand the div and attach the event handler
 		// to the cross div that gets dynamically added
 		var self = this;
+		// will only expand if the this.clicks counter is an odd number
 		if (!this.expanded && this.clicks % 2 != 0) {
 			if (divId == "#login") $(divId).animate({left: '450px', top: '5px', height: '700px', width: '700px'});
 			else $(divId).animate({left: '480px', top: '5px', height: '700px', width: '700px'});
@@ -46,10 +47,16 @@ class LoginRegistration {
 
 			// attaches the event handler to the cross icon
 			$("#close-icon").on("click", function() {
+				// self.clicks neutralizes the counter this.clicks
 				self.clicks = 1; // reset clicks to 1 which is an odd number everytime you click on the cross, this prevents it from restarting
 								 // as one of the condition is that you only expand if and only if it is even so the next time you click
-								// has to be the time when it is actually even as 1 + 1 = 2, and when you lick again it will be 3 allowing this
+								// has to be the time when it is actually even as 1 + 1 = 2, and when you click again it will be 3 allowing this
 								// function to be executed
+
+								// What the above comments are trying to say is when you click the cross icon as it is inside the container div itself
+								// the event handler for the div triggers as well resulting in incrementing the counter by 1 even when you press the crowss sign
+								// thats why we reset the clicks to 1 so that when you click the cross the counter automatically becomes 2 and the
+								// next click will trigger the div to open.
 				self.collapse(divId, self);
 			}); // attaching event handler
 			this.expanded = true;
@@ -98,10 +105,12 @@ class LoginRegistration {
 						} else if (data === "login-password-error") {
 							$("#password").css("border-bottom", "1px solid #ff3333");																				
 						} else if (data === "registration-success") {
-							self.clicks = 2; // reset clicks to 1 which is an odd number everytime you click on the cross, this prevents it from restarting
-								// as one of the condition is that you only expand if and only if it is even so the next time you click
-								// has to be the time when it is actually even as 1 + 1 = 2, and when you lick again it will be 3 allowing this
-								// function to be executed
+							self.clicks = 2; // Everytime you click on the div it will only expand if and only if
+											// the counter is an odd number and every click on the div you make increments
+											// the counter by 1, so whenever you submit the form and the div automatically closes
+											// we prep the click up to be even, indicating that the div has already been close
+											// and on the next click the counter will increment to an odd number resulting in expanding
+											// the div. (EVERY CLICK ON THE DIV INCREMENTS THE COUNTER and the DIV ONLY EXPANDS IF THE COUNTER IS AN ODD NUMBER ON CLICK)
 							self.collapse(divId, self); // collapse the div which is extended
 						} else if (data === "registration-failure") {
 							$("#name").css("border-bottom", "1px solid #ff3333");
