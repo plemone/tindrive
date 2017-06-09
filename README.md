@@ -8,5 +8,4 @@
 	<img src = "https://user-images.githubusercontent.com/25164326/26962799-b4bb29f2-4cb6-11e7-8afe-513d5656d14c.gif"></img>
 </p>
 
-Cloud Backup Storage System
 
