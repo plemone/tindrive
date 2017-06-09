@@ -98,6 +98,10 @@ class LoginRegistration {
 						} else if (data === "login-password-error") {
 							$("#password").css("border-bottom", "1px solid #ff3333");																				
 						} else if (data === "registration-success") {
+							self.clicks = 2; // reset clicks to 1 which is an odd number everytime you click on the cross, this prevents it from restarting
+								// as one of the condition is that you only expand if and only if it is even so the next time you click
+								// has to be the time when it is actually even as 1 + 1 = 2, and when you lick again it will be 3 allowing this
+								// function to be executed
 							self.collapse(divId, self); // collapse the div which is extended
 						} else if (data === "registration-failure") {
 							$("#name").css("border-bottom", "1px solid #ff3333");
