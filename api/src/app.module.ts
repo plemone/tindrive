@@ -4,15 +4,13 @@ import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { FileSystemModule } from './fs/fs.module';
-import { FileModule } from './file/file.module';
-import { FolderModule } from './folder/folder.module';
+import { NodeModule } from './node/node.module';
 
 @Module({
     imports: [
         TypeOrmModule.forRoot(),
         FileSystemModule,
-        FileModule,
-        FolderModule,
+        NodeModule,
         GraphQLModule.forRoot({ autoSchemaFile: 'schema.gpl' }),
     ],
     controllers: [AppController],

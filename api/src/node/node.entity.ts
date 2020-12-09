@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('file')
-export class FileEntity {
+@Entity('node')
+export class NodeEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 }

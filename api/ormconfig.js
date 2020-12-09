@@ -1,6 +1,6 @@
 module.exports = {
     type: 'sqlite',
-    database: './data/tindrive.db',
+    database: './data/tindrive.sqlite3',
     autoSchemeSync: true,
     logging: true,
     entities: [
