@@ -3,8 +3,8 @@ import * as path from 'path';
 import Node from './Node';
 
 class FileSystem {
-    private _pwd = '../../..';
-    private _root = '../../..';
+    private _pwd = '.';
+    private _root = '.';
 
     private stats(file: string): fs.Stats {
         return fs.statSync(file);
