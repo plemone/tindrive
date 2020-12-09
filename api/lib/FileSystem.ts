@@ -1,6 +1,15 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import Node from './Node';
+
+export interface Node {
+    readonly name: string;
+    readonly path: string;
+    readonly extension: string | null;
+    readonly directory: boolean;
+    readonly parentDir: string;
+    readonly createdDate: Date;
+    readonly size: number;
+}
 
 class FileSystem {
     private _pwd = '.';
@@ -30,7 +39,7 @@ class FileSystem {
         for (const file of files) {
             const source = `${this.pwd()}/${file}`;
             const stats: fs.Stats = this.stats(source);
-            const node: Node = new Node({
+            nodes.push({
                 name: file,
                 path: source,
                 directory: stats.isDirectory(),
@@ -38,8 +47,7 @@ class FileSystem {
                 extension: path.extname(file) || null,
                 createdDate: stats.birthtime,
                 size: stats.size,
-            });
-            nodes.push(node);
+            } as Node);
         }
         return nodes;
     }

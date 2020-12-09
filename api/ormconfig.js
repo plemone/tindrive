@@ -1,7 +1,7 @@
 module.exports = {
     type: 'sqlite',
     database: './data/tindrive.sqlite3',
-    autoSchemeSync: true,
+    synchronize: true,
     logging: true,
     entities: [
         process.env.NODE_ENV === 'production'
