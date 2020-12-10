@@ -1,51 +1,53 @@
 import { ConnectionOptions, createConnection, Repository } from 'typeorm';
-import { FileSystem, Node } from '../lib';
-import { NodeEntity } from '../src/fs/node.entity';
+import { FileSystemService as FileSystem } from '../src/fs/fs.service';
+import { FileEntity } from '../src/fs/file.entity';
 
 const options: ConnectionOptions = {
     type: 'sqlite',
     database: './data/tindrive.sqlite3',
-    entities: [NodeEntity],
+    entities: [FileEntity],
 };
 
-const populate = async (repository: Repository<NodeEntity>): Promise<void> => {
+const populate = async (repository: Repository<FileEntity>): Promise<void> => {
     const batchSize = 140;
     const fs: FileSystem = new FileSystem();
-    let nodes: Node[] = fs.ls();
-    const directoriesToVisit: Node[] = nodes.filter((node) => node.directory);
-    const nodeBatches: Node[][] = [];
+    let files: FileEntity[] = fs.ls();
+    const directoriesToVisit: FileEntity[] = files.filter(
+        (file) => file.isDirectory
+    );
+    const fileBatches: FileEntity[][] = [];
 
     while (directoriesToVisit.length !== 0) {
-        const node: Node = directoriesToVisit.pop();
-        fs.cd(node.path);
-        const newNodes: Node[] = fs.ls();
-        for (const node of newNodes) {
-            nodes.push(node);
-            if (node.directory) {
-                directoriesToVisit.push(node);
+        const file: FileEntity = directoriesToVisit.pop();
+        fs.cd(file.path);
+        const newFiles: FileEntity[] = fs.ls();
+        for (const file of newFiles) {
+            files.push(file);
+            if (file.isDirectory) {
+                directoriesToVisit.push(file);
             }
-            if (nodes.length === batchSize) {
-                nodeBatches.push(nodes);
-                nodes = [];
+            if (files.length === batchSize) {
+                fileBatches.push(files);
+                files = [];
             }
         }
     }
 
     let count = 0;
-    for await (const nodes of nodeBatches) {
+    for await (const files of fileBatches) {
         await repository
             .createQueryBuilder()
             .insert()
-            .into('node')
-            .values(nodes)
+            .into('file')
+            .values(files)
             .updateEntity(false)
             .execute();
-        count += nodes.length;
+        count += files.length;
         console.log(`${count} records have been inserted so far`);
     }
 };
 
-const drop = async (repository: Repository<NodeEntity>): Promise<void> => {
+const drop = async (repository: Repository<FileEntity>): Promise<void> => {
     const numRecords: number = await repository.count();
     repository.clear();
     console.log(`${numRecords} have been dropped`);
@@ -53,8 +55,8 @@ const drop = async (repository: Repository<NodeEntity>): Promise<void> => {
 
 (async (): Promise<void> => {
     const connection = await createConnection(options);
-    const repository: Repository<NodeEntity> = connection.getRepository(
-        NodeEntity
+    const repository: Repository<FileEntity> = connection.getRepository(
+        FileEntity
     );
     await drop(repository);
     await populate(repository);

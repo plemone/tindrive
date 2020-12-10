@@ -4,39 +4,49 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
 } from 'typeorm';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 
-@Entity('node')
-export class NodeEntity {
+@ObjectType()
+@Entity('file')
+export class FileEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
+    @Field()
     @Column('text')
     name: string;
 
+    @Field()
     @Column({
         type: 'text',
         unique: true,
     })
     path: string;
 
+    @Field({ nullable: true })
     @Column({
         type: 'text',
         nullable: true,
     })
     extension: string;
 
-    @Column('text')
-    directory: boolean;
+    @Field()
+    @Column('boolean')
+    isDirectory: boolean;
 
+    @Field()
     @Column('text')
-    parentDir: string;
+    parentDirectory: string;
 
+    @Field()
     @Column('datetime')
     createdDate: Date;
 
+    @Field(() => Int)
     @Column('integer')
     size: number;
 
+    @Field()
     @CreateDateColumn()
     populatedDate: Date;
 }

@@ -1,9 +1,13 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+import { FileEntity } from './file.entity';
+import { FileService } from './file.service';
 
-@Resolver()
+@Resolver(() => FileEntity)
 export class FileSystemResolver {
-    @Query(() => String)
-    async hello() {
-        return 'Hello World';
+    constructor(private readonly fileService: FileService) {}
+
+    @Query(() => [FileEntity])
+    async ls(@Args('path') path: string) {
+        return this.fileService.findByParentDirectory(path);
     }
 }
