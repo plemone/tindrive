@@ -1,5 +1,5 @@
 import { ConnectionOptions, createConnection, Repository } from 'typeorm';
-import { FileSystemService as FileSystem } from '../src/fs/fs.service';
+import { FileSystemService } from '../src/fs/fs.service';
 import { FileEntity } from '../src/fs/file.entity';
 
 const options: ConnectionOptions = {
@@ -7,45 +7,73 @@ const options: ConnectionOptions = {
     database: './data/tindrive.sqlite3',
     entities: [FileEntity],
 };
+const batchSize = 140;
+const batchProcessSize = 200;
 
-const populate = async (repository: Repository<FileEntity>): Promise<void> => {
-    const batchSize = 140;
-    const fs: FileSystem = new FileSystem();
+const insert = async (
+    repository: Repository<FileEntity>,
+    fileBatches: FileEntity[][],
+    insertionCount: number
+): Promise<number> => {
+    const promises = [];
+    for (const files of fileBatches) {
+        promises.push(
+            new Promise((resolve, reject) => {
+                repository
+                    .createQueryBuilder()
+                    .insert()
+                    .into('file')
+                    .values(files)
+                    .updateEntity(false)
+                    .execute()
+                    .then(() => {
+                        insertionCount += files.length;
+                        console.log(
+                            `Number of records cached: ${insertionCount}`
+                        );
+                        resolve(undefined);
+                    })
+                    .catch(reject);
+            })
+        );
+    }
+    await Promise.all(promises);
+    return insertionCount;
+};
+
+function* createBatchIterator() {
+    const fs: FileSystemService = new FileSystemService();
     let files: FileEntity[] = fs.ls();
-    const directoriesToVisit: FileEntity[] = files.filter(
-        (file) => file.isDirectory
-    );
-    const fileBatches: FileEntity[][] = [];
+    const dfsStack: FileEntity[] = files.filter((file) => file.isDirectory);
+    let fileBatches: FileEntity[][] = [];
 
-    while (directoriesToVisit.length !== 0) {
-        const file: FileEntity = directoriesToVisit.pop();
+    while (dfsStack.length !== 0) {
+        const file: FileEntity = dfsStack.pop();
         fs.cd(file.path);
         const newFiles: FileEntity[] = fs.ls();
         for (const file of newFiles) {
             files.push(file);
             if (file.isDirectory) {
-                directoriesToVisit.push(file);
+                dfsStack.push(file);
             }
             if (files.length === batchSize) {
                 fileBatches.push(files);
                 files = [];
+                if (fileBatches.length === batchProcessSize) {
+                    yield fileBatches;
+                    fileBatches = [];
+                }
             }
         }
     }
 
-    let count = 0;
-    for await (const files of fileBatches) {
-        await repository
-            .createQueryBuilder()
-            .insert()
-            .into('file')
-            .values(files)
-            .updateEntity(false)
-            .execute();
-        count += files.length;
-        console.log(`${count} records have been inserted so far`);
+    if (files.length > 0) {
+        fileBatches.push(files);
     }
-};
+    if (fileBatches.length > 0) {
+        yield fileBatches;
+    }
+}
 
 const drop = async (repository: Repository<FileEntity>): Promise<void> => {
     const numRecords: number = await repository.count();
@@ -53,11 +81,22 @@ const drop = async (repository: Repository<FileEntity>): Promise<void> => {
     console.log(`${numRecords} have been dropped`);
 };
 
-(async (): Promise<void> => {
+const main = async (): Promise<void> => {
+    console.time('Time Elapsed');
     const connection = await createConnection(options);
+    await connection.synchronize();
     const repository: Repository<FileEntity> = connection.getRepository(
         FileEntity
     );
+    const batchIterator = createBatchIterator();
+    let insertionCount = 0;
     await drop(repository);
-    await populate(repository);
+    for await (const batch of batchIterator) {
+        insertionCount = await insert(repository, batch, insertionCount);
+    }
+    console.timeEnd('Time Elapsed');
+};
+
+(async (): Promise<void> => {
+    await main();
 })().catch(console.error);
