@@ -97,6 +97,4 @@ const main = async (): Promise<void> => {
     console.timeEnd('Script execution time');
 };
 
-(async (): Promise<void> => {
-    await main();
-})().catch(console.error);
+(async (): Promise<void> => main())().catch(console.error);
