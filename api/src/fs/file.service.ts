@@ -4,7 +4,7 @@ import { FileEntity } from './file.entity';
 
 @Injectable()
 export class FileService {
-    constructor(@InjectRepository(FileEntity) private nodeRepository) {}
+    constructor(@InjectRepository(FileEntity) private fileRepository) {}
 
     async findByParentDirectory(
         parentDirectory: string
@@ -15,7 +15,7 @@ export class FileService {
                 parentDirectory.length - 1
             );
         }
-        return this.nodeRepository.find({
+        return this.fileRepository.find({
             where: { parentDirectory },
         });
     }

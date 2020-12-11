@@ -6,8 +6,8 @@ import { FileSystemModule } from './fs/fs.module';
 @Module({
     imports: [
         TypeOrmModule.forRoot(),
-        FileSystemModule,
         GraphQLModule.forRoot({ autoSchemaFile: 'schema.gpl' }),
+        FileSystemModule,
     ],
 })
 export class AppModule {}
