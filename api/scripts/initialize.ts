@@ -29,7 +29,7 @@ const insert = async (
                     .then(() => {
                         insertionCount += files.length;
                         console.log(
-                            `Number of records cached: ${insertionCount}`
+                            `Number of records inserted: ${insertionCount}`
                         );
                         resolve(undefined);
                     })
@@ -82,7 +82,7 @@ const drop = async (repository: Repository<FileEntity>): Promise<void> => {
 };
 
 const main = async (): Promise<void> => {
-    console.time('Time Elapsed');
+    console.time('Script execution time');
     const connection = await createConnection(options);
     await connection.synchronize();
     const repository: Repository<FileEntity> = connection.getRepository(
@@ -94,7 +94,7 @@ const main = async (): Promise<void> => {
     for await (const batch of batchIterator) {
         insertionCount = await insert(repository, batch, insertionCount);
     }
-    console.timeEnd('Time Elapsed');
+    console.timeEnd('Script execution time');
 };
 
 (async (): Promise<void> => {
