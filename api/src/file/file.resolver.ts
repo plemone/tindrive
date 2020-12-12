@@ -3,7 +3,7 @@ import { FileEntity } from './file.entity';
 import { FileService } from './file.service';
 
 @Resolver(() => FileEntity)
-export class FileSystemResolver {
+export class FileResolver {
     constructor(private readonly fileService: FileService) {}
 
     @Query(() => [FileEntity])

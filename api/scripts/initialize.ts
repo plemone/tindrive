@@ -1,6 +1,6 @@
 import { ConnectionOptions, createConnection, Repository } from 'typeorm';
-import { FileSystemService } from '../src/fs/fs.service';
-import { FileEntity } from '../src/fs/file.entity';
+import { FileSystemService } from '../src/file/fs.service';
+import { FileEntity } from '../src/file/file.entity';
 
 const options: ConnectionOptions = {
     type: 'sqlite',
