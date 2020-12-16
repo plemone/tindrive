@@ -6,6 +6,9 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
+/**
+ * This class represents the schema for the file table and dto for graphql
+ */
 @ObjectType()
 @Entity('file')
 export class FileEntity {

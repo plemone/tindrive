@@ -3,6 +3,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileModule } from './file/file.module';
 
+/**
+ * Class used to encapsulate the dependencies required for the entire application
+ */
 @Module({
     imports: [
         TypeOrmModule.forRoot(),

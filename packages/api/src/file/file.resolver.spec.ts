@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { FileEntity } from './file.entity';
 import { FileService } from './file.service';
+import { FileResolver } from './file.resolver';
 
 interface Mock {
     find: jest.Mock<any[], [entity: any]>;
@@ -11,8 +12,9 @@ export const repositoryMockFactory: () => Mock = jest.fn(() => ({
     find: jest.fn((entity) => [entity]),
 }));
 
-describe('FileService', () => {
+describe('FileResolver', () => {
     let service: FileService;
+    let resolver: FileResolver;
     let repository: any;
     const files = [
         {
@@ -53,38 +55,43 @@ describe('FileService', () => {
         return repository;
     };
 
-    const getService: any = (module: TestingModule) => {
+    const getResolver: any = (module: TestingModule) => {
+        return module.get<FileResolver>(FileResolver);
+    };
+
+    const getService: any = (module: TestingModule, data: []) => {
         return module.get<FileService>(FileService);
     };
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                // Service that we are going to test.
+                FileResolver,
                 FileService,
-                // The mocks of the dependency injections within service.
                 {
-                    // The mock for this.fileRepository within FileService.
                     provide: getRepositoryToken(FileEntity),
                     useFactory: repositoryMockFactory,
                 },
             ],
         }).compile();
-        // Retrieve the instantiated service and repository.
-        service = getService(module);
         repository = getRepository(module, files);
+        resolver = getResolver(module);
+        service = getService(module);
     });
 
-    test('findByParentDirectory', async () => {
+    test('ls', async () => {
+        const spy = jest.spyOn(service, 'findByParentDirectory');
         let testPath = '.';
-        expect(await service.findByParentDirectory(testPath)).toEqual(files);
+        expect(await resolver.ls(testPath)).toEqual(files);
         expect(repository.find).toHaveBeenCalledWith({
             where: { parentDirectory: testPath },
         });
         expect(repository.find).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(testPath);
 
         testPath = './';
-        expect(await service.findByParentDirectory(testPath)).toEqual(files);
+        expect(await resolver.ls(testPath)).toEqual(files);
         expect(repository.find).not.toHaveBeenCalledWith({
             where: { parentDirectory: testPath },
         });
@@ -92,9 +99,11 @@ describe('FileService', () => {
             where: { parentDirectory: testPath.replace('/', '') },
         });
         expect(repository.find).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledWith(testPath);
 
         testPath = './dotfiles/';
-        expect(await service.findByParentDirectory(testPath)).toEqual(files);
+        expect(await resolver.ls(testPath)).toEqual(files);
         expect(repository.find).not.toHaveBeenCalledWith({
             where: { parentDirectory: testPath },
         });
@@ -102,12 +111,16 @@ describe('FileService', () => {
             where: { parentDirectory: testPath.replace('s/', 's') },
         });
         expect(repository.find).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledWith(testPath);
 
         testPath = './dotfiles';
-        expect(await service.findByParentDirectory(testPath)).toEqual(files);
+        expect(await resolver.ls(testPath)).toEqual(files);
         expect(repository.find).toHaveBeenCalledWith({
             where: { parentDirectory: testPath },
         });
         expect(repository.find).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledWith(testPath);
     });
 });
