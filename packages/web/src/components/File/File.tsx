@@ -11,15 +11,15 @@ import {
 } from '@material-ui/icons';
 import { FileProps } from './File.d';
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles(() => ({
     root: {
-        width: 55,
+        width: 50,
         height: 50,
     },
     '@media (max-width: 640px)': {
         root: {
-            width: 40,
-            height: 40,
+            width: 35,
+            height: 35,
         },
     },
 }));

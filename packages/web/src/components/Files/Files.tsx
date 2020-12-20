@@ -18,7 +18,7 @@ export const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         maxHeight: '85vh',
         minHeight: 500,
-        minWidth: 350,
+        minWidth: 300,
         paddingLeft: theme.spacing(3),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
