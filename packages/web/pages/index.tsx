@@ -1,8 +1,11 @@
 import React from 'react';
+import { Container } from '@material-ui/core';
 import { Files } from '../src';
 
 const Index: React.FC = () => (
-    <Files />
+    <Container>
+        <Files />
+    </Container>
 );
 
 export default Index;
