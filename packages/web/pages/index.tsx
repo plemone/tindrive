@@ -4,7 +4,7 @@ import { Files } from '../src';
 
 const Index: React.FC = () => (
     <Container>
-        <Files />
+        <Files path='./' />
     </Container>
 );
 
