@@ -63,7 +63,8 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
         <>
             <TextField
                 className={classes.searchBar}
-                defaultValue={path}
+                disabled
+                value={path}
             />
             <Paper className={clsx({
                 [classes.files]: !loading,
