@@ -47,7 +47,7 @@ const Files: React.FC<FilesProps> = () => {
     const classes = useStyles();
     const router = useRouter();
     const path = router.query?.path || './';
-    const { loading, error, data } = useQuery(gql`
+    const { error, loading, data } = useQuery(gql`
         query {
             ls(path:"${path}") {
                 name,
@@ -70,10 +70,8 @@ const Files: React.FC<FilesProps> = () => {
                 value={path}
             />
             <Paper className={clsx({
-                [classes.files]: !loading,
-                [classes.filesNoContent]: loading,
-                [classes.filesNoContent]: data?.ls?.length === 0,
-                [classes.filesNoContent]: error,
+                [classes.files]: !loading && !error && data?.ls?.length !== 0,
+                [classes.filesNoContent]: loading || !!error || data?.ls?.length === 0,
             })}
             >
                 {loading && <CircularProgress className={classes.loading} />}
