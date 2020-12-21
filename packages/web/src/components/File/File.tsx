@@ -15,7 +15,7 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         flexDirection: 'column',
         fontSize: 14,
-        width: 60,
+        width: 65,
         margin: theme.spacing(1),
         wordBreak: 'break-word',
         textOverflow: 'ellipsis',
