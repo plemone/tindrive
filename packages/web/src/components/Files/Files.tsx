@@ -30,6 +30,7 @@ export const useStyles = makeStyles(theme => ({
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
+        outlineStyle: 'none',
     },
     filesNoContent: {
         display: 'flex',
@@ -54,7 +55,7 @@ const Files: React.FC<FilesProps> = () => {
 
     const classes = useStyles();
     const router = useRouter();
-    const { getRootProps, getInputProps } = useDropzone({ onDrop });
+    const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true });
     const { ref, ...rootProps } = getRootProps();
     const path = router.query?.path || './';
     const { error, loading, data } = useQuery(gql`

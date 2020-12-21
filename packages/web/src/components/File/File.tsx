@@ -47,10 +47,7 @@ const File: React.FC<FileProps> = ({
     return (
         <IconButton
             disabled={!isDirectory}
-            onClick={(event: React.SyntheticEvent): void => {
-                event.stopPropagation();
-                if (isDirectory) onClick(path);
-            }}
+            onClick={(): void => isDirectory && onClick(path)}
         >
             <div className={classes.root}>
                 {getIcon(isDirectory, classes)}
