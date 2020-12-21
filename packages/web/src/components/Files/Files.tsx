@@ -17,29 +17,33 @@ export const useStyles = makeStyles(theme => ({
         marginBottom: 20,
     },
     files: {
-        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'baseline',
         flexWrap: 'wrap',
-        maxHeight: '85vh',
-        minHeight: 500,
+        overflowY: 'auto',
         minWidth: 300,
         paddingLeft: theme.spacing(3),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
     },
     filesLoading: {
-        maxHeight: '85vh',
-        minHeight: 500,
-        minWidth: 300,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        overflowY: 'auto',
+        minWidth: 300,
+        paddingLeft: theme.spacing(3),
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
     },
     loading: { width: 300 },
 }));
 
 const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
-    const [path] = React.useState(pathProps);
+    const [path, setPath] = React.useState(pathProps);
     const { loading, error, data } = useQuery(gql`
         query {
             ls(path:"${path}") {
@@ -59,7 +63,7 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
         <>
             <TextField
                 className={classes.searchBar}
-                defaultValue='./'
+                defaultValue={path}
             />
             <Paper className={clsx({
                 [classes.files]: !loading,
@@ -71,6 +75,7 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
                     <File
                         key={`file-${index}`}
                         {...file}
+                        onClick={(path: string): void => setPath(path)}
                     />
                 ))}
             </Paper>

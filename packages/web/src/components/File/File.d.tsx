@@ -9,4 +9,5 @@ export interface FileProps extends StandardProps {
     createdDate: Date;
     size: number;
     populatedDate: Date;
+    onClick: Function;
 }
