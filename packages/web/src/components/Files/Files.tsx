@@ -12,7 +12,7 @@ import { FilesProps } from './Files.d';
 import { File } from '../index';
 
 export const useStyles = makeStyles(theme => ({
-    searchBar: {
+    pathName: {
         width: '100%',
         marginTop: 20,
         marginBottom: 20,
@@ -67,7 +67,7 @@ const Files: React.FC<FilesProps> = () => {
     return (
         <>
             <TextField
-                className={classes.searchBar}
+                className={classes.pathName}
                 disabled
                 value={path}
             />

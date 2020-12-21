@@ -5,6 +5,7 @@ import {
     InsertDriveFile as FileIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
+import clsx from 'clsx';
 import { FileProps } from './File.d';
 
 export const useStyles = makeStyles(theme => ({
@@ -23,6 +24,7 @@ export const useStyles = makeStyles(theme => ({
         width: 50,
         height: 50,
     },
+    folderIcon: { fill: '#FBD405' },
     '@media (max-width: 640px)': {
         icon: {
             width: 35,
@@ -40,7 +42,9 @@ const File: React.FC<FileProps> = ({
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIcon;
-        return <Component className={classes.icon} />;
+        return (
+            <Component className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })} />
+        );
     };
     return (
         <IconButton
