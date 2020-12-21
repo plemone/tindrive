@@ -89,7 +89,12 @@ const Files: React.FC<FilesProps> = () => {
                     })}
                 >
                     <input {...getInputProps()} />
-                    {loading && <CircularProgress className={classes.loading} />}
+                    {loading && (
+                        <CircularProgress
+                            className={classes.loading}
+                            color='secondary'
+                        />
+                    )}
                     {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}
                     {!loading && !error && data?.ls?.map((file, index) => (
                         <File
