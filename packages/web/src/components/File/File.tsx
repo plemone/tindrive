@@ -42,17 +42,14 @@ const File: React.FC<FileProps> = ({
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIcon;
-        return (
-            <Component className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })} />
-        );
+        return <Component className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })} />;
     };
     return (
         <IconButton
             disabled={!isDirectory}
-            onClick={(): void => {
-                if (isDirectory) {
-                    onClick(path);
-                }
+            onClick={(event: React.SyntheticEvent): void => {
+                event.stopPropagation();
+                if (isDirectory) onClick(path);
             }}
         >
             <div className={classes.root}>
