@@ -27,7 +27,7 @@ export const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
     },
-    filesLoading: {
+    filesNoContent: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -68,10 +68,13 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
             />
             <Paper className={clsx({
                 [classes.files]: !loading,
-                [classes.filesLoading]: loading,
+                [classes.filesNoContent]: loading,
+                [classes.filesNoContent]: data?.ls?.length === 0,
+                [classes.filesNoContent]: error,
             })}
             >
                 {loading && <CircularProgress className={classes.loading} />}
+                {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}
                 {!loading && !error && data?.ls?.map((file, index) => (
                     <File
                         key={`file-${index}`}
@@ -79,6 +82,7 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
                         onClick={(path: string): void => setPath(path)}
                     />
                 ))}
+                {!loading && error && 'An error has occured'}
             </Paper>
         </>
     );
