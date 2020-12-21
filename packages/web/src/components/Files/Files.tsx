@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useQuery, gql } from '@apollo/client';
+import Router, { useRouter } from 'next/router';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
 
@@ -42,8 +43,10 @@ export const useStyles = makeStyles(theme => ({
     loading: { width: 300 },
 }));
 
-const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
-    const [path, setPath] = React.useState(pathProps);
+const Files: React.FC<FilesProps> = () => {
+    const classes = useStyles();
+    const router = useRouter();
+    const path = router.query?.path || './';
     const { loading, error, data } = useQuery(gql`
         query {
             ls(path:"${path}") {
@@ -58,7 +61,7 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
             }
         }
     `);
-    const classes = useStyles();
+
     return (
         <>
             <TextField
@@ -79,7 +82,13 @@ const Files: React.FC<FilesProps> = ({ path: pathProps }) => {
                     <File
                         key={`file-${index}`}
                         {...file}
-                        onClick={(path: string): void => setPath(path)}
+                        onClick={(path: string): void => {
+                            // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
+                            Router.push({
+                                pathname: '/',
+                                query: { path },
+                            });
+                        }}
                     />
                 ))}
                 {!loading && error && 'An error has occured'}
