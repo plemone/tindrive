@@ -24,6 +24,7 @@ export const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         overflowY: 'auto',
         minWidth: 300,
+        maxHeight: '85vh',
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
