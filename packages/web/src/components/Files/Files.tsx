@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import { useQuery, gql } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import RootRef from '@material-ui/core/RootRef';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
 
@@ -45,18 +44,29 @@ export const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
     },
+    dragging: { backgroundColor: theme.palette.success.main },
     loading: { width: 300 },
 }));
 
 const Files: React.FC<FilesProps> = () => {
+    const [dragging, setDragging] = React.useState(false);
+
     const onDrop = React.useCallback(acceptedFiles => {
+        setDragging(false);
         console.log(acceptedFiles);
+    }, []);
+
+    const onDragEnter = React.useCallback(() => {
+        setDragging(true);
+    }, []);
+
+    const onDragLeave = React.useCallback(() => {
+        setDragging(false);
     }, []);
 
     const classes = useStyles();
     const router = useRouter();
-    const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true });
-    const { ref, ...rootProps } = getRootProps();
+    const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
     const path = router.query?.path || './';
     const { error, loading, data } = useQuery(gql`
         query {
@@ -80,38 +90,37 @@ const Files: React.FC<FilesProps> = () => {
                 disabled
                 value={path}
             />
-            <RootRef rootRef={ref}>
-                <Paper
-                    {...rootProps}
-                    className={clsx({
-                        [classes.files]: !loading && !error && data?.ls?.length !== 0,
-                        [classes.filesNoContent]: loading || !!error || data?.ls?.length === 0,
-                    })}
-                >
-                    <input {...getInputProps()} />
-                    {loading && (
-                        <CircularProgress
-                            className={classes.loading}
-                            color='secondary'
-                        />
-                    )}
-                    {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}
-                    {!loading && !error && data?.ls?.map((file, index) => (
-                        <File
-                            key={`file-${index}`}
-                            {...file}
-                            onClick={(path: string): void => {
-                                // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
-                                Router.push({
-                                    pathname: '/',
-                                    query: { path },
-                                });
-                            }}
-                        />
-                    ))}
-                    {!loading && error && 'An error has occured'}
-                </Paper>
-            </RootRef>
+            <Paper
+                {...getRootProps}
+                className={clsx({
+                    [classes.files]: !loading && !error && data?.ls?.length !== 0,
+                    [classes.filesNoContent]: loading || !!error || data?.ls?.length === 0,
+                    [classes.dragging]: dragging,
+                })}
+            >
+                <input {...getInputProps()} />
+                {loading && (
+                    <CircularProgress
+                        className={classes.loading}
+                        color='secondary'
+                    />
+                )}
+                {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}
+                {!loading && !error && data?.ls?.map((file, index) => (
+                    <File
+                        key={`file-${index}`}
+                        {...file}
+                        onClick={(path: string): void => {
+                            // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
+                            Router.push({
+                                pathname: '/',
+                                query: { path },
+                            });
+                        }}
+                    />
+                ))}
+                {!loading && error && 'An error has occured'}
+            </Paper>
         </>
     );
 };
