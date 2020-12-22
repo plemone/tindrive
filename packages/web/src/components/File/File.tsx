@@ -18,7 +18,7 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         flexDirection: 'column',
         fontSize: 14,
-        width: 65,
+        width: 80,
         margin: theme.spacing(1),
         wordBreak: 'break-word',
     },
