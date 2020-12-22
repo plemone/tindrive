@@ -33,17 +33,22 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
             maxItems={7}
             style={style}
         >
-            {pathArr?.map((path, index) => (
-                <Button
-                    key={`${path}-${index}`}
-                    className={classes.button}
-                    onClick={(): void => {
-                        onClick(pathArr, index);
-                    }}
-                >
-                    {path}
-                </Button>
-            ))}
+            {pathArr?.reduce((acc, path, index) => {
+                if (path) {
+                    acc.push(
+                        <Button
+                            key={`${path}-${index}`}
+                            className={classes.button}
+                            onClick={(): void => {
+                                onClick(pathArr, index);
+                            }}
+                        >
+                            {path}
+                        </Button>,
+                    );
+                }
+                return acc;
+            }, [])}
         </Breadcrumbs>
     );
 };
