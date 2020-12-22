@@ -67,7 +67,7 @@ const Files: React.FC<FilesProps> = () => {
     const router = useRouter();
     const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
     const path = router.query?.path as string || './' as string;
-    const { error, loading, data } = useQuery(gql`
+    const { error, loading = true, data } = useQuery(gql`
         query {
             ls(path:"${path}") {
                 name,

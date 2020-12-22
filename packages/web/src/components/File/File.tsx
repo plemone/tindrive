@@ -1,6 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import {
+    Tooltip,
+    IconButton,
+} from '@material-ui/core';
 import {
     InsertDriveFile as FileIcon,
     Folder as FolderIcon,
@@ -18,7 +21,6 @@ export const useStyles = makeStyles(theme => ({
         width: 65,
         margin: theme.spacing(1),
         wordBreak: 'break-word',
-        textOverflow: 'ellipsis',
     },
     icon: {
         width: 50,
@@ -39,22 +41,32 @@ const File: React.FC<FileProps> = ({
     onClick,
     path,
 }) => {
+    const characterLimit = 20;
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIcon;
         return <Component className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })} />;
     };
-    return (
-        <IconButton
-            disabled={!isDirectory}
-            onClick={(): void => isDirectory && onClick(path)}
-        >
-            <div className={classes.root}>
-                {getIcon(isDirectory, classes)}
-                {name}
-            </div>
-        </IconButton>
-    );
+
+    return name.length > characterLimit
+        ? (
+            <Tooltip title={name}>
+                <IconButton onClick={(): void => isDirectory && onClick(path)}>
+                    <div className={classes.root}>
+                        {getIcon(isDirectory, classes)}
+                        {`${name.slice(0, characterLimit)}...`}
+                    </div>
+                </IconButton>
+            </Tooltip>
+        )
+        : (
+            <IconButton onClick={(): void => isDirectory && onClick(path)}>
+                <div className={classes.root}>
+                    {getIcon(isDirectory, classes)}
+                    {name}
+                </div>
+            </IconButton>
+        );
 };
 
 export default File;
