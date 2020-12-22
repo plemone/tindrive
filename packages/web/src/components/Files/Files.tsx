@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { useQuery, gql } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import Path from '../Path';
+import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
 
@@ -84,7 +84,7 @@ const Files: React.FC<FilesProps> = () => {
 
     return (
         <>
-            <Path
+            <PathBreadcrumbs
                 className={classes.path}
                 path={path}
             />
@@ -101,6 +101,7 @@ const Files: React.FC<FilesProps> = () => {
                     <CircularProgress
                         className={classes.loading}
                         color='secondary'
+                        size={30}
                     />
                 )}
                 {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}

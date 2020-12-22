@@ -1,5 +1,5 @@
 import { StandardProps } from '../../index.d';
 
-export interface PathProps extends StandardProps {
+export interface PathBreadcrumbsProps extends StandardProps {
     path: string;
 }

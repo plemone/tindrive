@@ -3,10 +3,13 @@ import {
     Breadcrumbs,
     Button,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
-import { PathProps } from './Path.d';
+import { PathBreadcrumbsProps } from './PathBreadcrumbs.d';
 
-const Path: React.FC<PathProps> = ({
+export const useStyles = makeStyles(() => ({ button: { textTransform: 'none' } }));
+
+const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     path,
     style,
     className,
@@ -22,15 +25,18 @@ const Path: React.FC<PathProps> = ({
             query: { path },
         });
     };
+    const classes = useStyles();
     const pathArr: string[] = path.split('/');
     return (
         <Breadcrumbs
             className={className}
+            maxItems={7}
             style={style}
         >
             {pathArr?.map((path, index) => (
                 <Button
                     key={`${path}-${index}`}
+                    className={classes.button}
                     onClick={(): void => {
                         onClick(pathArr, index);
                     }}
@@ -42,4 +48,4 @@ const Path: React.FC<PathProps> = ({
     );
 };
 
-export default Path;
+export default PathBreadcrumbs;
