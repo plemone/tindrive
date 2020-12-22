@@ -2,19 +2,18 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Paper,
-    TextField,
     CircularProgress,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useQuery, gql } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
+import Path from '../Path';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
 
 export const useStyles = makeStyles(theme => ({
-    pathName: {
-        width: '100%',
+    path: {
         marginTop: 20,
         marginBottom: 20,
     },
@@ -67,7 +66,7 @@ const Files: React.FC<FilesProps> = () => {
     const classes = useStyles();
     const router = useRouter();
     const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
-    const path = router.query?.path || './';
+    const path = router.query?.path as string || './' as string;
     const { error, loading, data } = useQuery(gql`
         query {
             ls(path:"${path}") {
@@ -85,10 +84,9 @@ const Files: React.FC<FilesProps> = () => {
 
     return (
         <>
-            <TextField
-                className={classes.pathName}
-                disabled
-                value={path}
+            <Path
+                className={classes.path}
+                path={path}
             />
             <Paper
                 {...getRootProps}
