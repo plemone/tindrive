@@ -43,7 +43,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
                                 onClick(pathArr, index);
                             }}
                         >
-                            {path}
+                            {path === '.' ? 'root' : path}
                         </Button>,
                     );
                 }
