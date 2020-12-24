@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-syntax */
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { MockedProvider } from '@apollo/client/testing';
 import { ls } from '../../queries';
@@ -51,14 +50,14 @@ describe('Files', () => {
     beforeAll(() => useRouter.mockImplementationOnce(() => ({ query: {} })));
 
     test('render', async () => {
-        const { getByTestId, findByText } = render(<Wrapper />);
+        const { getByTestId } = render(<Wrapper />);
         expect(getByTestId('files-spinner')).toBeInTheDocument();
-        expect(await getByTestId('files'));
-        let index = 0;
-        for await (const folder of data) {
-            expect(await findByText(folder.name)).toBeInTheDocument();
-            expect(await getByTestId(`files-file-${index++}`));
-        }
-        expect(await getByTestId('files-path-breadcrumbs'));
+        expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
+        expect(getByTestId('files')).toBeInTheDocument();
+        await waitFor(() => {
+            for (let index = 0; index < data.length; ++index) {
+                expect(getByTestId(`files-file-${index}`)).toBeInTheDocument();
+            }
+        });
     });
 });
