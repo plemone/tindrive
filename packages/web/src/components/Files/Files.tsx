@@ -5,9 +5,10 @@ import {
     CircularProgress,
 } from '@material-ui/core';
 import clsx from 'clsx';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
+import { ls } from '../../queries';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
@@ -47,12 +48,11 @@ export const useStyles = makeStyles(theme => ({
     loading: { width: 300 },
 }));
 
-const Files: React.FC<FilesProps> = () => {
+const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const [dragging, setDragging] = React.useState(false);
 
-    const onDrop = React.useCallback(acceptedFiles => {
+    const onDrop = React.useCallback(() => {
         setDragging(false);
-        console.log(acceptedFiles);
     }, []);
 
     const onDragEnter = React.useCallback(() => {
@@ -67,28 +67,17 @@ const Files: React.FC<FilesProps> = () => {
     const router = useRouter();
     const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
     const path = router?.query?.path as string || './' as string;
-    const { error, loading = true, data } = useQuery(gql`
-        query {
-            ls(path:"${path}") {
-                name,
-                path,
-                extension,
-                isDirectory,
-                parentDirectory,
-                createdDate,
-                size,
-                populatedDate
-            }
-        }
-    `);
+    const { error, loading = true, data } = useQuery(ls, { variables: { path } });
 
     return (
         <>
             <PathBreadcrumbs
                 className={classes.path}
+                data-testid='files-path-breadcrumbs'
                 path={path}
             />
             <Paper
+                data-testid={dataTestid || 'files'}
                 {...getRootProps}
                 className={clsx({
                     [classes.files]: !loading && !error && data?.ls?.length !== 0,
@@ -101,6 +90,7 @@ const Files: React.FC<FilesProps> = () => {
                     <CircularProgress
                         className={classes.loading}
                         color='secondary'
+                        data-testid='files-spinner'
                         size={30}
                     />
                 )}
@@ -108,6 +98,7 @@ const Files: React.FC<FilesProps> = () => {
                 {!loading && !error && data?.ls?.map((file, index) => (
                     <File
                         key={`file-${index}`}
+                        data-testid={`files-file-${index}`}
                         {...file}
                         onClick={(path: string): void => {
                             // Calling Router with these options should invoke the file called ../../../pages/[path].tsx

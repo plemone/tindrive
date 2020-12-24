@@ -40,6 +40,7 @@ const File: React.FC<FileProps> = ({
     name,
     onClick,
     path,
+    'data-testid': dataTestid,
 }) => {
     const characterLimit = 20;
     const classes = useStyles();
@@ -52,7 +53,10 @@ const File: React.FC<FileProps> = ({
         ? (
             <Tooltip title={name}>
                 <IconButton onClick={(): void => isDirectory && onClick(path)}>
-                    <div className={classes.root}>
+                    <div
+                        className={classes.root}
+                        data-testid={dataTestid || `file-${path}`}
+                    >
                         {getIcon(isDirectory, classes)}
                         {`${name.slice(0, characterLimit)}...`}
                     </div>
@@ -61,7 +65,10 @@ const File: React.FC<FileProps> = ({
         )
         : (
             <IconButton onClick={(): void => isDirectory && onClick(path)}>
-                <div className={classes.root}>
+                <div
+                    className={classes.root}
+                    data-testid={dataTestid || `file-${path}`}
+                >
                     {getIcon(isDirectory, classes)}
                     {name}
                 </div>
