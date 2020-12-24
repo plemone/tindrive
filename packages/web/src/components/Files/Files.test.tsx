@@ -5,7 +5,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { ls } from '../../queries';
 import Files from '.';
 
-describe('Files', () => {
+describe(Files, () => {
     const data: {}[] = [
         {
             name: 'dotfiles',
