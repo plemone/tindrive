@@ -32,7 +32,8 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
         <Breadcrumbs
             className={className}
             data-testid={dataTestid || 'path-breakcrumbs'}
-            maxItems={7}
+            maxItems={6}
+            separator='›'
             style={style}
         >
             {pathArr?.reduce((acc, path, index) => {
