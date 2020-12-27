@@ -2,6 +2,7 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { MockedProvider } from '@apollo/client/testing';
+import { GraphQLError } from 'graphql';
 import { ls } from '../../queries';
 import Files from '.';
 
@@ -45,16 +46,43 @@ describe(Files, () => {
                 <Files />
             </MockedProvider>
         ));
-        expect(getByTestId('files-spinner')).toBeInTheDocument();
         expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
+        expect(getByTestId('files-spinner')).toBeInTheDocument();
         expect(getByTestId('files')).toBeInTheDocument();
         expect(queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
+            expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
+            expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
+            expect(queryByText('An error has occured')).not.toBeInTheDocument();
             for (let index = 0; index < data.length; ++index) {
                 expect(getByTestId(`files-file-${index}`)).toBeInTheDocument();
             }
-            expect(queryByText('An error has occured')).not.toBeInTheDocument();
+        });
+    });
+
+    test('render with error', async () => {
+        const { queryByText, queryByTestId, getByTestId } = render((
+            <MockedProvider
+                addTypename={false}
+                mocks={[{
+                    request: {
+                        query: ls,
+                        variables: { path: './' },
+                    },
+                    result: { errors: [new GraphQLError('error')] },
+                }]}
+            >
+                <Files />
+            </MockedProvider>
+        ));
+        expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
+        expect(getByTestId('files-spinner')).toBeInTheDocument();
+        expect(getByTestId('files')).toBeInTheDocument();
+        expect(queryByText('An error has occured')).not.toBeInTheDocument();
+        await waitFor(() => {
+            expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
             expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
+            expect(queryByText('An error has occured')).toBeInTheDocument();
         });
     });
 });
