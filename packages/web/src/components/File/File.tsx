@@ -46,12 +46,20 @@ const File: React.FC<FileProps> = ({
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIcon;
-        return <Component className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })} />;
+        return (
+            <Component
+                className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })}
+                data-testid={`${isDirectory ? 'folder-icon' : 'file-icon'}`}
+            />
+        );
     };
 
     return name.length > characterLimit
         ? (
-            <Tooltip title={name}>
+            <Tooltip
+                data-testid='file-tooltip'
+                title={name}
+            >
                 <IconButton onClick={(): void => isDirectory && onClick(path)}>
                     <div
                         className={classes.root}
