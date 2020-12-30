@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 const getWindowDimensions = (): { width: number; height: number } => ({ width: window.innerWidth, height: window.innerHeight });
 
-export default (): { width: number; height: number } => {
+export default function useWindowDimensions(): { width: number; height: number } {
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
     useEffect(() => {
@@ -12,4 +12,4 @@ export default (): { width: number; height: number } => {
     }, []);
 
     return windowDimensions;
-};
+}
