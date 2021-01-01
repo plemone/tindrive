@@ -1,13 +1,17 @@
 module.exports = {
-    roots: ['<rootDir>/src'],
-
-    transform: { '^.+\\.tsx?$': 'ts-jest' },
-
+    collectCoverageFrom: [
+        '**/*.{js,jsx,ts,tsx}',
+        '!**/*.d.ts',
+        '!**/node_modules/**',
+    ],
     setupFilesAfterEnv: [
         '@testing-library/jest-dom/extend-expect',
     ],
-
-    testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
-
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+    transform: { '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest' },
+    transformIgnorePatterns: [
+        '/node_modules/',
+        '^.+\\.module\\.(css|sass|scss)$',
+    ],
+    moduleNameMapper: { '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy' },
 };
