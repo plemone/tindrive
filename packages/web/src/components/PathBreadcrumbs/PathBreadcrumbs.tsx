@@ -31,7 +31,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     return (
         <Breadcrumbs
             className={className}
-            data-testid={dataTestid || 'path-breakcrumbs'}
+            data-testid={dataTestid || 'path-breadcrumbs'}
             maxItems={6}
             separator='›'
             style={style}
@@ -42,6 +42,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
                         <Button
                             key={`${path}-${index}`}
                             className={classes.button}
+                            data-testid={`path-breadcrumbs-button-${index}`}
                             onClick={(): void => {
                                 onClick(pathArr, index);
                             }}
