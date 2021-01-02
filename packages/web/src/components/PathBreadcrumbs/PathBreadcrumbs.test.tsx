@@ -3,9 +3,10 @@ import { fireEvent, render } from '@testing-library/react';
 import Router from 'next/router';
 import PathBreadcrumbs from '.';
 
-jest.mock('next/router', () => ({ push: jest.fn() }));
-
 describe(PathBreadcrumbs, () => {
+    beforeAll(() => {
+        jest.mock('next/router', () => ({ push: jest.fn() }));
+    });
     test('render', async () => {
         const folders = ['.', 'folder-a', 'folder-b', 'folder-c'];
         const { getByTestId, getByText, getAllByText } = render(
@@ -30,7 +31,7 @@ describe(PathBreadcrumbs, () => {
         expect(getAllByText('›')).toHaveLength(folders.length - 1);
     });
 
-    test('render with large path', () => {
+    test('render with a large path', () => {
         const { getAllByText } = render(
             <PathBreadcrumbs path='./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h' />,
         );
