@@ -3,10 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import Router from 'next/router';
 import PathBreadcrumbs from '.';
 
+jest.mock('next/router', () => ({ push: jest.fn() }));
+
 describe(PathBreadcrumbs, () => {
-    beforeAll(() => {
-        jest.mock('next/router', () => ({ push: jest.fn() }));
-    });
     test('render', async () => {
         const folders = ['.', 'folder-a', 'folder-b', 'folder-c'];
         const { getByTestId, getByText, getAllByText } = render(

@@ -5,9 +5,9 @@ import { GraphQLError } from 'graphql';
 import { ls } from '../../queries';
 import Files from '.';
 
-describe(Files, () => {
-    beforeAll(() => jest.mock('next/router', () => ({ useRouter: (): {} => ({ query: { path: './' } }) })));
+jest.mock('next/router', () => ({ useRouter: (): {} => ({ query: { path: './' } }) }));
 
+describe(Files, () => {
     test('render', async () => {
         const data: {}[] = [
             {
