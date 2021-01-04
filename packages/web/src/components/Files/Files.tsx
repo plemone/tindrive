@@ -14,6 +14,7 @@ export const useStyles = makeStyles(theme => ({
     path: {
         marginTop: 20,
         marginBottom: 20,
+        flex: 2,
     },
     files: {
         display: 'flex',
@@ -76,7 +77,6 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                 container
                 data-testid='files-header'
                 direction='row'
-                justify='space-between'
             >
                 <PathBreadcrumbs
                     className={classes.path}
