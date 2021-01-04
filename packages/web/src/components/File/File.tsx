@@ -33,6 +33,7 @@ export const useStyles = makeStyles(theme => ({
             height: 35,
         },
     },
+    button: { borderRadius: '5%' },
 }));
 
 const File: React.FC<FileProps> = ({
@@ -60,7 +61,10 @@ const File: React.FC<FileProps> = ({
                 data-testid='file-tooltip'
                 title={name}
             >
-                <IconButton onClick={(): void => isDirectory && onClick(path)}>
+                <IconButton
+                    className={classes.button}
+                    onClick={(): void => isDirectory && onClick(path)}
+                >
                     <div
                         className={classes.root}
                         data-testid={dataTestid || `file-${path}`}
@@ -72,7 +76,10 @@ const File: React.FC<FileProps> = ({
             </Tooltip>
         )
         : (
-            <IconButton onClick={(): void => isDirectory && onClick(path)}>
+            <IconButton
+                className={classes.button}
+                onClick={(): void => isDirectory && onClick(path)}
+            >
                 <div
                     className={classes.root}
                     data-testid={dataTestid || `file-${path}`}
