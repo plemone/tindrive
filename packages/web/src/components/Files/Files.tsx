@@ -1,9 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-    Paper,
-    CircularProgress,
-} from '@material-ui/core';
+import { Grid, CircularProgress } from '@material-ui/core';
 import clsx from 'clsx';
 import { useQuery } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
@@ -46,6 +43,7 @@ export const useStyles = makeStyles(theme => ({
     },
     dragging: { backgroundColor: theme.palette.success.main },
     loading: { width: 300 },
+    header: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(4) },
 }));
 
 const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
@@ -71,12 +69,22 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
 
     return (
         <>
-            <PathBreadcrumbs
-                className={classes.path}
-                data-testid='files-path-breadcrumbs'
-                path={path}
-            />
-            <Paper
+
+            <Grid
+                alignItems='center'
+                className={classes.header}
+                container
+                data-testid='files-header'
+                direction='row'
+                justify='space-between'
+            >
+                <PathBreadcrumbs
+                    className={classes.path}
+                    data-testid='files-path-breadcrumbs'
+                    path={path}
+                />
+            </Grid>
+            <div
                 data-testid={dataTestid || 'files'}
                 {...getRootProps}
                 className={clsx({
@@ -110,7 +118,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                     />
                 ))}
                 {!loading && error && 'An error has occured'}
-            </Paper>
+            </div>
         </>
     );
 };

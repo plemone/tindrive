@@ -43,7 +43,7 @@ const File: React.FC<FileProps> = ({
     path,
     'data-testid': dataTestid,
 }) => {
-    const characterLimit = 20;
+    const characterLimit = 30;
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIcon;

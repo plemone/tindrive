@@ -45,11 +45,16 @@ describe(Files, () => {
                 <Files />
             </MockedProvider>
         ));
+        const header = getByTestId('files-header');
+        expect(header).toBeInTheDocument();
+        expect(header).toHaveStyle('justify-content: space-between');
+        expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
         expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
         expect(getByTestId('files-spinner')).toBeInTheDocument();
         expect(getByTestId('files')).toBeInTheDocument();
         expect(queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
+            expect(getByTestId('files-header')).toBeInTheDocument();
             expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
             expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
             expect(queryByText('An error has occured')).not.toBeInTheDocument();
@@ -74,11 +79,15 @@ describe(Files, () => {
                 <Files />
             </MockedProvider>
         ));
+        const header = getByTestId('files-header');
+        expect(header).toBeInTheDocument();
+        expect(header).toHaveStyle('justify-content: space-between');
         expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
         expect(getByTestId('files-spinner')).toBeInTheDocument();
         expect(getByTestId('files')).toBeInTheDocument();
         expect(queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
+            expect(getByTestId('files-header')).toBeInTheDocument();
             expect(getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
             expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
             expect(queryByText('An error has occured')).toBeInTheDocument();
