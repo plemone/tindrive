@@ -59,7 +59,7 @@ describe('FileResolver', () => {
         return module.get<FileResolver>(FileResolver);
     };
 
-    const getService: any = (module: TestingModule, data: []) => {
+    const getService: any = (module: TestingModule) => {
         return module.get<FileService>(FileService);
     };
 
