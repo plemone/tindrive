@@ -1,8 +1,8 @@
 import * as imports from '.';
 
-describe('utils', () => {
+describe('config', () => {
     test('imports', () => {
-        const allowed = ['getDeviceDimensions'];
+        const allowed = ['theme'];
         const functionSet = new Set(Object.keys(imports));
         allowed.forEach(util => expect(functionSet.has(util)).toBeTruthy());
     });
