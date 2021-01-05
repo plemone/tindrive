@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getDimensionCutoff } from '../utils';
+import { getDeviceDimensions } from '../utils';
 
 const getWindowDimensions = (): { width: number; height: number } => {
     if (typeof window === 'undefined') {
         // default desktop screen dimension
         return {
-            width: getDimensionCutoff().desktop.max,
+            width: getDeviceDimensions().desktop.max,
             height: 1024,
         };
     }

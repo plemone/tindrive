@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
 import { PathBreadcrumbsProps } from './PathBreadcrumbs.d';
 import { useWindowDimensions } from '../../hooks';
-import { getDimensionCutoff } from '../../utils';
+import { getDeviceDimensions } from '../../utils';
 
 export const useStyles = makeStyles(() => ({ button: { textTransform: 'none' } }));
 
@@ -21,7 +21,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     const separator = '›';
     const maxItem = 6;
     const { width } = useWindowDimensions();
-    const minDimension = getDimensionCutoff().tablet.max;
+    const minDimension = getDeviceDimensions().tablet.max;
     const onClick = (pathArr: string[], index: number): void => {
         let path = '';
         for (let i = 0; i < index + 1; ++i) {

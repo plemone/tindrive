@@ -1,4 +1,4 @@
-export default function getDimensionCutoff(): {
+export default function getDeviceDimensions(): {
     mobile: {
         min: number;
         max: number;

@@ -9,7 +9,7 @@ import { ls } from '../../queries';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
 import { File, Spinner } from '../index';
-import { getDimensionCutoff } from '../../utils';
+import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
@@ -24,7 +24,7 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'baseline',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: getDimensionCutoff().mobile.min,
+        minWidth: getDeviceDimensions().mobile.min,
         maxHeight: '85vh',
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
@@ -38,7 +38,7 @@ export const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: getDimensionCutoff().mobile.min,
+        minWidth: getDeviceDimensions().mobile.min,
         minHeight: 140,
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),

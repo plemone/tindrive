@@ -1,1 +1,1 @@
-export { default as getDimensionCutoff } from './getDimensionCutoff';
+export { default as getDeviceDimensions } from './getDeviceDimensions';
