@@ -5,7 +5,12 @@ import { GraphQLError } from 'graphql';
 import { ls } from '../../queries';
 import Files from '.';
 
-jest.mock('next/router', () => ({ useRouter: (): {} => ({ query: { path: './' } }) }));
+jest.mock('next/router', () => ({
+    useRouter: (): {} => ({
+        events: { on: jest.fn() },
+        query: { path: './' },
+    }),
+}));
 
 describe(Files, () => {
     test('render', async () => {
