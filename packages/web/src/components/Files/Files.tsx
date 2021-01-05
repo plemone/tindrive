@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import clsx from 'clsx';
 import { useQuery } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
@@ -8,7 +8,7 @@ import { useDropzone } from 'react-dropzone';
 import { ls } from '../../queries';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
-import { File } from '../index';
+import { File, Spinner } from '../index';
 import { getDimensionCutoff } from '../../utils';
 
 export const useStyles = makeStyles(theme => ({
@@ -44,7 +44,6 @@ export const useStyles = makeStyles(theme => ({
         paddingBottom: theme.spacing(2),
     },
     dragging: { backgroundColor: theme.palette.success.main },
-    loading: { width: 300 },
     header: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(4) },
 }));
 
@@ -96,8 +95,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
             >
                 <input {...getInputProps()} />
                 {loading && (
-                    <CircularProgress
-                        className={classes.loading}
+                    <Spinner
                         color='secondary'
                         data-testid='files-spinner'
                         size={30}
