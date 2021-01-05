@@ -2,6 +2,7 @@ import React from 'react';
 import {
     Breadcrumbs,
     Button,
+    Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
@@ -17,6 +18,8 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     className,
     'data-testid': dataTestid,
 }) => {
+    const separator = '›';
+    const maxItem = 6;
     const { width } = useWindowDimensions();
     const minDimension = getDimensionCutoff().tablet.max;
     const onClick = (pathArr: string[], index: number): void => {
@@ -37,18 +40,20 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
         <Breadcrumbs
             className={className}
             data-testid={dataTestid || 'path-breadcrumbs'}
-            maxItems={6}
-            separator='›'
+            maxItems={maxItem}
+            separator={separator}
             style={style}
         >
             {width <= minDimension
                 ? (
-                    <Button
-                        className={classes.button}
-                        data-testid='path-breadcrumbs-button-0'
-                    >
-                        {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
-                    </Button>
+                    <Tooltip title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}>
+                        <Button
+                            className={classes.button}
+                            data-testid='path-breadcrumbs-button-0'
+                        >
+                            {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
+                        </Button>
+                    </Tooltip>
                 )
                 : pathArr?.reduce((acc, path, index) => {
                     if (path) {
