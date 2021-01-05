@@ -4,6 +4,9 @@ import ViewAs from '.';
 
 describe(ViewAs, () => {
     test('render', () => {
-        render(<ViewAs />);
+        render(<ViewAs
+            onClick={jest.fn()}
+            value='icons'
+        />);
     });
 });

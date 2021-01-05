@@ -13,7 +13,12 @@ const useStyles = makeStyles(() => createStyles({
     },
 }));
 
-const ViewAs: React.FC<ViewAsProps> = ({ className, 'data-testid': dataTestid }) => {
+const ViewAs: React.FC<ViewAsProps> = ({
+    className,
+    'data-testid': dataTestid,
+    value,
+    onClick,
+}) => {
     const classes = useStyles();
     const [t] = useTranslation('common');
 
@@ -23,18 +28,18 @@ const ViewAs: React.FC<ViewAsProps> = ({ className, 'data-testid': dataTestid })
             data-testid={dataTestid}
         >
             <Tooltip title={t('viewAs.asIcons')}>
-                <IconButton>
-                    <IconsIcon />
+                <IconButton onClick={(): void => onClick('icons')}>
+                    <IconsIcon color={value === 'icons' ? 'secondary' : undefined} />
                 </IconButton>
             </Tooltip>
             <Tooltip title={t('viewAs.asList')}>
-                <IconButton>
-                    <ListIcon />
+                <IconButton onClick={(): void => onClick('list')}>
+                    <ListIcon color={value === 'list' ? 'secondary' : undefined} />
                 </IconButton>
             </Tooltip>
             <Tooltip title={t('viewAs.asColumn')}>
-                <IconButton>
-                    <ViewColumnIcon />
+                <IconButton onClick={(): void => onClick('columns')}>
+                    <ViewColumnIcon color={value === 'columns' ? 'secondary' : undefined} />
                 </IconButton>
             </Tooltip>
         </div>

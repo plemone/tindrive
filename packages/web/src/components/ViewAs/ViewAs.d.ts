@@ -1,3 +1,6 @@
 import { StandardProps } from '../../index.d';
 
-export type ViewAsProps = StandardProps
+export interface ViewAsProps extends StandardProps {
+    onClick: function;
+    value: 'icons' | 'list' | 'columns';
+}

@@ -50,19 +50,16 @@ export const useStyles = makeStyles(theme => ({
 
 const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const [dragging, setDragging] = React.useState(false);
+    const [viewAs, setViewAs]: ['icons' | 'columns' | 'list', Function] = React.useState('icons');
     const [t] = useTranslation('common');
 
-    const onDrop = React.useCallback(() => {
-        setDragging(false);
-    }, []);
+    const onViewAsClick = React.useCallback((value: string): void => setViewAs(value), []);
 
-    const onDragEnter = React.useCallback(() => {
-        setDragging(true);
-    }, []);
+    const onDrop = React.useCallback(() => setDragging(false), []);
 
-    const onDragLeave = React.useCallback(() => {
-        setDragging(false);
-    }, []);
+    const onDragEnter = React.useCallback(() => setDragging(true), []);
+
+    const onDragLeave = React.useCallback(() => setDragging(false), []);
 
     const classes = useStyles();
     const router = useRouter();
@@ -88,7 +85,10 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                     data-testid='files-path-breadcrumbs'
                     path={path}
                 />
-                <ViewAs className={classes.viewAs} />
+                <ViewAs
+                    onClick={onViewAsClick}
+                    value={viewAs}
+                />
             </Grid>
             <div
                 data-testid={dataTestid || 'files'}
