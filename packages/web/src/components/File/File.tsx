@@ -33,7 +33,13 @@ export const useStyles = makeStyles(theme => ({
             height: 35,
         },
     },
-    button: { borderRadius: '5%' },
+    button: {
+        borderRadius: '5%',
+        '& .MuiTouchRipple-root span': {
+            backgroundColor: `${theme.palette.grey[500]}!important`,
+            opacity: 0.3,
+        },
+    },
 }));
 
 const File: React.FC<FileProps> = ({
