@@ -10,6 +10,7 @@ import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
 import { File, Spinner } from '../index';
 import { getDimensionCutoff } from '../../utils';
+import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
     path: {
@@ -67,6 +68,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
     const path = router?.query?.path as string || './' as string;
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
+    const customLoading = useRouterLoader(loading);
 
     return (
         <>
@@ -88,21 +90,21 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                 data-testid={dataTestid || 'files'}
                 {...getRootProps}
                 className={clsx({
-                    [classes.files]: !loading && !error && data?.ls?.length !== 0,
-                    [classes.filesNoContent]: loading || !!error || data?.ls?.length === 0,
+                    [classes.files]: !customLoading && !error && data?.ls?.length !== 0,
+                    [classes.filesNoContent]: customLoading || !!error || data?.ls?.length === 0,
                     [classes.dragging]: dragging,
                 })}
             >
                 <input {...getInputProps()} />
-                {loading && (
+                {customLoading && (
                     <Spinner
                         color='secondary'
                         data-testid='files-spinner'
                         size={30}
                     />
                 )}
-                {!loading && !error && data?.ls?.length === 0 && 'Folder is empty'}
-                {!loading && !error && data?.ls?.map((file, index) => (
+                {!customLoading && !error && data?.ls?.length === 0 && 'Folder is empty'}
+                {!customLoading && !error && data?.ls?.map((file, index) => (
                     <File
                         key={`file-${index}`}
                         data-testid={`files-file-${index}`}
@@ -116,7 +118,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                         }}
                     />
                 ))}
-                {!loading && error && 'An error has occured'}
+                {!customLoading && error && 'An error has occured'}
             </div>
         </>
     );
