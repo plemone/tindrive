@@ -1,6 +1,6 @@
 import React from 'react';
 import { Files } from '../src';
 
-const Index: React.FC = () => <Files />;
+const IndexPath: React.FC = () => <Files />;
 
-export default Index;
+export default IndexPath;
