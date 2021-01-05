@@ -9,6 +9,7 @@ import { ls } from '../../queries';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
 import { File } from '../index';
+import { getDimensionCutoff } from '../../utils';
 
 export const useStyles = makeStyles(theme => ({
     path: {
@@ -22,7 +23,7 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'baseline',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: 300,
+        minWidth: getDimensionCutoff().mobile.min,
         maxHeight: '85vh',
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
@@ -36,7 +37,7 @@ export const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: 300,
+        minWidth: getDimensionCutoff().mobile.min,
         minHeight: 140,
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),

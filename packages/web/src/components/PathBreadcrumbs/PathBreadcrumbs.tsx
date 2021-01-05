@@ -6,6 +6,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import Router from 'next/router';
 import { PathBreadcrumbsProps } from './PathBreadcrumbs.d';
+import { useWindowDimensions } from '../../hooks';
+import { getDimensionCutoff } from '../../utils';
 
 export const useStyles = makeStyles(() => ({ button: { textTransform: 'none' } }));
 
@@ -15,6 +17,8 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     className,
     'data-testid': dataTestid,
 }) => {
+    const { width } = useWindowDimensions();
+    const minDimension = getDimensionCutoff().tablet.max;
     const onClick = (pathArr: string[], index: number): void => {
         let path = '';
         for (let i = 0; i < index + 1; ++i) {
@@ -27,7 +31,8 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
         });
     };
     const classes = useStyles();
-    const pathArr: string[] = path.split('/');
+    const pathArr: string[] = path.split('/').filter(path => !!path);
+
     return (
         <Breadcrumbs
             className={className}
@@ -36,23 +41,32 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
             separator='›'
             style={style}
         >
-            {pathArr?.reduce((acc, path, index) => {
-                if (path) {
-                    acc.push(
-                        <Button
-                            key={`${path}-${index}`}
-                            className={classes.button}
-                            data-testid={`path-breadcrumbs-button-${index}`}
-                            onClick={(): void => {
-                                onClick(pathArr, index);
-                            }}
-                        >
-                            {path === '.' ? 'root' : path}
-                        </Button>,
-                    );
-                }
-                return acc;
-            }, [])}
+            {width <= minDimension
+                ? (
+                    <Button
+                        className={classes.button}
+                        data-testid='path-breadcrumbs-button-0'
+                    >
+                        {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
+                    </Button>
+                )
+                : pathArr?.reduce((acc, path, index) => {
+                    if (path) {
+                        acc.push(
+                            <Button
+                                key={`${path}-${index}`}
+                                className={classes.button}
+                                data-testid={`path-breadcrumbs-button-${index}`}
+                                onClick={(): void => {
+                                    onClick(pathArr, index);
+                                }}
+                            >
+                                {path === '.' ? 'root' : path}
+                            </Button>,
+                        );
+                    }
+                    return acc;
+                }, [])}
         </Breadcrumbs>
     );
 };
