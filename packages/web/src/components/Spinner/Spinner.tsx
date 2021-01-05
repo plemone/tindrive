@@ -20,16 +20,21 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const Spinner: React.FC<SpinnerProps> = props => {
     const classes = useStyles();
-    const { size, thickness } = props;
+    const { size, thickness, 'data-testid': dataTestid } = props;
+    const customProps = { ...props };
+    delete customProps['data-testid'];
     return (
-        <div className={classes.root}>
+        <div
+            className={classes.root}
+            data-testid={dataTestid}
+        >
             <CircularProgress
                 className={classes.bottom}
                 data-testid='spinner-determinate'
                 size={size}
                 thickness={thickness}
                 variant='determinate'
-                {...props}
+                {...customProps}
                 value={100}
             />
             <CircularProgress
@@ -40,7 +45,7 @@ const Spinner: React.FC<SpinnerProps> = props => {
                 size={size}
                 thickness={thickness}
                 variant='indeterminate'
-                {...props}
+                {...customProps}
             />
         </div>
     );

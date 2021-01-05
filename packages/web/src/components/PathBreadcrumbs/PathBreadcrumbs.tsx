@@ -46,10 +46,13 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
         >
             {width <= minDimension
                 ? (
-                    <Tooltip title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}>
+                    <Tooltip
+                        data-testid='path-breadcrumbs-tooltip'
+                        title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}
+                    >
                         <Button
                             className={classes.button}
-                            data-testid='path-breadcrumbs-button-0'
+                            data-testid='path-breadcrumbs-button'
                         >
                             {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
                         </Button>

@@ -2,7 +2,14 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import Router from 'next/router';
 import PathBreadcrumbs from '.';
+import { useWindowDimensions } from '../../hooks';
 
+jest.mock('../../hooks', () => ({
+    useWindowDimensions: jest.fn(() => ({
+        width: 1024,
+        height: 768,
+    })),
+}));
 jest.mock('next/router', () => ({ push: jest.fn() }));
 
 describe(PathBreadcrumbs, () => {
@@ -35,5 +42,23 @@ describe(PathBreadcrumbs, () => {
             <PathBreadcrumbs path='./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h' />,
         );
         expect(getAllByText('›')).toHaveLength(2);
+    });
+
+    test('responsiveness', async () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        useWindowDimensions.mockImplementation(() => ({
+            width: 360,
+            height: 640,
+        }));
+        const separator = '›';
+        const path = './folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h';
+        const { getByTestId } = render(
+            <PathBreadcrumbs path={path} />,
+        );
+        expect(getByTestId('path-breadcrumbs'));
+        const pathBreadcrumbsButton = getByTestId('path-breadcrumbs-button');
+        expect(pathBreadcrumbsButton).toBeInTheDocument();
+        expect(pathBreadcrumbsButton).toHaveProperty('title', path.replace('.', 'root').replaceAll('/', ` ${separator} `));
     });
 });
