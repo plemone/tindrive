@@ -5,18 +5,18 @@ import clsx from 'clsx';
 import { useQuery } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
+import { useTranslation } from 'react-i18next';
 import { ls } from '../../queries';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import { FilesProps } from './Files.d';
-import { File, Spinner } from '../index';
+import { File, Spinner, ViewAs } from '../index';
 import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
-    path: {
+    pathBreadcrumbs: {
         marginTop: 20,
         marginBottom: 20,
-        flex: 2,
     },
     files: {
         display: 'flex',
@@ -50,6 +50,7 @@ export const useStyles = makeStyles(theme => ({
 
 const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const [dragging, setDragging] = React.useState(false);
+    const [t] = useTranslation('common');
 
     const onDrop = React.useCallback(() => {
         setDragging(false);
@@ -79,12 +80,15 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                 container
                 data-testid='files-header'
                 direction='row'
+                justify='space-between'
+                wrap='nowrap'
             >
                 <PathBreadcrumbs
-                    className={classes.path}
+                    className={classes.pathBreadcrumbs}
                     data-testid='files-path-breadcrumbs'
                     path={path}
                 />
+                <ViewAs className={classes.viewAs} />
             </Grid>
             <div
                 data-testid={dataTestid || 'files'}
@@ -103,7 +107,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                         size={30}
                     />
                 )}
-                {!customLoading && !error && data?.ls?.length === 0 && 'Folder is empty'}
+                {!customLoading && !error && data?.ls?.length === 0 && t('files.folderIsEmpty')}
                 {!customLoading && !error && data?.ls?.map((file, index) => (
                     <File
                         key={`file-${index}`}
