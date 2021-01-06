@@ -65,14 +65,17 @@ const ViewAs: React.FC<ViewAsProps> = ({
         ? (
             <div
                 className={clsx(classes.root, className)}
-                data-testid={dataTestid}
+                data-testid={dataTestid || 'view-as'}
             >
                 <Tooltip title={t('viewAs.asIcons')}>
                     <IconButton
                         data-testid='view-as-icons-button'
                         onClick={(): void => onClick('icons')}
                     >
-                        <IconsIcon color={value === 'icons' ? 'secondary' : undefined} />
+                        <IconsIcon
+                            color={value === 'icons' ? 'secondary' : undefined}
+                            data-testid='view-as-icons-button-icon'
+                        />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asList')}>
@@ -80,7 +83,10 @@ const ViewAs: React.FC<ViewAsProps> = ({
                         data-testid='view-as-list-button'
                         onClick={(): void => onClick('list')}
                     >
-                        <ListIcon color={value === 'list' ? 'secondary' : undefined} />
+                        <ListIcon
+                            color={value === 'list' ? 'secondary' : undefined}
+                            data-testid='view-as-list-button-icon'
+                        />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asColumn')}>
@@ -88,7 +94,10 @@ const ViewAs: React.FC<ViewAsProps> = ({
                         data-testid='view-as-columns-button'
                         onClick={(): void => onClick('columns')}
                     >
-                        <ViewColumnIcon color={value === 'columns' ? 'secondary' : undefined} />
+                        <ViewColumnIcon
+                            color={value === 'columns' ? 'secondary' : undefined}
+                            data-testid='view-as-columns-button-icon'
+                        />
                     </IconButton>
                 </Tooltip>
             </div>
