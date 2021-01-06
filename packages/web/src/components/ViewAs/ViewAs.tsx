@@ -65,7 +65,7 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 <Tooltip title={t('viewAs.asIcons')}>
                     <IconButton
                         data-testid='view-as-icons-button'
-                        onClick={(): void => onClick('icons')}
+                        onClick={(): void => onClick(t('viewAs.optionsAsIcons'))}
                     >
                         <IconsIcon color={value === t('viewAs.optionsAsIcons') ? 'secondary' : undefined} />
                     </IconButton>
@@ -73,7 +73,7 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 <Tooltip title={t('viewAs.asList')}>
                     <IconButton
                         data-testid='view-as-list-button'
-                        onClick={(): void => onClick('list')}
+                        onClick={(): void => onClick(t('viewAs.optionsAsList'))}
                     >
                         <ListIcon color={value === t('viewAs.optionsAsList') ? 'secondary' : undefined} />
                     </IconButton>
@@ -81,7 +81,7 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 <Tooltip title={t('viewAs.asColumn')}>
                     <IconButton
                         data-testid='view-as-columns-button'
-                        onClick={(): void => onClick('columns')}
+                        onClick={(): void => onClick(t('viewAs.optionsAsColumns'))}
                     >
                         <ViewColumnIcon color={value === t('viewAs.optionsAsColumns') ? 'secondary' : undefined} />
                     </IconButton>
