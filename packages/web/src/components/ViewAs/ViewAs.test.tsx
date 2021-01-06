@@ -2,6 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
+import { useWindowDimensions } from '../../hooks';
 import commonEn from '../../translations/en/common.json';
 import ViewAs from '.';
 
@@ -93,5 +94,29 @@ describe(ViewAs, () => {
         expect(component.getByTestId('view-as-icons-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
         expect(component.getByTestId('view-as-list-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
         expect(component.getByTestId('view-as-columns-button-icon')).toHaveClass('MuiSvgIcon-colorSecondary');
+    });
+
+    test('responsiveness', () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        useWindowDimensions.mockImplementation(() => ({
+            width: 360,
+            height: 640,
+        }));
+        const component = render(
+            <I18nextProvider i18n={i18next}>
+                <ViewAs
+                    onClick={jest.fn()}
+                    value='columns'
+                />
+            </I18nextProvider>,
+        );
+        expect(component.getByTestId('view-as-more-vert-button')).toBeInTheDocument();
+        expect(component.getByTestId('view-as-menu')).toBeInTheDocument();
+        [
+            'icons',
+            'list',
+            'columns',
+        ].forEach(value => expect(component.getByTestId(`view-as-menu-option-${value}`)));
     });
 });
