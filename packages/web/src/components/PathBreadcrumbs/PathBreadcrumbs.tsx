@@ -21,7 +21,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     const separator = '›';
     const maxItem = 6;
     const { width } = useWindowDimensions();
-    const minDimension = getDeviceDimensions().tablet.max;
+    const minWidth = getDeviceDimensions().tablet.max;
     const onClick = (pathArr: string[], index: number): void => {
         let path = '';
         for (let i = 0; i < index + 1; ++i) {
@@ -44,12 +44,9 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
             separator={separator}
             style={style}
         >
-            {width <= minDimension
+            {width <= minWidth
                 ? (
-                    <Tooltip
-                        data-testid='path-breadcrumbs-tooltip'
-                        title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}
-                    >
+                    <Tooltip title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}>
                         <Button
                             className={classes.button}
                             data-testid='path-breadcrumbs-button'

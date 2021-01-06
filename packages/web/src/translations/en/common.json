@@ -5,6 +5,9 @@
    "viewAs": {
        "asIcons": "Show items as icons",
        "asList": "Show items as list",
-       "asColumn": "Show items as columns"
+       "asColumn": "Show items as columns",
+       "optionsAsIcons": "As icons",
+       "optionsAsList": "As list",
+       "optionsAsColumns": "As columns"
    }
 }
