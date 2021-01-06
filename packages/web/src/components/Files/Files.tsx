@@ -50,7 +50,7 @@ export const useStyles = makeStyles(theme => ({
 
 const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const [dragging, setDragging] = React.useState(false);
-    const [viewAs, setViewAs]: ['As icons' | 'As columns' | 'As list', Function] = React.useState('As icons');
+    const [viewAs, setViewAs]: ['icons' | 'list' | 'columns', Function] = React.useState('icons');
     const [t] = useTranslation('common');
 
     const onViewAsClick = React.useCallback((value: string): void => setViewAs(value), []);

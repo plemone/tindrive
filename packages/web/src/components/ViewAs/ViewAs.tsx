@@ -42,6 +42,11 @@ const ViewAs: React.FC<ViewAsProps> = ({
         t('viewAs.optionsAsList'),
         t('viewAs.optionsAsColumns'),
     ];
+    const values = [
+        'icons',
+        'list',
+        'columns',
+    ];
     const { width } = useWindowDimensions();
     const minWidth = getDeviceDimensions().tablet.max;
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -65,25 +70,25 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 <Tooltip title={t('viewAs.asIcons')}>
                     <IconButton
                         data-testid='view-as-icons-button'
-                        onClick={(): void => onClick(t('viewAs.optionsAsIcons'))}
+                        onClick={(): void => onClick('icons')}
                     >
-                        <IconsIcon color={value === t('viewAs.optionsAsIcons') ? 'secondary' : undefined} />
+                        <IconsIcon color={value === 'icons' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asList')}>
                     <IconButton
                         data-testid='view-as-list-button'
-                        onClick={(): void => onClick(t('viewAs.optionsAsList'))}
+                        onClick={(): void => onClick('list')}
                     >
-                        <ListIcon color={value === t('viewAs.optionsAsList') ? 'secondary' : undefined} />
+                        <ListIcon color={value === 'list' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asColumn')}>
                     <IconButton
                         data-testid='view-as-columns-button'
-                        onClick={(): void => onClick(t('viewAs.optionsAsColumns'))}
+                        onClick={(): void => onClick('columns')}
                     >
-                        <ViewColumnIcon color={value === t('viewAs.optionsAsColumns') ? 'secondary' : undefined} />
+                        <ViewColumnIcon color={value === 'columns' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
             </div>
@@ -107,12 +112,12 @@ const ViewAs: React.FC<ViewAsProps> = ({
                     open={open}
                     PaperProps={{ className: classes.menuPaper }}
                 >
-                    {options.map(option => (
+                    {options.map((option, index) => (
                         <MenuItem
                             key={option}
-                            data-testid={`view-as-menu-option-${option}`}
-                            onClick={(): void => onMenuSelected(option)}
-                            selected={option === value}
+                            data-testid={`view-as-menu-option-${values[index]}`}
+                            onClick={(): void => onMenuSelected(values[index])}
+                            selected={values[index] === value}
                         >
                             {option}
                         </MenuItem>
