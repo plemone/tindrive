@@ -14,6 +14,7 @@ import {
     InsertDriveFile as FileIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
+import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
 import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
@@ -29,8 +30,14 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         '& svg': { marginRight: 7 },
     },
-    content: { minWidth: getDeviceDimensions().mobile.min },
-    noContent: { minWidth: getDeviceDimensions().mobile.min },
+    table: { minWidth: getDeviceDimensions().mobile.min },
+    noContent: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: 300,
+    },
     folderIcon: { fill: '#FBD405' },
     directoryRow: { cursor: 'pointer' },
 }));
@@ -47,11 +54,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
             className={classes.root}
             data-testid={dataTestid}
         >
-            <Table className={clsx({
-                [classes.content]: !customLoading && !error && data?.ls?.length !== 0,
-                [classes.noContent]: customLoading || !!error || data?.ls?.length === 0,
-            })}
-            >
+            <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
@@ -60,40 +63,43 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                         <TableCell align='right'>Size</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody>
-                    {data?.ls?.map(datum => (
-                        <TableRow
-                            key={datum.name}
-                            className={clsx({ [classes.directoryRow]: datum.isDirectory })}
-                            hover
-                            onClick={
-                                datum.isDirectory
-                                    ? (): void => {
+                {!customLoading && !error && (
+                    <TableBody>
+                        {data?.ls?.map(datum => (
+                            <TableRow
+                                key={datum.name}
+                                className={clsx({ [classes.directoryRow]: datum.isDirectory })}
+                                hover
+                                onClick={
+                                    datum.isDirectory
+                                        ? (): void => {
                                         // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
-                                        Router.push({
-                                            pathname: '/',
-                                            query: { path: datum.path },
-                                        });
-                                    } : undefined
-                            }
-                        >
-                            <TableCell
-                                component='th'
-                                scope='row'
+                                            Router.push({
+                                                pathname: '/',
+                                                query: { path: datum.path },
+                                            });
+                                        } : undefined
+                                }
                             >
-                                <div className={classes.name}>
-                                    {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
-                                    {datum.name}
-                                </div>
-                            </TableCell>
-                            <TableCell align='right'>{datum.extension || 'folder'}</TableCell>
-                            <TableCell align='right'>{datum.createdDate}</TableCell>
-                            <TableCell align='right'>
-                                {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
+                                <TableCell
+                                    component='th'
+                                    scope='row'
+                                >
+                                    <div className={classes.name}>
+                                        {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
+                                        {datum.name}
+                                    </div>
+                                </TableCell>
+                                <TableCell align='right'>{datum.extension || 'folder'}</TableCell>
+                                <TableCell align='right'>{datum.createdDate}</TableCell>
+                                <TableCell align='right'>
+                                    {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                )}
+                {customLoading && <div className={classes.noContent}><Spinner color='secondary' /></div>}
             </Table>
         </div>
     );
