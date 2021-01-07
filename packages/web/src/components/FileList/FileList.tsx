@@ -17,7 +17,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
-import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
 import { ls } from '../../queries';
 
@@ -38,7 +37,6 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         '& svg': { marginRight: 7 },
     },
-    table: { minWidth: getDeviceDimensions().mobile.min },
     folderIcon: { fill: '#FBD405' },
     directoryRow: { cursor: 'pointer' },
 }));
@@ -57,7 +55,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
             data-testid={dataTestid}
         >
             {!customLoading && !error && (
-                <Table className={classes.table}>
+                <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
