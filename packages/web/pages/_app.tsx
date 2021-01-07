@@ -11,8 +11,6 @@ import i18next from 'i18next';
 import { theme } from '../src';
 import commonEn from '../src/translations/en/common.json';
 
-i18next.init({ interpolation: { escapeValue: false } });
-
 i18next.init({
     interpolation: { escapeValue: false },
     lng: 'en',
@@ -22,6 +20,7 @@ i18next.init({
 export const cache = createCache({ key: 'css', prepend: true });
 
 export const client = new ApolloClient({
+    // TODO - move this to a .env file
     uri: 'http://localhost:4000/graphql',
     cache: new InMemoryCache(),
 });

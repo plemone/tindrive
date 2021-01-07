@@ -10,6 +10,7 @@ jest.mock('../../hooks', () => ({
         height: 768,
     })),
 }));
+
 jest.mock('next/router', () => ({ push: jest.fn() }));
 
 describe(PathBreadcrumbs, () => {

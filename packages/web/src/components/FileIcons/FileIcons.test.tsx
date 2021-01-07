@@ -18,8 +18,6 @@ jest.mock('next/router', () => ({
     }),
 }));
 
-i18next.init({ interpolation: { escapeValue: false } });
-
 i18next.init({
     interpolation: { escapeValue: false },
     lng: 'en',

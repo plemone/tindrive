@@ -47,6 +47,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                     path={path}
                 />
                 <ViewAs
+                    data-testid='files-view-as'
                     onClick={onViewAsClick}
                     value={viewAs}
                 />

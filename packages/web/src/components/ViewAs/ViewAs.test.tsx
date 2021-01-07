@@ -12,7 +12,6 @@ jest.mock('../../hooks', () => ({
         height: 768,
     })),
 }));
-i18next.init({ interpolation: { escapeValue: false } });
 
 i18next.init({
     interpolation: { escapeValue: false },

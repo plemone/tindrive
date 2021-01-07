@@ -12,10 +12,6 @@ import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
-    pathBreadcrumbs: {
-        marginTop: 20,
-        marginBottom: 20,
-    },
     files: {
         display: 'flex',
         flexDirection: 'row',
@@ -43,7 +39,6 @@ export const useStyles = makeStyles(theme => ({
         paddingBottom: theme.spacing(2),
     },
     dragging: { backgroundColor: theme.palette.success.main },
-    header: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(4) },
 }));
 
 const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
