@@ -16,19 +16,17 @@ export const useStyles = makeStyles(theme => ({
 }));
 
 const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
-    const [viewAs, setViewAs]: ['icons' | 'list' | 'columns', Function] = React.useState('icons');
+    const [viewAs, setViewAs] = React.useState('icons');
     const onViewAsClick = React.useCallback((value: string): void => setViewAs(value), []);
     const classes = useStyles();
     const router = useRouter();
     const path = router?.query?.path as string || './' as string;
 
-    const getComponent = (viewAs: string) => {
-        const componentMap = {
-            'icons': FileIcons
-        }
+    const getComponent = (viewAs: string): JSX.Element | void => {
+        const componentMap = { icons: FileIcons };
         const Component = componentMap[viewAs];
-        return Component ? <Component data-testid={dataTestid}/> : null;
-    }
+        return Component ? <Component data-testid={dataTestid} /> : null;
+    };
 
     return (
         <>
@@ -49,7 +47,7 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
                 <ViewAs
                     data-testid='files-view-as'
                     onClick={onViewAsClick}
-                    value={viewAs}
+                    value={viewAs as 'icons' | 'list' | 'columns'}
                 />
             </Grid>
             {getComponent(viewAs)}
