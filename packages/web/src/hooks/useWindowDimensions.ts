@@ -1,28 +1,29 @@
 import { useState, useEffect } from 'react';
 import { getDeviceDimensions } from '../utils';
 
-const getWindowDimensions = (): { width: number; height: number } => {
-    if (typeof window === 'undefined') {
-        // default desktop screen dimension
-        return {
-            width: getDeviceDimensions().desktop.max,
-            height: 1024,
-        };
-    }
-    return {
-        width: window.innerWidth,
-        height: window.innerHeight,
-    };
-};
-
+// Read this again to understand why we need useEffect: https://www.joshwcomeau.com/react/the-perils-of-rehydration/
 export default function useWindowDimensions(): { width: number; height: number } {
-    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    const [windowSize, setWindowSize] = useState({
+        width: getDeviceDimensions().desktop.max,
+        height: 1024,
+    });
 
     useEffect(() => {
-        const handleResize = (): void => setWindowDimensions(getWindowDimensions());
-        window.addEventListener('resize', handleResize);
-        return (): void => window.removeEventListener('resize', handleResize);
+        if (typeof window !== 'undefined') {
+            const handleResize = (): void => {
+                setWindowSize({
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                });
+            };
+            window.addEventListener('resize', handleResize);
+
+            // Call handleResize right away on initial window size change.
+            handleResize();
+
+            return (): void => window.removeEventListener('resize', handleResize);
+        }
     }, []);
 
-    return windowDimensions;
+    return windowSize;
 }

@@ -64,7 +64,6 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             <TableCell align='right'>Size</TableCell>
                         </TableRow>
                     </TableHead>
-
                     <TableBody>
                         {data?.ls?.map(datum => (
                             <TableRow

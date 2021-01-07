@@ -10,6 +10,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
 import { theme } from '../src';
 import commonEn from '../src/translations/en/common.json';
+import '../public/index.css';
 
 i18next.init({
     interpolation: { escapeValue: false },
