@@ -4,6 +4,7 @@ import { Grid } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import PathBreadcrumbs from '../PathBreadcrumbs';
 import FileIcons from '../FileIcons';
+import FileList from '../FileList';
 import { FilesProps } from './Files.d';
 import { ViewAs } from '../index';
 
@@ -23,7 +24,10 @@ const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
     const path = router?.query?.path as string || './' as string;
 
     const getComponent = (viewAs: string): JSX.Element | void => {
-        const componentMap = { icons: FileIcons };
+        const componentMap = {
+            icons: FileIcons,
+            list: FileList,
+        };
         const Component = componentMap[viewAs];
         return Component ? <Component data-testid={dataTestid} /> : null;
     };
