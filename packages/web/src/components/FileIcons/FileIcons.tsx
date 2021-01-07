@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { ls } from '../../queries';
 import { FileIconsProps } from './FileIcons.d';
 import { File, Spinner } from '../index';
-import { getDeviceDimensions } from '../../utils';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
@@ -18,12 +17,12 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'baseline',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: getDeviceDimensions().mobile.min,
-        maxHeight: '85vh',
+        height: '100%',
+        width: '100%',
+        outlineStyle: 'none',
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
-        outlineStyle: 'none',
     },
     filesNoContent: {
         display: 'flex',
@@ -32,7 +31,8 @@ export const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         flexWrap: 'wrap',
         overflowY: 'auto',
-        minWidth: getDeviceDimensions().mobile.min,
+        height: '100%',
+        width: '100%',
         minHeight: 140,
         paddingLeft: theme.spacing(2),
         paddingTop: theme.spacing(2),
