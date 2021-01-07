@@ -14,6 +14,7 @@ import {
     InsertDriveFile as FileIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
+import { useTranslation } from 'react-i18next';
 import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
 import { getDeviceDimensions } from '../../utils';
@@ -25,19 +26,19 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
     },
+    noContent: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: 140,
+    },
     name: {
         display: 'flex',
         alignItems: 'center',
         '& svg': { marginRight: 7 },
     },
     table: { minWidth: getDeviceDimensions().mobile.min },
-    noContent: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: 300,
-    },
     folderIcon: { fill: '#FBD405' },
     directoryRow: { cursor: 'pointer' },
 }));
@@ -45,25 +46,27 @@ const useStyles = makeStyles(theme => ({
 const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const classes = useStyles();
     const router = useRouter();
+    const [t] = useTranslation('common');
     const path = router?.query?.path as string || './' as string;
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
     const customLoading = useRouterLoader(loading);
 
     return (
         <div
-            className={classes.root}
+            className={clsx(classes.root, { [classes.noContent]: customLoading || !!error })}
             data-testid={dataTestid}
         >
-            <Table className={classes.table}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell align='right'>Kind</TableCell>
-                        <TableCell align='right'>Created Date</TableCell>
-                        <TableCell align='right'>Size</TableCell>
-                    </TableRow>
-                </TableHead>
-                {!customLoading && !error && (
+            {!customLoading && !error && (
+                <Table className={classes.table}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell align='right'>Kind</TableCell>
+                            <TableCell align='right'>Created Date</TableCell>
+                            <TableCell align='right'>Size</TableCell>
+                        </TableRow>
+                    </TableHead>
+
                     <TableBody>
                         {data?.ls?.map(datum => (
                             <TableRow
@@ -73,7 +76,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                 onClick={
                                     datum.isDirectory
                                         ? (): void => {
-                                        // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
+                                            // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
                                             Router.push({
                                                 pathname: '/',
                                                 query: { path: datum.path },
@@ -98,9 +101,10 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             </TableRow>
                         ))}
                     </TableBody>
-                )}
-                {customLoading && <div className={classes.noContent}><Spinner color='secondary' /></div>}
-            </Table>
+                </Table>
+            )}
+            {customLoading && <Spinner color='secondary' />}
+            {error && t('error.unknown')}
         </div>
     );
 };

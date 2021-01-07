@@ -9,5 +9,8 @@
        "optionsAsIcons": "As icons",
        "optionsAsList": "As list",
        "optionsAsColumns": "As columns"
+   },
+   "error": {
+       "unknown": "An error has occured"
    }
 }

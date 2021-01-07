@@ -77,7 +77,7 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                     }}
                 />
             ))}
-            {!customLoading && error && 'An error has occured'}
+            {!customLoading && error && t('error.unknown')}
         </div>
     );
 };
