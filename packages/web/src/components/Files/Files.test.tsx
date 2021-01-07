@@ -17,7 +17,12 @@ jest.mock('next/router', () => ({
 
 jest.mock('../FileIcons', () => ({
     __esModule: true,
-    default: (): React.ReactNode => <></>,
+    default: (): React.ReactNode => <>Should render FileIcons</>,
+}));
+
+jest.mock('../FileList', () => ({
+    __esModule: true,
+    default: (): React.ReactNode => <>Should render FileList</>,
 }));
 
 i18next.init({
@@ -36,5 +41,14 @@ describe(Files, () => {
         expect(component.getByTestId('files-header')).toBeInTheDocument();
         expect(component.getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
         expect(component.getByTestId('files-view-as')).toBeInTheDocument();
+    });
+
+    test('render with default viewAs value', async () => {
+        const component = render(
+            <I18nextProvider i18n={i18next}>
+                <Files viewAs='list' />
+            </I18nextProvider>,
+        );
+        expect(component.getByText('Should render FileList')).toBeInTheDocument();
     });
 });

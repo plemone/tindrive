@@ -1,3 +1,5 @@
 import { StandardProps } from '../../index.d';
 
-export type FilesProps = StandardProps
+export interface FilesProps extends StandardProps {
+    viewAs?: string;
+}

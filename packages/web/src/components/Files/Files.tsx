@@ -7,6 +7,7 @@ import FileIcons from '../FileIcons';
 import FileList from '../FileList';
 import { FilesProps } from './Files.d';
 import { ViewAs } from '../index';
+import { useCookie } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
     pathBreadcrumbs: {
@@ -16,8 +17,12 @@ export const useStyles = makeStyles(theme => ({
     header: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(4) },
 }));
 
-const Files: React.FC<FilesProps> = ({ 'data-testid': dataTestid }) => {
-    const [viewAs, setViewAs] = React.useState('icons');
+const Files: React.FC<FilesProps> = ({
+    'data-testid': dataTestid,
+    viewAs: initialViewAsValue,
+}) => {
+    const [viewAs, setViewAs] = React.useState(initialViewAsValue || 'icons');
+    useCookie(viewAs, 'viewAs');
     const onViewAsClick = React.useCallback((value: string): void => setViewAs(value), []);
     const classes = useStyles();
     const router = useRouter();
