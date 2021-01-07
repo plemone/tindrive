@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useQuery } from '@apollo/client';
 import Router, { useRouter } from 'next/router';
-import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { ls } from '../../queries';
 import { FileIconsProps } from './FileIcons.d';
@@ -38,37 +37,24 @@ export const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
     },
-    dragging: { backgroundColor: theme.palette.success.main },
 }));
 
 const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
-    const [dragging, setDragging] = React.useState(false);
-    const [t] = useTranslation('common');
-
-    const onDrop = React.useCallback(() => setDragging(false), []);
-
-    const onDragEnter = React.useCallback(() => setDragging(true), []);
-
-    const onDragLeave = React.useCallback(() => setDragging(false), []);
-
     const classes = useStyles();
     const router = useRouter();
-    const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, onDragEnter, onDragLeave });
+    const [t] = useTranslation('common');
     const path = router?.query?.path as string || './' as string;
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
     const customLoading = useRouterLoader(loading);
 
     return (
         <div
-            data-testid={dataTestid || 'files'}
-            {...getRootProps}
             className={clsx({
                 [classes.files]: !customLoading && !error && data?.ls?.length !== 0,
                 [classes.filesNoContent]: customLoading || !!error || data?.ls?.length === 0,
-                [classes.dragging]: dragging,
             })}
+            data-testid={dataTestid || 'files'}
         >
-            <input {...getInputProps()} />
             {customLoading && (
                 <Spinner
                     color='secondary'
