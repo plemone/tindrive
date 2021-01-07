@@ -64,14 +64,14 @@ describe(FileIcons, () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(getByTestId('files-spinner')).toBeInTheDocument();
-        expect(getByTestId('files')).toBeInTheDocument();
+        expect(getByTestId('file-icons-spinner')).toBeInTheDocument();
+        expect(getByTestId('file-icons')).toBeInTheDocument();
         expect(queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
+            expect(queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
             expect(queryByText('An error has occured')).not.toBeInTheDocument();
             for (let index = 0; index < data.length; ++index) {
-                expect(getByTestId(`files-file-${index}`)).toBeInTheDocument();
+                expect(getByTestId(`file-icons-file-${index}`)).toBeInTheDocument();
             }
         });
     });
@@ -93,11 +93,11 @@ describe(FileIcons, () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(getByTestId('files-spinner')).toBeInTheDocument();
-        expect(getByTestId('files')).toBeInTheDocument();
+        expect(getByTestId('file-icons-spinner')).toBeInTheDocument();
+        expect(getByTestId('file-icons')).toBeInTheDocument();
         expect(queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(queryByTestId('files-spinner')).not.toBeInTheDocument();
+            expect(queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
             expect(queryByText('An error has occured')).toBeInTheDocument();
         });
     });

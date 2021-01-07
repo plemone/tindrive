@@ -10,7 +10,7 @@ import { File, Spinner } from '../index';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
-    files: {
+    content: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'baseline',
@@ -23,7 +23,7 @@ export const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
     },
-    filesNoContent: {
+    noContent: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -50,15 +50,15 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
     return (
         <div
             className={clsx({
-                [classes.files]: !customLoading && !error && data?.ls?.length !== 0,
-                [classes.filesNoContent]: customLoading || !!error || data?.ls?.length === 0,
+                [classes.content]: !customLoading && !error && data?.ls?.length !== 0,
+                [classes.noContent]: customLoading || !!error || data?.ls?.length === 0,
             })}
-            data-testid={dataTestid || 'files'}
+            data-testid={dataTestid || 'file-icons'}
         >
             {customLoading && (
                 <Spinner
                     color='secondary'
-                    data-testid='files-spinner'
+                    data-testid='file-icons-spinner'
                     size={30}
                 />
             )}
@@ -66,7 +66,7 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
             {!customLoading && !error && data?.ls?.map((file, index) => (
                 <File
                     key={`file-${index}`}
-                    data-testid={`files-file-${index}`}
+                    data-testid={`file-icons-file-${index}`}
                     {...file}
                     onClick={(path: string): void => {
                         // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
