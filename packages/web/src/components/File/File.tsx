@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Tooltip,
@@ -8,7 +9,6 @@ import {
     InsertDriveFile as FileIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
-import clsx from 'clsx';
 import { FileProps } from './File.d';
 
 export const useStyles = makeStyles(theme => ({
