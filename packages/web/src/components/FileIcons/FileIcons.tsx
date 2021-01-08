@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useQuery } from '@apollo/client';
@@ -6,7 +7,7 @@ import Router, { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { ls } from '../../queries';
 import { FileIconsProps } from './FileIcons.d';
-import { File, Spinner } from '../index';
+import { FileIcon, Spinner } from '../index';
 import { useRouterLoader } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
@@ -46,9 +47,10 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
     const path = router?.query?.path as string || './' as string;
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
     const customLoading = useRouterLoader(loading);
+    const isEmpty = data?.ls?.length === 0;
 
     return (
-        <div
+        <Box
             className={clsx({
                 [classes.content]: !customLoading && !error && data?.ls?.length !== 0,
                 [classes.noContent]: customLoading || !!error || data?.ls?.length === 0,
@@ -62,9 +64,8 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                     size={30}
                 />
             )}
-            {!customLoading && !error && data?.ls?.length === 0 && t('files.folderIsEmpty')}
-            {!customLoading && !error && data?.ls?.map((file, index) => (
-                <File
+            {!customLoading && !error && !isEmpty && data?.ls?.map((file, index) => (
+                <FileIcon
                     key={`file-${index}`}
                     data-testid={`file-icons-file-${index}`}
                     {...file}
@@ -77,8 +78,9 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                     }}
                 />
             ))}
+            {!customLoading && !error && isEmpty && t('files.folderIsEmpty')}
             {!customLoading && error && t('error.unknown')}
-        </div>
+        </Box>
     );
 };
 

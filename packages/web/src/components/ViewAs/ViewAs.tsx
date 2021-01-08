@@ -5,6 +5,7 @@ import {
     MenuItem,
     IconButton,
     Tooltip,
+    Box,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +64,7 @@ const ViewAs: React.FC<ViewAsProps> = ({
 
     return width >= minWidth
         ? (
-            <div
+            <Box
                 className={clsx(classes.root, className)}
                 data-testid={dataTestid || 'view-as'}
             >
@@ -100,10 +101,10 @@ const ViewAs: React.FC<ViewAsProps> = ({
                         />
                     </IconButton>
                 </Tooltip>
-            </div>
+            </Box>
         )
         : (
-            <div
+            <Box
                 className={className}
                 data-testid={dataTestid}
             >
@@ -132,7 +133,7 @@ const ViewAs: React.FC<ViewAsProps> = ({
                         </MenuItem>
                     ))}
                 </Menu>
-            </div>
+            </Box>
         );
 };
 

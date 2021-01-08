@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+    Box,
     Table,
     TableBody,
     TableCell,
@@ -53,7 +54,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const isEmpty = data?.ls?.length === 0;
 
     return (
-        <div
+        <Box
             className={clsx(classes.root, { [classes.noContent]: customLoading || !!error || isEmpty })}
             data-testid={dataTestid}
         >
@@ -68,9 +69,9 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data?.ls?.map(datum => (
+                        {data?.ls?.map((datum, index) => (
                             <TableRow
-                                key={datum.name}
+                                key={`file-${index}`}
                                 className={clsx({ [classes.directoryRow]: datum.isDirectory })}
                                 hover
                                 onClick={
@@ -88,10 +89,10 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                     component='th'
                                     scope='row'
                                 >
-                                    <div className={classes.name}>
+                                    <Box className={classes.name}>
                                         {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
                                         {datum.name}
-                                    </div>
+                                    </Box>
                                 </TableCell>
                                 <TableCell align='right'>
                                     {
@@ -110,7 +111,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
             {isEmpty && t('files.folderIsEmpty')}
             {customLoading && <Spinner color='secondary' />}
             {error && t('error.unknown')}
-        </div>
+        </Box>
     );
 };
 

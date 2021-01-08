@@ -4,12 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     Tooltip,
     IconButton,
+    Box,
 } from '@material-ui/core';
 import {
-    InsertDriveFile as FileIcon,
+    InsertDriveFile as FileIconIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
-import { FileProps } from './File.d';
+import { FileIconProps } from './FileIcon.d';
 
 export const useStyles = makeStyles(theme => ({
     root: {
@@ -42,7 +43,7 @@ export const useStyles = makeStyles(theme => ({
     },
 }));
 
-const File: React.FC<FileProps> = ({
+const FileIcon: React.FC<FileIconProps> = ({
     isDirectory,
     name,
     onClick,
@@ -52,11 +53,11 @@ const File: React.FC<FileProps> = ({
     const characterLimit = 30;
     const classes = useStyles();
     const getIcon = (isDirectory, classes): React.ReactNode => {
-        const Component = isDirectory ? FolderIcon : FileIcon;
+        const Component = isDirectory ? FolderIcon : FileIconIcon;
         return (
             <Component
                 className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })}
-                data-testid={`${isDirectory ? 'folder-icon' : 'file-icon'}`}
+                data-testid={`${isDirectory ? 'folder-icon' : 'fileIcon-iconicon'}`}
             />
         );
     };
@@ -64,20 +65,20 @@ const File: React.FC<FileProps> = ({
     return name.length > characterLimit
         ? (
             <Tooltip
-                data-testid='file-tooltip'
+                data-testid='fileIcon-icontooltip'
                 title={name}
             >
                 <IconButton
                     className={classes.button}
                     onClick={(): void => isDirectory && onClick(path)}
                 >
-                    <div
+                    <Box
                         className={classes.root}
-                        data-testid={dataTestid || `file-${path}`}
+                        data-testid={dataTestid || `fileIcon-icon${path}`}
                     >
                         {getIcon(isDirectory, classes)}
                         {`${name.slice(0, characterLimit)}...`}
-                    </div>
+                    </Box>
                 </IconButton>
             </Tooltip>
         )
@@ -86,15 +87,15 @@ const File: React.FC<FileProps> = ({
                 className={classes.button}
                 onClick={(): void => isDirectory && onClick(path)}
             >
-                <div
+                <Box
                     className={classes.root}
-                    data-testid={dataTestid || `file-${path}`}
+                    data-testid={dataTestid || `fileIcon-icon${path}`}
                 >
                     {getIcon(isDirectory, classes)}
                     {name}
-                </div>
+                </Box>
             </IconButton>
         );
 };
 
-export default File;
+export default FileIcon;

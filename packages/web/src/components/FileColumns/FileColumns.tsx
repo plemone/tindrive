@@ -1,31 +1,46 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
+import { Box } from '@material-ui/core';
+import { FileColumnsProps } from './FileColumns.d';
+import { FileColumn } from '../index';
 
 const useStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
-    },
-    noContent: {
+        overflowX: 'scroll',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: 140,
+        flexDirection: 'row',
     },
-    name: {
-        display: 'flex',
-        alignItems: 'center',
-        '& svg': { marginRight: 7 },
-    },
-    folderIcon: { fill: '#FBD405' },
-    directoryRow: { cursor: 'pointer' },
 }));
 
-const FileColumns: React.FC = () => {
+const FileColumns: React.FC<FileColumnsProps> = ({ 'data-testid': dataTestid }) => {
+    const router = useRouter();
     const classes = useStyles();
+    const path = router?.query?.path as string || './' as string;
+    const segmentedPath = path.split('/').filter(directory => !!directory);
+    const columnPaths = segmentedPath.reduce((acc: string[], _path: string, index: number): string[] => {
+        acc.push(segmentedPath.slice(0, index + 1).join('/'));
+        return acc;
+    }, []);
+
     return (
-        <div>Hello World</div>
+        <Box
+            className={classes.root}
+            data-testid={dataTestid}
+        >
+            {
+                columnPaths.map((path: string, index: number): JSX.Element => (
+                    <FileColumn
+                        key={`file-column-${index}`}
+                        hideBorder={index === columnPaths.length - 1}
+                        path={path}
+                    />
+                ))
+            }
+        </Box>
     );
 };
+
 export default FileColumns;

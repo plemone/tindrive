@@ -1,6 +1,9 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+    CircularProgress,
+    Box,
+} from '@material-ui/core';
 import { SpinnerProps } from './Spinner.d';
 
 // Inspired by the former Facebook spinners.
@@ -24,7 +27,7 @@ const Spinner: React.FC<SpinnerProps> = props => {
     const customProps = { ...props };
     delete customProps['data-testid'];
     return (
-        <div
+        <Box
             className={classes.root}
             data-testid={dataTestid}
         >
@@ -47,7 +50,7 @@ const Spinner: React.FC<SpinnerProps> = props => {
                 variant='indeterminate'
                 {...customProps}
             />
-        </div>
+        </Box>
     );
 };
 

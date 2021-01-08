@@ -26,7 +26,7 @@ const Files: React.FC<FilesProps> = ({
     viewAs: initialViewAsValue,
 }) => {
     const [viewAs, setViewAs] = React.useState(initialViewAsValue || 'icons');
-    useCookie(viewAs, 'viewAs');
+    useCookie('viewAs', viewAs);
     const onViewAsClick = React.useCallback((value: string): void => setViewAs(value), []);
     const classes = useStyles();
     const router = useRouter();

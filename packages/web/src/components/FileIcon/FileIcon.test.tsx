@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import File from '.';
+import FileIcon from '.';
 
-describe(File, () => {
-    test('render file', async () => {
-        const file = {
-            name: 'file',
-            path: './file',
+describe(FileIcon, () => {
+    test('render fileIcon', async () => {
+        const fileIcon = {
+            name: 'fileIcon',
+            path: './fileIcon',
             extension: null,
             isDirectory: false,
             parentDirectory: '.',
@@ -16,14 +16,14 @@ describe(File, () => {
         };
 
         const { queryByText, getByTestId } = render(
-            <File
+            <FileIcon
                 onClick={(): boolean => true}
-                {...file}
+                {...fileIcon}
             />,
         );
-        expect(getByTestId('file-./file')).toBeInTheDocument();
-        expect(getByTestId('file-icon')).toBeInTheDocument();
-        expect(queryByText(file.name)).toBeInTheDocument();
+        expect(getByTestId('fileIcon-icon./fileIcon')).toBeInTheDocument();
+        expect(getByTestId('fileIcon-iconicon')).toBeInTheDocument();
+        expect(queryByText(fileIcon.name)).toBeInTheDocument();
     });
 
     test('render folder', async () => {
@@ -39,20 +39,20 @@ describe(File, () => {
         };
 
         const { queryByText, getByTestId } = render(
-            <File
+            <FileIcon
                 onClick={(): boolean => true}
                 {...folder}
             />,
         );
-        expect(getByTestId('file-./folder')).toBeInTheDocument();
+        expect(getByTestId('fileIcon-icon./folder')).toBeInTheDocument();
         expect(getByTestId('folder-icon')).toBeInTheDocument();
         expect(queryByText(folder.name)).toBeInTheDocument();
     });
 
     test('tooltip on character limit', () => {
-        let file = {
-            name: 'file',
-            path: './file',
+        let fileIcon = {
+            name: 'fileIcon',
+            path: './fileIcon',
             extension: null,
             isDirectory: false,
             parentDirectory: '.',
@@ -62,16 +62,16 @@ describe(File, () => {
         };
 
         let renderedComponent = render(
-            <File
+            <FileIcon
                 onClick={(): boolean => true}
-                {...file}
+                {...fileIcon}
             />,
         );
-        expect(renderedComponent.queryByTestId('file-tooltip')).not.toBeInTheDocument();
+        expect(renderedComponent.queryByTestId('fileIcon-icontooltip')).not.toBeInTheDocument();
 
-        file = {
-            name: 'somefilenamegreaterthantwentycharacterlong',
-            path: './somefilenamegreaterthantwentycharacterlong',
+        fileIcon = {
+            name: 'somefileIconnamegreaterthantwentycharacterlong',
+            path: './somefileIconnamegreaterthantwentycharacterlong',
             extension: null,
             isDirectory: false,
             parentDirectory: '.',
@@ -81,11 +81,11 @@ describe(File, () => {
         };
 
         renderedComponent = render(
-            <File
+            <FileIcon
                 onClick={(): boolean => true}
-                {...file}
+                {...fileIcon}
             />,
         );
-        expect(renderedComponent.queryByTestId('file-tooltip')).toBeInTheDocument();
+        expect(renderedComponent.queryByTestId('fileIcon-icontooltip')).toBeInTheDocument();
     });
 });

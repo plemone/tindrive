@@ -1,6 +1,6 @@
 import { StandardProps } from '../../index.d';
 
-export interface FileProps extends StandardProps {
+export interface FileIconProps extends StandardProps {
     name: string;
     path: string;
     extension: string;
