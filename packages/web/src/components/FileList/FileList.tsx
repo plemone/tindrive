@@ -20,6 +20,7 @@ import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
 import { useRouterLoader } from '../../hooks';
 import { ls } from '../../queries';
+import { getExtensionDescriptions } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -92,7 +93,13 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                         {datum.name}
                                     </div>
                                 </TableCell>
-                                <TableCell align='right'>{datum.extension ? datum.extension : (datum.isDirectory ? 'folder' : 'unknown')}</TableCell>
+                                <TableCell align='right'>
+                                    {
+                                        datum.extension
+                                            ? getExtensionDescriptions(datum.extension)[0] || 'Unknown'
+                                            : (datum.isDirectory ? 'Folder' : 'File')
+                                    }
+                                </TableCell>
                                 <TableCell align='right'>{moment(datum.createdDate).format('LLLL')}</TableCell>
                                 <TableCell align='right'>{`${Math.round((datum.size / 1024) * 10) / 10} KB`}</TableCell>
                             </TableRow>
