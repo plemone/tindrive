@@ -3,10 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import PathBreadcrumbs from '../PathBreadcrumbs';
-import FileIcons from '../FileIcons';
-import FileList from '../FileList';
+import {
+    FileIcons,
+    FileList,
+    FileColumns,
+    ViewAs,
+} from '../..';
 import { FilesProps } from './Files.d';
-import { ViewAs } from '../index';
+
 import { useCookie } from '../../hooks';
 
 export const useStyles = makeStyles(theme => ({
@@ -32,6 +36,7 @@ const Files: React.FC<FilesProps> = ({
         const componentMap = {
             icons: FileIcons,
             list: FileList,
+            columns: FileColumns,
         };
         const Component = componentMap[viewAs];
         return Component ? <Component data-testid={dataTestid} /> : null;

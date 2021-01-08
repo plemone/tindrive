@@ -8196,8 +8196,8 @@ export default function getExtension(): {} {
         },
         MD: {
             descriptions: [
-                'Archive',
                 'Markdown-formatted text file',
+                'Archive',
             ],
         },
         MD2: {
