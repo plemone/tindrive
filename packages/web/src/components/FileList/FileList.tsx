@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Table,
@@ -91,7 +92,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                     </div>
                                 </TableCell>
                                 <TableCell align='right'>{datum.extension || 'folder'}</TableCell>
-                                <TableCell align='right'>{datum.createdDate}</TableCell>
+                                <TableCell align='right'>{moment(datum.createdDate).format('LLLL')}</TableCell>
                                 <TableCell align='right'>
                                     {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
                                 </TableCell>
