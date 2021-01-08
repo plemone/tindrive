@@ -49,13 +49,14 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const path = router?.query?.path as string || './' as string;
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
     const customLoading = useRouterLoader(loading);
+    const isEmpty = data?.ls?.length === 0;
 
     return (
         <div
-            className={clsx(classes.root, { [classes.noContent]: customLoading || !!error })}
+            className={clsx(classes.root, { [classes.noContent]: customLoading || !!error || isEmpty })}
             data-testid={dataTestid}
         >
-            {!customLoading && !error && (
+            {!customLoading && !error && !isEmpty && (
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -91,16 +92,15 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                         {datum.name}
                                     </div>
                                 </TableCell>
-                                <TableCell align='right'>{datum.extension || 'folder'}</TableCell>
+                                <TableCell align='right'>{datum.extension ? datum.extension : (datum.isDirectory ? 'folder' : 'unknown')}</TableCell>
                                 <TableCell align='right'>{moment(datum.createdDate).format('LLLL')}</TableCell>
-                                <TableCell align='right'>
-                                    {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
-                                </TableCell>
+                                <TableCell align='right'>{`${Math.round((datum.size / 1024) * 10) / 10} KB`}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             )}
+            {isEmpty && t('files.folderIsEmpty')}
             {customLoading && <Spinner color='secondary' />}
             {error && t('error.unknown')}
         </div>
