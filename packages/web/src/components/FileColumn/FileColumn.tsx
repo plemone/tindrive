@@ -37,6 +37,7 @@ const useStyles = makeStyles(() => ({
 
 const FileColumn: React.FC<FileColumnProps> = ({
     path,
+    index: indexProps,
     hideBorder = false,
     'data-testid': dataTestid,
 }) => {
@@ -81,7 +82,7 @@ const FileColumn: React.FC<FileColumnProps> = ({
                                         });
                                     } : undefined
                             }
-                            selected={segmentedPath.includes(datum.name)}
+                            selected={segmentedPath[indexProps] === datum.name}
                         >
                             <div
                                 key={index}

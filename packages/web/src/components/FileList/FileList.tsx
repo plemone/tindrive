@@ -56,23 +56,39 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     return (
         <Box
             className={clsx(classes.root, { [classes.noContent]: customLoading || !!error || isEmpty })}
-            data-testid={dataTestid}
+            data-testid={dataTestid || 'file-list'}
         >
             {!customLoading && !error && !isEmpty && (
-                <Table>
-                    <TableHead>
+                <Table data-testid='file-list-table'>
+                    <TableHead data-testid='file-list-table-header'>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell align='right'>Kind</TableCell>
-                            <TableCell align='right'>Created Date</TableCell>
-                            <TableCell align='right'>Size</TableCell>
+                            <TableCell data-testid='file-list-table-header-name'>Name</TableCell>
+                            <TableCell
+                                align='right'
+                                data-testid='file-list-table-header-kind'
+                            >
+                                Kind
+                            </TableCell>
+                            <TableCell
+                                align='right'
+                                data-testid='file-list-table-header-created-date'
+                            >
+                                Created Date
+                            </TableCell>
+                            <TableCell
+                                align='right'
+                                data-testid='file-list-table-header-size'
+                            >
+                                Size
+                            </TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody data-testid='file-list-table-content'>
                         {data?.ls?.map((datum, index) => (
                             <TableRow
                                 key={`file-${index}`}
                                 className={clsx({ [classes.directoryRow]: datum.isDirectory })}
+                                data-testid={`file-list-table-row-${index}`}
                                 hover
                                 onClick={
                                     datum.isDirectory
@@ -87,6 +103,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             >
                                 <TableCell
                                     component='th'
+                                    data-testid={`file-list-table-row-${index}-name`}
                                     scope='row'
                                 >
                                     <Box className={classes.name}>
@@ -94,15 +111,30 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                         {datum.name}
                                     </Box>
                                 </TableCell>
-                                <TableCell align='right'>
+                                <TableCell
+                                    align='right'
+                                    data-testid={`file-list-table-row-${index}-extension`}
+                                >
                                     {
                                         datum.extension
                                             ? getExtensionDescriptions(datum.extension)[0] || 'Unknown'
                                             : (datum.isDirectory ? 'Folder' : 'File')
                                     }
                                 </TableCell>
-                                <TableCell align='right'>{moment(datum.createdDate).format('LLLL')}</TableCell>
-                                <TableCell align='right'>{`${Math.round((datum.size / 1024) * 10) / 10} KB`}</TableCell>
+                                <TableCell
+                                    align='right'
+                                    data-testid={`file-list-table-row-${index}-created-date`}
+                                >
+                                    {moment(datum.createdDate).format('LLLL')}
+
+                                </TableCell>
+                                <TableCell
+                                    align='right'
+                                    data-testid={`file-list-table-row-${index}-size`}
+                                >
+                                    {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
+
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

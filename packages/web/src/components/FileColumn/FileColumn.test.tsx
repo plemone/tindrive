@@ -60,7 +60,10 @@ describe(FileColumn, () => {
                         result: { data: { ls: data } },
                     }]}
                 >
-                    <FileColumn path='./' />
+                    <FileColumn
+                        index={1}
+                        path='./'
+                    />
                 </MockedProvider>
             </I18nextProvider>
         ));
@@ -92,7 +95,10 @@ describe(FileColumn, () => {
                         result: { errors: [new GraphQLError('error')] },
                     }]}
                 >
-                    <FileColumn path='./' />
+                    <FileColumn
+                        index={1}
+                        path='./'
+                    />
                 </MockedProvider>
             </I18nextProvider>
         ));
@@ -131,7 +137,10 @@ describe(FileColumn, () => {
                         result: { data: { ls: data } },
                     }]}
                 >
-                    <FileColumn path='./' />
+                    <FileColumn
+                        index={1}
+                        path='./'
+                    />
                 </MockedProvider>
             </I18nextProvider>
         ));
@@ -149,7 +158,10 @@ describe(FileColumn, () => {
                         result: { data: { ls: data } },
                     }]}
                 >
-                    <FileColumn path='./' />
+                    <FileColumn
+                        index={1}
+                        path='./'
+                    />
                 </MockedProvider>
             </I18nextProvider>
         ));
