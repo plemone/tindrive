@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 export default function getExtension(): {} {
     return {
         0: {
