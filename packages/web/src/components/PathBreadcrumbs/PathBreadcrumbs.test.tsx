@@ -16,15 +16,15 @@ jest.mock('next/router', () => ({ push: jest.fn() }));
 describe(PathBreadcrumbs, () => {
     test('render', async () => {
         const folders = ['.', 'folder-a', 'folder-b', 'folder-c'];
-        const { getByTestId, getByText, getAllByText } = render(
+        const component = render(
             <PathBreadcrumbs path={`${folders[0]}/${folders[1]}/${folders[2]}/${folders[3]}`} />,
         );
-        expect(getByTestId('path-breadcrumbs')).toBeInTheDocument();
+        expect(component.getByTestId('path-breadcrumbs')).toBeInTheDocument();
         for (let i = 0; i < folders.length; ++i) {
-            const pathBreadcrumb = getByTestId(`path-breadcrumbs-button-${i}`);
+            const pathBreadcrumb = component.getByTestId(`path-breadcrumbs-button-${i}`);
             const folder = folders[i] === '.' ? 'root' : folders[i];
             expect(pathBreadcrumb).toBeInTheDocument();
-            expect(getByText(folder)).toBeInTheDocument();
+            expect(component.getByText(folder)).toBeInTheDocument();
             fireEvent.click(pathBreadcrumb);
             let path = '';
             for (let j = 0; j < i + 1; ++j) {
@@ -35,14 +35,14 @@ describe(PathBreadcrumbs, () => {
                 query: { path },
             });
         }
-        expect(getAllByText('›')).toHaveLength(folders.length - 1);
+        expect(component.getAllByText('›')).toHaveLength(folders.length - 1);
     });
 
     test('render with a large path', () => {
-        const { getAllByText } = render(
+        const component = render(
             <PathBreadcrumbs path='./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h' />,
         );
-        expect(getAllByText('›')).toHaveLength(2);
+        expect(component.getAllByText('›')).toHaveLength(2);
     });
 
     test('responsiveness', async () => {
@@ -54,11 +54,11 @@ describe(PathBreadcrumbs, () => {
         }));
         const separator = '›';
         const path = './folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h';
-        const { getByTestId } = render(
+        const component = render(
             <PathBreadcrumbs path={path} />,
         );
-        expect(getByTestId('path-breadcrumbs'));
-        const pathBreadcrumbsButton = getByTestId('path-breadcrumbs-button');
+        expect(component.getByTestId('path-breadcrumbs'));
+        const pathBreadcrumbsButton = component.getByTestId('path-breadcrumbs-button');
         expect(pathBreadcrumbsButton).toBeInTheDocument();
         expect(pathBreadcrumbsButton).toHaveProperty('title', path.replace('.', 'root').replaceAll('/', ` ${separator} `));
     });

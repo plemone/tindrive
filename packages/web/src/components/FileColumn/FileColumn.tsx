@@ -53,16 +53,17 @@ const FileColumn: React.FC<FileColumnProps> = ({
         <Box
             borderRight={customLoading || hideBorder ? 0 : 1}
             className={clsx({ [classes.noContent]: customLoading || !!error || data?.ls?.length === 0 })}
-            data-testid={dataTestid}
+            data-testid={dataTestid || 'file-column'}
             width={400}
         >
             {!customLoading && !error && !isEmpty && (
-                <List>
+                <List data-testid='file-column-list'>
                     {data?.ls?.map((datum, index) => (
                         <ListItem
                             key={`file-${index}`}
                             button
                             className={datum.isDirectory ? classes.directoryRow : classes.fileRow}
+                            data-testid={`file-column-list-item-${index}`}
                             onClick={
                                 datum.isDirectory
                                     ? (): void => {
@@ -82,8 +83,14 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             }
                             selected={segmentedPath.includes(datum.name)}
                         >
-                            <div key={index}>
-                                <div className={classes.name}>
+                            <div
+                                key={index}
+                                data-testid={`file-column-list-item-content-${index}`}
+                            >
+                                <div
+                                    className={classes.name}
+                                    data-testid={`file-column-list-item-content-name-${index}`}
+                                >
                                     {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
                                     {datum.name}
                                 </div>
@@ -95,7 +102,12 @@ const FileColumn: React.FC<FileColumnProps> = ({
             )}
             {!customLoading && !error && isEmpty && t('files.folderIsEmpty')}
             {!customLoading && error && t('error.unknown')}
-            {customLoading && <Spinner color='secondary' />}
+            {customLoading && (
+                <Spinner
+                    color='secondary'
+                    data-testid='file-column-spinner'
+                />
+            )}
         </Box>
     );
 };

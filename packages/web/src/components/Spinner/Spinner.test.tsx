@@ -4,8 +4,8 @@ import Spinner from '.';
 
 describe(Spinner, () => {
     test('render', () => {
-        const { getByTestId } = render(<Spinner />);
-        expect(getByTestId('spinner-determinate')).toHaveClass('MuiCircularProgress-determinate');
-        expect(getByTestId('spinner-indeterminate')).toHaveClass('MuiCircularProgress-indeterminate');
+        const component = render(<Spinner />);
+        expect(component.getByTestId('spinner-determinate')).toHaveClass('MuiCircularProgress-determinate');
+        expect(component.getByTestId('spinner-indeterminate')).toHaveClass('MuiCircularProgress-indeterminate');
     });
 });

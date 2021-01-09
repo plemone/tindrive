@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import FileIcon from '.';
 
 describe(FileIcon, () => {
@@ -15,15 +15,15 @@ describe(FileIcon, () => {
             populatedDate: new Date(),
         };
 
-        const { queryByText, getByTestId } = render(
+        const component = render(
             <FileIcon
                 onClick={(): boolean => true}
                 {...fileIcon}
             />,
         );
-        expect(getByTestId('fileIcon-icon./fileIcon')).toBeInTheDocument();
-        expect(getByTestId('fileIcon-iconicon')).toBeInTheDocument();
-        expect(queryByText(fileIcon.name)).toBeInTheDocument();
+        expect(component.getByTestId('fileIcon-icon./fileIcon')).toBeInTheDocument();
+        expect(component.getByTestId('fileIcon-iconicon')).toBeInTheDocument();
+        expect(component.queryByText(fileIcon.name)).toBeInTheDocument();
     });
 
     test('render folder', async () => {
@@ -38,15 +38,15 @@ describe(FileIcon, () => {
             populatedDate: new Date(),
         };
 
-        const { queryByText, getByTestId } = render(
+        const component = render(
             <FileIcon
                 onClick={(): boolean => true}
                 {...folder}
             />,
         );
-        expect(getByTestId('fileIcon-icon./folder')).toBeInTheDocument();
-        expect(getByTestId('folder-icon')).toBeInTheDocument();
-        expect(queryByText(folder.name)).toBeInTheDocument();
+        expect(component.getByTestId('fileIcon-icon./folder')).toBeInTheDocument();
+        expect(component.getByTestId('folder-icon')).toBeInTheDocument();
+        expect(component.queryByText(folder.name)).toBeInTheDocument();
     });
 
     test('tooltip on character limit', () => {
@@ -61,13 +61,14 @@ describe(FileIcon, () => {
             populatedDate: new Date(),
         };
 
-        let renderedComponent = render(
+        let component = render(
             <FileIcon
                 onClick={(): boolean => true}
                 {...fileIcon}
             />,
         );
-        expect(renderedComponent.queryByTestId('fileIcon-icontooltip')).not.toBeInTheDocument();
+        expect(component.queryByTestId('fileIcon-icontooltip')).not.toBeInTheDocument();
+        cleanup();
 
         fileIcon = {
             name: 'somefileIconnamegreaterthantwentycharacterlong',
@@ -80,12 +81,12 @@ describe(FileIcon, () => {
             populatedDate: new Date(),
         };
 
-        renderedComponent = render(
+        component = render(
             <FileIcon
                 onClick={(): boolean => true}
                 {...fileIcon}
             />,
         );
-        expect(renderedComponent.queryByTestId('fileIcon-icontooltip')).toBeInTheDocument();
+        expect(component.queryByTestId('fileIcon-icontooltip')).toBeInTheDocument();
     });
 });
