@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from '@material-ui/core/styles';
@@ -41,10 +41,13 @@ const FileColumn: React.FC<FileColumnProps> = ({
     'data-testid': dataTestid,
 }) => {
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
+    const router = useRouter();
+    const routerPath = router?.query?.path as string || './' as string;
     const customLoading = useRouterLoader(loading);
     const [t] = useTranslation('common');
     const classes = useStyles();
     const isEmpty = data?.ls?.length === 0;
+    const segmentedPath = routerPath.split('/').filter(path => !!path);
 
     return (
         <Box
@@ -63,6 +66,13 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             onClick={
                                 datum.isDirectory
                                     ? (): void => {
+                                        if (routerPath === datum.path) {
+                                            router.push({
+                                                pathname: '/',
+                                                query: { path: datum.parentDirectory },
+                                            });
+                                            return;
+                                        }
                                         // Calling Router with these options should invoke the file called ../../../pages/[path].tsx
                                         Router.push({
                                             pathname: '/',
@@ -70,6 +80,7 @@ const FileColumn: React.FC<FileColumnProps> = ({
                                         });
                                     } : undefined
                             }
+                            selected={segmentedPath.includes(datum.name)}
                         >
                             <div key={index}>
                                 <div className={classes.name}>
