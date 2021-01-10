@@ -17,12 +17,17 @@ jest.mock('next/router', () => ({
 
 jest.mock('../FileIcons', () => ({
     __esModule: true,
-    default: (): React.ReactNode => <>Should render FileIcons</>,
+    default: (): React.ReactNode => <>Should render icons</>,
 }));
 
 jest.mock('../FileList', () => ({
     __esModule: true,
-    default: (): React.ReactNode => <>Should render FileList</>,
+    default: (): React.ReactNode => <>Should render list</>,
+}));
+
+jest.mock('../FileColumns', () => ({
+    __esModule: true,
+    default: (): React.ReactNode => <>Should render columns</>,
 }));
 
 i18next.init({
@@ -46,9 +51,20 @@ describe(Files, () => {
     test('render with default viewAs value', async () => {
         const component = render(
             <I18nextProvider i18n={i18next}>
-                <Files viewAs='list' />
+                <Files />
             </I18nextProvider>,
         );
-        expect(component.getByText('Should render FileList')).toBeInTheDocument();
+        expect(component.getByText('Should render icons')).toBeInTheDocument();
+    });
+
+    test('render with all values', async () => {
+        ['icons', 'list', 'columns'].forEach(item => {
+            const component = render(
+                <I18nextProvider i18n={i18next}>
+                    <Files viewAs={item} />
+                </I18nextProvider>,
+            );
+            expect(component.getByText(`Should render ${item}`)).toBeInTheDocument();
+        });
     });
 });
