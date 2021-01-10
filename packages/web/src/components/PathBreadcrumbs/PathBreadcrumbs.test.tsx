@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import Router from 'next/router';
@@ -46,7 +47,6 @@ describe(PathBreadcrumbs, () => {
     });
 
     test('responsiveness', async () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         useWindowDimensions.mockImplementation(() => ({
             width: 360,

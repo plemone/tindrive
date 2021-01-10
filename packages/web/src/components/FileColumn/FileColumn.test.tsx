@@ -1,21 +1,24 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React from 'react';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
+import * as nextRouter from 'next/router';
 import commonEn from '../../translations/en/common.json';
 import { ls } from '../../queries';
 import FileColumn from '.';
 
-jest.mock('next/router', () => ({
-    useRouter: (): {} => ({
-        events: {
-            on: jest.fn(),
-            off: jest.fn(),
-        },
-        query: { path: './' },
-    }),
+// @ts-ignore
+nextRouter.useRouter = jest.fn();
+// @ts-ignore
+nextRouter.useRouter.mockImplementation(() => ({
+    events: {
+        on: jest.fn(),
+        off: jest.fn(),
+    },
+    query: { path: './' },
 }));
 
 i18next.init({
@@ -166,5 +169,50 @@ describe(FileColumn, () => {
             </I18nextProvider>
         ));
         expect(component.getByTestId('file-column')).not.toHaveStyle('border-right: 1px solid');
+    });
+
+    test('selected list', async () => {
+        // @ts-ignore
+        nextRouter.useRouter.mockImplementation(() => ({
+            events: {
+                on: jest.fn(),
+                off: jest.fn(),
+            },
+            query: { path: './folder' },
+        }));
+        const data: {}[] = [
+            {
+                name: 'folder',
+                path: './folder',
+                extension: null,
+                isDirectory: true,
+                parentDirectory: '.',
+                createdDate: '2020-11-05T05:34:51.219Z',
+                size: 4096,
+                populatedDate: '2020-12-13T18:10:38.000Z',
+            },
+        ];
+        const component = render((
+            <I18nextProvider i18n={i18next}>
+                <MockedProvider
+                    addTypename={false}
+                    mocks={[{
+                        request: {
+                            query: ls,
+                            variables: { path: './folder' },
+                        },
+                        result: { data: { ls: data } },
+                    }]}
+                >
+                    <FileColumn
+                        index={1}
+                        path='./folder'
+                    />
+                </MockedProvider>
+            </I18nextProvider>
+        ));
+        await waitFor(() => {
+            expect(component.getByTestId('file-column-list-item-0')).toHaveClass('Mui-selected');
+        });
     });
 });
