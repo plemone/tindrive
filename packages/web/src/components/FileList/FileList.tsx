@@ -107,7 +107,16 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                     scope='row'
                                 >
                                     <Box className={classes.name}>
-                                        {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
+                                        {datum.isDirectory ? (
+                                            <FolderIcon
+                                                className={classes.folderIcon}
+                                                data-testid={`file-list-table-item-folder-${index}`}
+                                            />
+                                        ) : (
+                                            <FileIcon
+                                                data-testid={`file-list-table-item-file-${index}`}
+                                            />
+                                        )}
                                         {datum.name}
                                     </Box>
                                 </TableCell>
@@ -141,7 +150,12 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                 </Table>
             )}
             {isEmpty && t('files.folderIsEmpty')}
-            {customLoading && <Spinner color='secondary' />}
+            {customLoading && (
+                <Spinner
+                    color='secondary'
+                    data-testid='file-list-spinner'
+                />
+            )}
             {error && t('error.unknown')}
         </Box>
     );

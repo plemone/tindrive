@@ -92,7 +92,16 @@ const FileColumn: React.FC<FileColumnProps> = ({
                                     className={classes.name}
                                     data-testid={`file-column-list-item-content-name-${index}`}
                                 >
-                                    {datum.isDirectory ? <FolderIcon className={classes.folderIcon} /> : <FileIcon />}
+                                    {datum.isDirectory ? (
+                                        <FolderIcon
+                                            className={classes.folderIcon}
+                                            data-testid={`file-column-list-item-folder-${index}`}
+                                        />
+                                    ) : (
+                                        <FileIcon
+                                            data-testid={`file-column-list-item-file-${index}`}
+                                        />
+                                    )}
                                     {datum.name}
                                 </div>
                             </div>
