@@ -1,5 +1,5 @@
 export interface StandardProps {
     className?: string;
-    style?: object;
+    style?: Record<string, unknown>;
     'data-testid'?: string;
 }

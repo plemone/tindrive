@@ -1,6 +1,6 @@
 import { getExtensionDescriptions } from '.';
 
-describe(getExtensionDescriptions, () => {
+describe('getExtensionDescriptions', () => {
     test('if getExtensionDescriptions is a function', () => {
         expect(typeof getExtensionDescriptions).toBe('function');
     });

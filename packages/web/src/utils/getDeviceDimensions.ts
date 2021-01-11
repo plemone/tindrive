@@ -15,7 +15,7 @@ export default function getDeviceDimensions(): {
         min: number;
         max: number;
     };
-    } {
+} {
     return {
         mobile: {
             min: 320,

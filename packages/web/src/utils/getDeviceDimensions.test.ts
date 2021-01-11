@@ -1,6 +1,7 @@
+/* eslint-disable guard-for-in */
 import { getDeviceDimensions } from '.';
 
-describe(getDeviceDimensions, () => {
+describe('getDeviceDimensions', () => {
     test('if getDeviceDimensions is a function', () => {
         expect(typeof getDeviceDimensions).toBe('function');
     });
@@ -20,11 +21,9 @@ describe(getDeviceDimensions, () => {
         const dimensions = getDeviceDimensions();
         // eslint-disable-next-line no-restricted-syntax
         for (const key in dimensions) {
-            if (key) {
-                const deviceDimension = dimensions[key];
-                const valueKeys = Object.keys(deviceDimension);
-                expect(valueKeys).toEqual(['min', 'max']);
-            }
+            const deviceDimension = dimensions[key];
+            const valueKeys = Object.keys(deviceDimension);
+            expect(valueKeys).toEqual(['min', 'max']);
         }
     });
 });
