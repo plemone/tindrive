@@ -4,7 +4,7 @@ export default function getExtension(): {
     [key: string]: {
         [key: string]: string[];
     };
-    } {
+} {
     return {
         0: {
             descriptions: [
