@@ -116,6 +116,7 @@ const FileColumn: React.FC<FileColumnProps> = ({
                 <Spinner
                     color='secondary'
                     data-testid='file-column-spinner'
+                    size={15}
                 />
             )}
         </Box>
