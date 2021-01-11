@@ -45,21 +45,21 @@ const Files: React.FC<FilesProps> = ({
     return (
         <>
             <Grid
-                alignItems='center'
+                alignItems="center"
                 className={classes.header}
                 container
-                data-testid='files-header'
-                direction='row'
-                justify='space-between'
-                wrap='nowrap'
+                data-testid="files-header"
+                direction="row"
+                justify="space-between"
+                wrap="nowrap"
             >
                 <PathBreadcrumbs
                     className={classes.pathBreadcrumbs}
-                    data-testid='files-path-breadcrumbs'
+                    data-testid="files-path-breadcrumbs"
                     path={path}
                 />
                 <ViewAs
-                    data-testid='files-view-as'
+                    data-testid="files-view-as"
                     onClick={onViewAsClick}
                     value={viewAs as 'icons' | 'list' | 'columns'}
                 />

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/destructuring-assignment */
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React from 'react';
 import { render } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
@@ -27,10 +27,10 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(FileColumns, () => {
+describe('FileColumns', () => {
     test('if number of columns rendered correspond to the path', async () => {
         const path = './folder-a/folder-b';
-        const data: {}[] = [];
+        const data: Record<string, unknown>[] = [];
         // @ts-ignore
         nextRouter.useRouter.mockImplementation(() => ({
             events: {

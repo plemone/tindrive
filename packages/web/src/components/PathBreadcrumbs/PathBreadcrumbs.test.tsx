@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import Router from 'next/router';
@@ -14,7 +14,7 @@ jest.mock('../../hooks', () => ({
 
 jest.mock('next/router', () => ({ push: jest.fn() }));
 
-describe(PathBreadcrumbs, () => {
+describe('PathBreadcrumbs', () => {
     test('render', async () => {
         const folders = ['.', 'folder-a', 'folder-b', 'folder-c'];
         const component = render(
@@ -41,7 +41,7 @@ describe(PathBreadcrumbs, () => {
 
     test('render with a large path', () => {
         const component = render(
-            <PathBreadcrumbs path='./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h' />,
+            <PathBreadcrumbs path="./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h" />,
         );
         expect(component.getAllByText('›')).toHaveLength(2);
     });
@@ -57,7 +57,7 @@ describe(PathBreadcrumbs, () => {
         const component = render(
             <PathBreadcrumbs path={path} />,
         );
-        expect(component.getByTestId('path-breadcrumbs'));
+        expect(component.getByTestId('path-breadcrumbs')).toBeInTheDocument();
         const pathBreadcrumbsButton = component.getByTestId('path-breadcrumbs-button');
         expect(pathBreadcrumbsButton).toBeInTheDocument();
         expect(pathBreadcrumbsButton).toHaveProperty('title', path.replace('.', 'root').replaceAll('/', ` ${separator} `));

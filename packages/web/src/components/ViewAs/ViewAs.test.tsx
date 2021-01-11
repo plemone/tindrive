@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
@@ -19,13 +20,13 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(ViewAs, () => {
+describe('ViewAs', () => {
     test('render', () => {
         const component = render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
-                    value='icons'
+                    value="icons"
                 />
             </I18nextProvider>,
         );
@@ -41,7 +42,7 @@ describe(ViewAs, () => {
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={mockedOnClick}
-                    value='icons'
+                    value="icons"
                 />
             </I18nextProvider>,
         );
@@ -58,7 +59,7 @@ describe(ViewAs, () => {
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
-                    value='icons'
+                    value="icons"
                 />
             </I18nextProvider>,
         );
@@ -72,7 +73,7 @@ describe(ViewAs, () => {
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
-                    value='list'
+                    value="list"
                 />
             </I18nextProvider>,
         );
@@ -86,7 +87,7 @@ describe(ViewAs, () => {
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
-                    value='columns'
+                    value="columns"
                 />
             </I18nextProvider>,
         );
@@ -96,7 +97,6 @@ describe(ViewAs, () => {
     });
 
     test('responsiveness', () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         useWindowDimensions.mockImplementation(() => ({
             width: 360,
@@ -106,7 +106,7 @@ describe(ViewAs, () => {
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
-                    value='columns'
+                    value="columns"
                 />
             </I18nextProvider>,
         );

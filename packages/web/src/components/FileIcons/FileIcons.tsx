@@ -59,14 +59,14 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
         >
             {customLoading && (
                 <Spinner
-                    color='secondary'
-                    data-testid='file-icons-spinner'
+                    color="secondary"
+                    data-testid="file-icons-spinner"
                     size={30}
                 />
             )}
             {!customLoading && !error && !isEmpty && data?.ls?.map((file, index) => (
                 <FileIcon
-                    key={`file-${index}`}
+                    key={`file-icon-${file.path}`}
                     data-testid={`file-icons-file-${index}`}
                     {...file}
                     onClick={(path: string): void => {

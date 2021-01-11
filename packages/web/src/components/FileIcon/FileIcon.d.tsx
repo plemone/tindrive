@@ -9,5 +9,5 @@ export interface FileIconProps extends StandardProps {
     createdDate: Date;
     size: number;
     populatedDate: Date;
-    onClick: Function;
+    onClick: (path: string) => void;
 }

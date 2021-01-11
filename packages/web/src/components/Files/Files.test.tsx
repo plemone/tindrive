@@ -6,7 +6,7 @@ import commonEn from '../../translations/en/common.json';
 import Files from '.';
 
 jest.mock('next/router', () => ({
-    useRouter: (): {} => ({
+    useRouter: (): Record<string, unknown> => ({
         events: {
             on: jest.fn(),
             off: jest.fn(),
@@ -36,7 +36,7 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(Files, () => {
+describe('Files', () => {
     test('render', async () => {
         const component = render(
             <I18nextProvider i18n={i18next}>

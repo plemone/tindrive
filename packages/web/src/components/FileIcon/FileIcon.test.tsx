@@ -2,7 +2,7 @@ import React from 'react';
 import { cleanup, render } from '@testing-library/react';
 import FileIcon from '.';
 
-describe(FileIcon, () => {
+describe('FileIcon', () => {
     test('render fileIcon', async () => {
         const fileIcon = {
             name: 'fileIcon',

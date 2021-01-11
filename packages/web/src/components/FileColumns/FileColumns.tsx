@@ -33,7 +33,7 @@ const FileColumns: React.FC<FileColumnsProps> = ({ 'data-testid': dataTestid }) 
             {
                 columnPaths.map((path: string, index: number): JSX.Element => (
                     <FileColumn
-                        key={`file-column-${index}`}
+                        key={`file-column-${path}`}
                         data-testid={`file-column-${index}`}
                         hideBorder={index === columnPaths.length - 1}
                         index={index + 1}

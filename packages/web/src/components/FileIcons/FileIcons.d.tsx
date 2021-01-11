@@ -1,3 +1,3 @@
 import { StandardProps } from '../../index.d';
 
-export type FileIconsProps = StandardProps
+export type FileIconsProps = StandardProps;

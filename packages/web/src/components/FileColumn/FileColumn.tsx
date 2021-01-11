@@ -58,10 +58,10 @@ const FileColumn: React.FC<FileColumnProps> = ({
             width={400}
         >
             {!customLoading && !error && !isEmpty && (
-                <List data-testid='file-column-list'>
+                <List data-testid="file-column-list">
                     {data?.ls?.map((datum, index) => (
                         <ListItem
-                            key={`file-${index}`}
+                            key={`file-list-${datum.path}`}
                             button
                             className={datum.isDirectory ? classes.directoryRow : classes.fileRow}
                             data-testid={`file-column-list-item-${index}`}
@@ -85,7 +85,7 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             selected={segmentedPath[indexProps] === datum.name}
                         >
                             <div
-                                key={index}
+                                key={`file-list-item-${datum.path}`}
                                 data-testid={`file-column-list-item-content-${index}`}
                             >
                                 <div
@@ -114,8 +114,8 @@ const FileColumn: React.FC<FileColumnProps> = ({
             {!customLoading && error && t('error.unknown')}
             {customLoading && (
                 <Spinner
-                    color='secondary'
-                    data-testid='file-column-spinner'
+                    color="secondary"
+                    data-testid="file-column-spinner"
                     size={15}
                 />
             )}

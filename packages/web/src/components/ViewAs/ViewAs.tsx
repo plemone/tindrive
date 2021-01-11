@@ -70,34 +70,34 @@ const ViewAs: React.FC<ViewAsProps> = ({
             >
                 <Tooltip title={t('viewAs.asIcons')}>
                     <IconButton
-                        data-testid='view-as-icons-button'
+                        data-testid="view-as-icons-button"
                         onClick={(): void => onClick('icons')}
                     >
                         <IconsIcon
                             color={value === 'icons' ? 'secondary' : undefined}
-                            data-testid='view-as-icons-button-icon'
+                            data-testid="view-as-icons-button-icon"
                         />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asList')}>
                     <IconButton
-                        data-testid='view-as-list-button'
+                        data-testid="view-as-list-button"
                         onClick={(): void => onClick('list')}
                     >
                         <ListIcon
                             color={value === 'list' ? 'secondary' : undefined}
-                            data-testid='view-as-list-button-icon'
+                            data-testid="view-as-list-button-icon"
                         />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asColumn')}>
                     <IconButton
-                        data-testid='view-as-columns-button'
+                        data-testid="view-as-columns-button"
                         onClick={(): void => onClick('columns')}
                     >
                         <ViewColumnIcon
                             color={value === 'columns' ? 'secondary' : undefined}
-                            data-testid='view-as-columns-button-icon'
+                            data-testid="view-as-columns-button-icon"
                         />
                     </IconButton>
                 </Tooltip>
@@ -109,14 +109,14 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 data-testid={dataTestid}
             >
                 <IconButton
-                    data-testid='view-as-more-vert-button'
+                    data-testid="view-as-more-vert-button"
                     onClick={onMenuClick}
                 >
                     <MoreVertIcon />
                 </IconButton>
                 <Menu
                     anchorEl={anchorEl}
-                    data-testid='view-as-menu'
+                    data-testid="view-as-menu"
                     keepMounted
                     onClose={onMenuClose}
                     open={open}

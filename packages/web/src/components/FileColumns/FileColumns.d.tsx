@@ -1,3 +1,3 @@
 import { StandardProps } from '../../index.d';
 
-export type FileColumnsProps = StandardProps
+export type FileColumnsProps = StandardProps;

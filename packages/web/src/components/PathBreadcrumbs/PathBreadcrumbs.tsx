@@ -49,7 +49,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
                     <Tooltip title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}>
                         <Button
                             className={classes.button}
-                            data-testid='path-breadcrumbs-button'
+                            data-testid="path-breadcrumbs-button"
                         >
                             {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
                         </Button>
@@ -59,7 +59,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
                     if (path) {
                         acc.push(
                             <Button
-                                key={`${path}-${index}`}
+                                key={`path-breadcrumb-${path}`}
                                 className={classes.button}
                                 data-testid={`path-breadcrumbs-button-${index}`}
                                 onClick={(): void => {

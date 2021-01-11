@@ -9,7 +9,7 @@ import { ls } from '../../queries';
 import FileIcons from '.';
 
 jest.mock('next/router', () => ({
-    useRouter: (): {} => ({
+    useRouter: (): Record<string, unknown> => ({
         events: {
             on: jest.fn(),
             off: jest.fn(),
@@ -24,9 +24,9 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(FileIcons, () => {
+describe('FileIcons', () => {
     test('render', async () => {
-        const data: {}[] = [
+        const data: Record<string, unknown>[] = [
             {
                 name: 'file',
                 path: './file',

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
@@ -27,9 +27,9 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(FileList, () => {
+describe('FileList', () => {
     test('render', async () => {
-        const data: {}[] = [
+        const data: Record<string, unknown>[] = [
             {
                 name: 'file',
                 path: './file',

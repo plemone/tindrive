@@ -65,7 +65,7 @@ const FileIcon: React.FC<FileIconProps> = ({
     return name.length > characterLimit
         ? (
             <Tooltip
-                data-testid='fileIcon-icontooltip'
+                data-testid="fileIcon-icontooltip"
                 title={name}
             >
                 <IconButton

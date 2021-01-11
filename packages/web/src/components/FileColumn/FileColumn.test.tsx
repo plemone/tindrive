@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
@@ -27,9 +27,9 @@ i18next.init({
     resources: { en: { common: commonEn } },
 });
 
-describe(FileColumn, () => {
+describe('FileColumn', () => {
     test('render', async () => {
-        const data: {}[] = [
+        const data: Record<string, unknown>[] = [
             {
                 name: 'file',
                 path: './file',
@@ -65,7 +65,7 @@ describe(FileColumn, () => {
                 >
                     <FileColumn
                         index={1}
-                        path='./'
+                        path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
@@ -100,7 +100,7 @@ describe(FileColumn, () => {
                 >
                     <FileColumn
                         index={1}
-                        path='./'
+                        path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
@@ -116,7 +116,7 @@ describe(FileColumn, () => {
     });
 
     test('border props', () => {
-        const data: {}[] = [
+        const data: Record<string, unknown>[] = [
             {
                 name: 'file',
                 path: './file',
@@ -142,7 +142,7 @@ describe(FileColumn, () => {
                 >
                     <FileColumn
                         index={1}
-                        path='./'
+                        path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
@@ -163,7 +163,7 @@ describe(FileColumn, () => {
                 >
                     <FileColumn
                         index={1}
-                        path='./'
+                        path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
@@ -180,7 +180,7 @@ describe(FileColumn, () => {
             },
             query: { path: './folder' },
         }));
-        const data: {}[] = [
+        const data: Record<string, unknown>[] = [
             {
                 name: 'folder',
                 path: './folder',
@@ -206,7 +206,7 @@ describe(FileColumn, () => {
                 >
                     <FileColumn
                         index={1}
-                        path='./folder'
+                        path="./folder"
                     />
                 </MockedProvider>
             </I18nextProvider>

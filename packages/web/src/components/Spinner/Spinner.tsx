@@ -33,21 +33,21 @@ const Spinner: React.FC<SpinnerProps> = props => {
         >
             <CircularProgress
                 className={classes.bottom}
-                data-testid='spinner-determinate'
+                data-testid="spinner-determinate"
                 size={size}
                 thickness={thickness}
-                variant='determinate'
+                variant="determinate"
                 {...customProps}
                 value={100}
             />
             <CircularProgress
                 classes={{ circle: classes.circle }}
                 className={classes.top}
-                data-testid='spinner-indeterminate'
+                data-testid="spinner-indeterminate"
                 disableShrink
                 size={size}
                 thickness={thickness}
-                variant='indeterminate'
+                variant="indeterminate"
                 {...customProps}
             />
         </Box>
