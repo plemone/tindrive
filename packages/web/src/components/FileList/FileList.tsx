@@ -56,39 +56,29 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     return (
         <Box
             className={clsx(classes.root, { [classes.noContent]: customLoading || !!error || isEmpty })}
-            data-testid={dataTestid || 'file-list'}
+            data-testid={dataTestid}
         >
             {!customLoading && !error && !isEmpty && (
-                <Table data-testid="file-list-table">
-                    <TableHead data-testid="file-list-table-header">
+                <Table>
+                    <TableHead>
                         <TableRow>
-                            <TableCell data-testid="file-list-table-header-name">Name</TableCell>
-                            <TableCell
-                                align="right"
-                                data-testid="file-list-table-header-kind"
-                            >
-                                Kind
+                            <TableCell>{t('files.name')}</TableCell>
+                            <TableCell align="right">
+                                {t('files.kind')}
                             </TableCell>
-                            <TableCell
-                                align="right"
-                                data-testid="file-list-table-header-created-date"
-                            >
-                                Created Date
+                            <TableCell align="right">
+                                {t('files.createdDate')}
                             </TableCell>
-                            <TableCell
-                                align="right"
-                                data-testid="file-list-table-header-size"
-                            >
-                                Size
+                            <TableCell align="right">
+                                {t('files.size')}
                             </TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody data-testid="file-list-table-content">
-                        {data?.ls?.map((datum, index) => (
+                    <TableBody>
+                        {data?.ls?.map(datum => (
                             <TableRow
                                 key={`file-row-${datum.path}`}
                                 className={clsx({ [classes.directoryRow]: datum.isDirectory })}
-                                data-testid={`file-list-table-row-${index}`}
                                 hover
                                 onClick={
                                     datum.isDirectory
@@ -103,44 +93,34 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             >
                                 <TableCell
                                     component="th"
-                                    data-testid={`file-list-table-row-${index}-name`}
                                     scope="row"
                                 >
                                     <Box className={classes.name}>
                                         {datum.isDirectory ? (
-                                            <FolderIcon
-                                                className={classes.folderIcon}
-                                                data-testid={`file-list-table-item-folder-${index}`}
-                                            />
+                                            <FolderIcon className={classes.folderIcon} />
                                         ) : (
-                                            <FileIcon
-                                                data-testid={`file-list-table-item-file-${index}`}
-                                            />
+                                            <FileIcon />
                                         )}
                                         {datum.name}
                                     </Box>
                                 </TableCell>
-                                <TableCell
-                                    align="right"
-                                    data-testid={`file-list-table-row-${index}-extension`}
-                                >
+                                <TableCell align="right">
                                     {
-                                        datum.extension
-                                            ? getExtensionDescriptions(datum.extension)[0] || 'Unknown'
-                                            : (datum.isDirectory ? 'Folder' : 'File')
+
+                                        datum.isDirectory
+                                            ? 'Folder'
+                                            : (
+                                                datum.extension
+                                                    ? getExtensionDescriptions(datum.extension)[0] || 'Unknown'
+                                                    : 'File'
+                                            )
                                     }
                                 </TableCell>
-                                <TableCell
-                                    align="right"
-                                    data-testid={`file-list-table-row-${index}-created-date`}
-                                >
+                                <TableCell align="right">
                                     {moment(datum.createdDate).format('LLLL')}
 
                                 </TableCell>
-                                <TableCell
-                                    align="right"
-                                    data-testid={`file-list-table-row-${index}-size`}
-                                >
+                                <TableCell align="right">
                                     {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
 
                                 </TableCell>

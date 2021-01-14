@@ -17,12 +17,9 @@ jest.mock('next/router', () => ({ push: jest.fn() }));
 describe('PathBreadcrumbs', () => {
     test('render', async () => {
         const folders = ['.', 'folder-a', 'folder-b', 'folder-c'];
-        const component = render(
-            <PathBreadcrumbs path={`${folders[0]}/${folders[1]}/${folders[2]}/${folders[3]}`} />,
-        );
-        expect(component.getByTestId('path-breadcrumbs')).toBeInTheDocument();
+        const component = render(<PathBreadcrumbs path={`${folders[0]}/${folders[1]}/${folders[2]}/${folders[3]}`} />);
         for (let i = 0; i < folders.length; ++i) {
-            const pathBreadcrumb = component.getByTestId(`path-breadcrumbs-button-${i}`);
+            const pathBreadcrumb = component.getAllByRole('button')[i];
             const folder = folders[i] === '.' ? 'root' : folders[i];
             expect(pathBreadcrumb).toBeInTheDocument();
             expect(component.getByText(folder)).toBeInTheDocument();
@@ -40,9 +37,7 @@ describe('PathBreadcrumbs', () => {
     });
 
     test('render with a large path', () => {
-        const component = render(
-            <PathBreadcrumbs path="./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h" />,
-        );
+        const component = render(<PathBreadcrumbs path="./folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h" />);
         expect(component.getAllByText('›')).toHaveLength(2);
     });
 
@@ -54,11 +49,8 @@ describe('PathBreadcrumbs', () => {
         }));
         const separator = '›';
         const path = './folder-a/folder-b/folder-c/folder-d/folder-e/folder-f/folder-g/folder-h';
-        const component = render(
-            <PathBreadcrumbs path={path} />,
-        );
-        expect(component.getByTestId('path-breadcrumbs')).toBeInTheDocument();
-        const pathBreadcrumbsButton = component.getByTestId('path-breadcrumbs-button');
+        const component = render(<PathBreadcrumbs path={path} />);
+        const pathBreadcrumbsButton = component.getByRole('button');
         expect(pathBreadcrumbsButton).toBeInTheDocument();
         expect(pathBreadcrumbsButton).toHaveProperty('title', path.replace('.', 'root').replaceAll('/', ` ${separator} `));
     });

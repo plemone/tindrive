@@ -48,18 +48,15 @@ const Files: React.FC<FilesProps> = ({
                 alignItems="center"
                 className={classes.header}
                 container
-                data-testid="files-header"
                 direction="row"
                 justify="space-between"
                 wrap="nowrap"
             >
                 <PathBreadcrumbs
                     className={classes.pathBreadcrumbs}
-                    data-testid="files-path-breadcrumbs"
                     path={path}
                 />
                 <ViewAs
-                    data-testid="files-view-as"
                     onClick={onViewAsClick}
                     value={viewAs as 'icons' | 'list' | 'columns'}
                 />

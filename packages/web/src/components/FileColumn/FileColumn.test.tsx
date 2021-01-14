@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
-import { cleanup, render, waitFor } from '@testing-library/react';
+import {
+    cleanup,
+    render,
+    waitFor,
+    screen,
+} from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 import { I18nextProvider } from 'react-i18next';
@@ -51,7 +56,7 @@ describe('FileColumn', () => {
                 populatedDate: '2020-12-13T18:10:38.000Z',
             },
         ];
-        const component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -70,23 +75,24 @@ describe('FileColumn', () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-column-spinner')).toBeInTheDocument();
-        expect(component.getByTestId('file-column')).toBeInTheDocument();
-        expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.getByTestId('file-column-spinner')).toBeInTheDocument();
+        expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.queryByText('file')).toBeFalsy();
+        expect(screen.queryByText('folder')).toBeFalsy();
+        expect(screen.queryByTestId('file-column-folder-icon')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('file-column-file-icon')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(component.queryByTestId('file-column-spinner')).not.toBeInTheDocument();
-            expect(component.queryByTestId('file-column-list')).toBeInTheDocument();
-            expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
-            for (let index = 0; index < data.length; ++index) {
-                expect(component.getByTestId(`file-column-list-item-${index}`)).toBeInTheDocument();
-                expect(component.getByTestId(`file-column-list-item-content-${index}`)).toBeInTheDocument();
-                expect(component.getByTestId(`file-column-list-item-content-name-${index}`)).toBeInTheDocument();
-            }
+            expect(screen.queryByTestId('file-column-spinner')).not.toBeInTheDocument();
+            expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
+            expect(screen.getByText('file')).toBeTruthy();
+            expect(screen.getByText('folder')).toBeTruthy();
+            expect(screen.getByTestId('file-column-folder-icon')).toBeInTheDocument();
+            expect(screen.getByTestId('file-column-file-icon')).toBeInTheDocument();
         });
     });
 
     test('render with error', async () => {
-        const component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -105,13 +111,19 @@ describe('FileColumn', () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-column-spinner')).toBeInTheDocument();
-        expect(component.getByTestId('file-column')).toBeInTheDocument();
-        expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.getByTestId('file-column-spinner')).toBeInTheDocument();
+        expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.queryByText('file')).toBeFalsy();
+        expect(screen.queryByText('folder')).toBeFalsy();
+        expect(screen.queryByTestId('file-column-folder-icon')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('file-column-file-icon')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(component.queryByTestId('file-column-spinner')).not.toBeInTheDocument();
-            expect(component.queryByTestId('file-column-list')).not.toBeInTheDocument();
-            expect(component.queryByText('An error has occured')).toBeInTheDocument();
+            expect(screen.queryByTestId('file-column-spinner')).not.toBeInTheDocument();
+            expect(screen.queryByText('An error has occured')).toBeInTheDocument();
+            expect(screen.queryByText('file')).toBeFalsy();
+            expect(screen.queryByText('folder')).toBeFalsy();
+            expect(screen.queryByTestId('file-column-folder-icon')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('file-column-file-icon')).not.toBeInTheDocument();
         });
     });
 
@@ -128,7 +140,7 @@ describe('FileColumn', () => {
                 populatedDate: '2020-12-13T18:10:38.000Z',
             },
         ];
-        let component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -141,15 +153,16 @@ describe('FileColumn', () => {
                     }]}
                 >
                     <FileColumn
+                        data-testid="file-column"
                         index={1}
                         path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-column')).not.toHaveStyle('border-right: 1px solid');
+        expect(screen.getByTestId('file-column')).not.toHaveStyle('border-right: 1px solid');
         cleanup();
-        component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -162,13 +175,14 @@ describe('FileColumn', () => {
                     }]}
                 >
                     <FileColumn
+                        data-testid="file-column"
                         index={1}
                         path="./"
                     />
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-column')).not.toHaveStyle('border-right: 1px solid');
+        expect(screen.getByTestId('file-column')).not.toHaveStyle('border-right: 1px solid');
     });
 
     test('selected list', async () => {
@@ -192,7 +206,7 @@ describe('FileColumn', () => {
                 populatedDate: '2020-12-13T18:10:38.000Z',
             },
         ];
-        const component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -212,7 +226,7 @@ describe('FileColumn', () => {
             </I18nextProvider>
         ));
         await waitFor(() => {
-            expect(component.getByTestId('file-column-list-item-0')).toHaveClass('Mui-selected');
+            expect(screen.getByTestId('file-column-folder-0')).toHaveClass('Mui-selected');
         });
     });
 });

@@ -14446,9 +14446,9 @@ export default function getExtension(): {
         },
         TS: {
             descriptions: [
+                'TypeScript source file',
                 'MPEG transport stream',
                 'Qt Linguist TS File',
-                'TypeScript source file',
             ],
         },
         TSE: {

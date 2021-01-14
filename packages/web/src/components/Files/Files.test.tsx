@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
 import commonEn from '../../translations/en/common.json';
@@ -11,7 +11,7 @@ jest.mock('next/router', () => ({
             on: jest.fn(),
             off: jest.fn(),
         },
-        query: { path: './' },
+        query: { path: './folder-a/folder-b/folder-c' },
     }),
 }));
 
@@ -38,33 +38,21 @@ i18next.init({
 
 describe('Files', () => {
     test('render', async () => {
-        const component = render(
-            <I18nextProvider i18n={i18next}>
-                <Files />
-            </I18nextProvider>,
-        );
-        expect(component.getByTestId('files-header')).toBeInTheDocument();
-        expect(component.getByTestId('files-path-breadcrumbs')).toBeInTheDocument();
-        expect(component.getByTestId('files-view-as')).toBeInTheDocument();
+        render(<I18nextProvider i18n={i18next}><Files /></I18nextProvider>);
+        expect(screen.getByText('folder-a')).toBeInTheDocument();
+        expect(screen.getByText('folder-b')).toBeInTheDocument();
+        expect(screen.getByText('folder-c')).toBeInTheDocument();
     });
 
     test('render with default viewAs value', async () => {
-        const component = render(
-            <I18nextProvider i18n={i18next}>
-                <Files />
-            </I18nextProvider>,
-        );
-        expect(component.getByText('Should render icons')).toBeInTheDocument();
+        render(<I18nextProvider i18n={i18next}><Files /></I18nextProvider>);
+        expect(screen.getByText('Should render icons')).toBeInTheDocument();
     });
 
     test('render with all values', async () => {
         ['icons', 'list', 'columns'].forEach(item => {
-            const component = render(
-                <I18nextProvider i18n={i18next}>
-                    <Files viewAs={item} />
-                </I18nextProvider>,
-            );
-            expect(component.getByText(`Should render ${item}`)).toBeInTheDocument();
+            render(<I18nextProvider i18n={i18next}><Files viewAs={item} /></I18nextProvider>);
+            expect(screen.getByText(`Should render ${item}`)).toBeInTheDocument();
         });
     });
 });

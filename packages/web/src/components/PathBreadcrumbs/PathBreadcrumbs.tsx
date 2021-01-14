@@ -39,7 +39,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
     return (
         <Breadcrumbs
             className={className}
-            data-testid={dataTestid || 'path-breadcrumbs'}
+            data-testid={dataTestid}
             maxItems={maxItem}
             separator={separator}
             style={style}
@@ -47,10 +47,7 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
             {width <= minWidth
                 ? (
                     <Tooltip title={path?.replace('.', 'root')?.replaceAll('/', ` ${separator} `) || ''}>
-                        <Button
-                            className={classes.button}
-                            data-testid="path-breadcrumbs-button"
-                        >
+                        <Button className={classes.button}>
                             {pathArr[pathArr.length - 1] === '.' ? 'root' : pathArr[pathArr.length - 1]}
                         </Button>
                     </Tooltip>
@@ -61,7 +58,6 @@ const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = ({
                             <Button
                                 key={`path-breadcrumb-${path}`}
                                 className={classes.button}
-                                data-testid={`path-breadcrumbs-button-${index}`}
                                 onClick={(): void => {
                                     onClick(pathArr, index);
                                 }}

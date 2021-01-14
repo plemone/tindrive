@@ -1,6 +1,10 @@
 {
    "files": {
-       "folderIsEmpty": "Folder is empty"
+       "folderIsEmpty": "Folder is empty",
+        "name": "Name",
+        "kind": "Kind",
+        "createdDate": "Created Date",
+        "size": "Size"
    },
    "viewAs": {
        "asIcons": "Show items as icons",

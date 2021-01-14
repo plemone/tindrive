@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import {
+    render,
+    cleanup,
+    fireEvent,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
 import { useWindowDimensions } from '../../hooks';
@@ -21,24 +27,9 @@ i18next.init({
 });
 
 describe('ViewAs', () => {
-    test('render', () => {
-        const component = render(
-            <I18nextProvider i18n={i18next}>
-                <ViewAs
-                    onClick={jest.fn()}
-                    value="icons"
-                />
-            </I18nextProvider>,
-        );
-        expect(component.getByTestId('view-as')).toBeInTheDocument();
-        expect(component.getByTestId('view-as-icons-button')).toBeInTheDocument();
-        expect(component.getByTestId('view-as-list-button')).toBeInTheDocument();
-        expect(component.getByTestId('view-as-columns-button')).toBeInTheDocument();
-    });
-
     test('onClick', () => {
         const mockedOnClick = jest.fn();
-        const component = render(
+        render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={mockedOnClick}
@@ -46,16 +37,15 @@ describe('ViewAs', () => {
                 />
             </I18nextProvider>,
         );
-        fireEvent.click(component.getByTestId('view-as-icons-button'));
-        expect(mockedOnClick).toHaveBeenCalledWith('icons');
-        fireEvent.click(component.getByTestId('view-as-list-button'));
-        expect(mockedOnClick).toHaveBeenCalledWith('list');
-        fireEvent.click(component.getByTestId('view-as-columns-button'));
-        expect(mockedOnClick).toHaveBeenCalledWith('columns');
+        const buttons = screen.getAllByRole('button');
+        buttons.forEach(button => {
+            fireEvent.click(button);
+            expect(mockedOnClick).toHaveBeenCalledWith('icons');
+        });
     });
 
-    test('if appropriate icons are highlighted when specific values are passed to the component', () => {
-        let component = render(
+    test('if appropriate icons are highlighted when specific values are passed to the screen', () => {
+        render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
@@ -63,13 +53,13 @@ describe('ViewAs', () => {
                 />
             </I18nextProvider>,
         );
-        expect(component.getByTestId('view-as-icons-button-icon')).toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-list-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-columns-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        // The cleanup function needs to be called to unmount the component rendered above.
+        let buttons = screen.getAllByRole('button');
+        expect(buttons[0].firstChild.firstChild).toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[1].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[2].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
         cleanup();
 
-        component = render(
+        render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
@@ -77,13 +67,13 @@ describe('ViewAs', () => {
                 />
             </I18nextProvider>,
         );
-        expect(component.getByTestId('view-as-icons-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-list-button-icon')).toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-columns-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        // The cleanup function needs to be called to unmount the component rendered above.
+        buttons = screen.getAllByRole('button');
+        expect(buttons[0].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[1].firstChild.firstChild).toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[2].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
         cleanup();
 
-        component = render(
+        render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
@@ -91,31 +81,32 @@ describe('ViewAs', () => {
                 />
             </I18nextProvider>,
         );
-        expect(component.getByTestId('view-as-icons-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-list-button-icon')).not.toHaveClass('MuiSvgIcon-colorSecondary');
-        expect(component.getByTestId('view-as-columns-button-icon')).toHaveClass('MuiSvgIcon-colorSecondary');
+        buttons = screen.getAllByRole('button');
+        expect(buttons[0].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[1].firstChild.firstChild).not.toHaveClass('MuiSvgIcon-colorSecondary');
+        expect(buttons[2].firstChild.firstChild).toHaveClass('MuiSvgIcon-colorSecondary');
     });
 
-    test('responsiveness', () => {
+    test('responsiveness', async () => {
         // @ts-ignore
         useWindowDimensions.mockImplementation(() => ({
             width: 360,
             height: 640,
         }));
-        const component = render(
+        render(
             <I18nextProvider i18n={i18next}>
                 <ViewAs
                     onClick={jest.fn()}
                     value="columns"
+                    data-testid="view-as-menu"
                 />
             </I18nextProvider>,
         );
-        expect(component.getByTestId('view-as-more-vert-button')).toBeInTheDocument();
-        expect(component.getByTestId('view-as-menu')).toBeInTheDocument();
-        [
-            'icons',
-            'list',
-            'columns',
-        ].forEach(value => expect(component.getByTestId(`view-as-menu-option-${value}`)));
+        jest.useFakeTimers();
+        fireEvent.click(screen.getByRole('button'));
+        await waitFor(() => jest.advanceTimersByTime(100));
+        expect(screen.getByText('As icons')).toBeInTheDocument();
+        expect(screen.getByText('As list')).toBeInTheDocument();
+        expect(screen.getByText('As columns')).toBeInTheDocument();
     });
 });

@@ -5,7 +5,8 @@ import Spinner from '.';
 describe('Spinner', () => {
     test('render', () => {
         const component = render(<Spinner />);
-        expect(component.getByTestId('spinner-determinate')).toHaveClass('MuiCircularProgress-determinate');
-        expect(component.getByTestId('spinner-indeterminate')).toHaveClass('MuiCircularProgress-indeterminate');
+        const spinner = component.container;
+        expect(spinner.firstElementChild?.children[0]).toHaveClass('MuiCircularProgress-determinate');
+        expect(spinner.firstElementChild?.children[1]).toHaveClass('MuiCircularProgress-indeterminate');
     });
 });

@@ -54,17 +54,17 @@ const FileColumn: React.FC<FileColumnProps> = ({
         <Box
             borderRight={customLoading || hideBorder ? 0 : 1}
             className={clsx({ [classes.noContent]: customLoading || !!error || data?.ls?.length === 0 })}
-            data-testid={dataTestid || 'file-column'}
+            data-testid={dataTestid}
             width={400}
         >
             {!customLoading && !error && !isEmpty && (
-                <List data-testid="file-column-list">
+                <List>
                     {data?.ls?.map((datum, index) => (
                         <ListItem
                             key={`file-list-${datum.path}`}
                             button
+                            data-testid={`file-column-${datum.isDirectory ? 'folder' : 'file'}-${index}`}
                             className={datum.isDirectory ? classes.directoryRow : classes.fileRow}
-                            data-testid={`file-column-list-item-${index}`}
                             onClick={
                                 datum.isDirectory
                                     ? (): void => {
@@ -84,29 +84,20 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             }
                             selected={segmentedPath[indexProps] === datum.name}
                         >
-                            <div
-                                key={`file-list-item-${datum.path}`}
-                                data-testid={`file-column-list-item-content-${index}`}
-                            >
-                                <div
-                                    className={classes.name}
-                                    data-testid={`file-column-list-item-content-name-${index}`}
-                                >
-                                    {datum.isDirectory ? (
-                                        <FolderIcon
-                                            className={classes.folderIcon}
-                                            data-testid={`file-column-list-item-folder-${index}`}
-                                        />
-                                    ) : (
-                                        <FileIcon
-                                            data-testid={`file-column-list-item-file-${index}`}
-                                        />
-                                    )}
+                            <div key={`file-list-item-${datum.path}`}>
+                                <div className={classes.name}>
+                                    {datum.isDirectory
+                                        ? (
+                                            <FolderIcon
+                                                data-testid="file-column-folder-icon"
+                                                className={classes.folderIcon}
+                                            />
+                                        )
+                                        : <FileIcon data-testid="file-column-file-icon" />}
                                     {datum.name}
                                 </div>
                             </div>
                         </ListItem>
-
                     ))}
                 </List>
             )}

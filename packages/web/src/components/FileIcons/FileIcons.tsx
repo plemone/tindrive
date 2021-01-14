@@ -55,7 +55,7 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                 [classes.content]: !customLoading && !error && data?.ls?.length !== 0,
                 [classes.noContent]: customLoading || !!error || data?.ls?.length === 0,
             })}
-            data-testid={dataTestid || 'file-icons'}
+            data-testid={dataTestid}
         >
             {customLoading && (
                 <Spinner
@@ -64,10 +64,9 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                     size={30}
                 />
             )}
-            {!customLoading && !error && !isEmpty && data?.ls?.map((file, index) => (
+            {!customLoading && !error && !isEmpty && data?.ls?.map(file => (
                 <FileIcon
                     key={`file-icon-${file.path}`}
-                    data-testid={`file-icons-file-${index}`}
                     {...file}
                     onClick={(path: string): void => {
                         // Calling Router with these options should invoke the file called ../../../pages/[path].tsx

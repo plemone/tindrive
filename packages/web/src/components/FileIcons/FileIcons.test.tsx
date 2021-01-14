@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 import { I18nextProvider } from 'react-i18next';
@@ -48,7 +48,7 @@ describe('FileIcons', () => {
                 populatedDate: '2020-12-13T18:10:38.000Z',
             },
         ];
-        const component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -64,20 +64,20 @@ describe('FileIcons', () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-icons-spinner')).toBeInTheDocument();
-        expect(component.getByTestId('file-icons')).toBeInTheDocument();
-        expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.getByTestId('file-icons-spinner')).toBeInTheDocument();
+        expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.queryByText('folder')).not.toBeInTheDocument();
+        expect(screen.queryByText('file')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(component.queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
-            expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
-            for (let index = 0; index < data.length; ++index) {
-                expect(component.getByTestId(`file-icons-file-${index}`)).toBeInTheDocument();
-            }
+            expect(screen.queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
+            expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
+            expect(screen.queryByText('folder')).toBeInTheDocument();
+            expect(screen.queryByText('file')).toBeInTheDocument();
         });
     });
 
     test('render with error', async () => {
-        const component = render((
+        render((
             <I18nextProvider i18n={i18next}>
                 <MockedProvider
                     addTypename={false}
@@ -93,12 +93,11 @@ describe('FileIcons', () => {
                 </MockedProvider>
             </I18nextProvider>
         ));
-        expect(component.getByTestId('file-icons-spinner')).toBeInTheDocument();
-        expect(component.getByTestId('file-icons')).toBeInTheDocument();
-        expect(component.queryByText('An error has occured')).not.toBeInTheDocument();
+        expect(screen.getByTestId('file-icons-spinner')).toBeInTheDocument();
+        expect(screen.queryByText('An error has occured')).not.toBeInTheDocument();
         await waitFor(() => {
-            expect(component.queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
-            expect(component.queryByText('An error has occured')).toBeInTheDocument();
+            expect(screen.queryByTestId('file-icons-spinner')).not.toBeInTheDocument();
+            expect(screen.queryByText('An error has occured')).toBeInTheDocument();
         });
     });
 });

@@ -57,24 +57,21 @@ const FileIcon: React.FC<FileIconProps> = ({
         return (
             <Component
                 className={clsx(classes.icon, { [classes.folderIcon]: isDirectory })}
-                data-testid={`${isDirectory ? 'folder-icon' : 'fileIcon-iconicon'}`}
+                data-testid={`${isDirectory ? 'file-icon-folder-icon' : 'file-icon-file-icon'}`}
             />
         );
     };
 
     return name.length > characterLimit
         ? (
-            <Tooltip
-                data-testid="fileIcon-icontooltip"
-                title={name}
-            >
+            <Tooltip title={name}>
                 <IconButton
                     className={classes.button}
                     onClick={(): void => isDirectory && onClick(path)}
                 >
                     <Box
                         className={classes.root}
-                        data-testid={dataTestid || `fileIcon-icon${path}`}
+                        data-testid={dataTestid}
                     >
                         {getIcon(isDirectory, classes)}
                         {`${name.slice(0, characterLimit)}...`}
@@ -89,7 +86,7 @@ const FileIcon: React.FC<FileIconProps> = ({
             >
                 <Box
                     className={classes.root}
-                    data-testid={dataTestid || `fileIcon-icon${path}`}
+                    data-testid={dataTestid}
                 >
                     {getIcon(isDirectory, classes)}
                     {name}

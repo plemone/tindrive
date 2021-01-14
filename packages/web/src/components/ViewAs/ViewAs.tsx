@@ -66,39 +66,21 @@ const ViewAs: React.FC<ViewAsProps> = ({
         ? (
             <Box
                 className={clsx(classes.root, className)}
-                data-testid={dataTestid || 'view-as'}
+                data-testid={dataTestid}
             >
                 <Tooltip title={t('viewAs.asIcons')}>
-                    <IconButton
-                        data-testid="view-as-icons-button"
-                        onClick={(): void => onClick('icons')}
-                    >
-                        <IconsIcon
-                            color={value === 'icons' ? 'secondary' : undefined}
-                            data-testid="view-as-icons-button-icon"
-                        />
+                    <IconButton onClick={(): void => onClick('icons')}>
+                        <IconsIcon color={value === 'icons' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asList')}>
-                    <IconButton
-                        data-testid="view-as-list-button"
-                        onClick={(): void => onClick('list')}
-                    >
-                        <ListIcon
-                            color={value === 'list' ? 'secondary' : undefined}
-                            data-testid="view-as-list-button-icon"
-                        />
+                    <IconButton onClick={(): void => onClick('list')}>
+                        <ListIcon color={value === 'list' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('viewAs.asColumn')}>
-                    <IconButton
-                        data-testid="view-as-columns-button"
-                        onClick={(): void => onClick('columns')}
-                    >
-                        <ViewColumnIcon
-                            color={value === 'columns' ? 'secondary' : undefined}
-                            data-testid="view-as-columns-button-icon"
-                        />
+                    <IconButton onClick={(): void => onClick('columns')}>
+                        <ViewColumnIcon color={value === 'columns' ? 'secondary' : undefined} />
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -108,15 +90,11 @@ const ViewAs: React.FC<ViewAsProps> = ({
                 className={className}
                 data-testid={dataTestid}
             >
-                <IconButton
-                    data-testid="view-as-more-vert-button"
-                    onClick={onMenuClick}
-                >
+                <IconButton onClick={onMenuClick}>
                     <MoreVertIcon />
                 </IconButton>
                 <Menu
                     anchorEl={anchorEl}
-                    data-testid="view-as-menu"
                     keepMounted
                     onClose={onMenuClose}
                     open={open}
@@ -125,7 +103,6 @@ const ViewAs: React.FC<ViewAsProps> = ({
                     {options.map((option, index) => (
                         <MenuItem
                             key={option}
-                            data-testid={`view-as-menu-option-${values[index]}`}
                             onClick={(): void => onMenuSelected(values[index])}
                             selected={values[index] === value}
                         >
