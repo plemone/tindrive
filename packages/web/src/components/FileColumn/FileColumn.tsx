@@ -84,8 +84,8 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             }
                             selected={segmentedPath[indexProps] === datum.name}
                         >
-                            <div key={`file-list-item-${datum.path}`}>
-                                <div className={classes.name}>
+                            <Box key={`file-list-item-${datum.path}`}>
+                                <Box className={classes.name}>
                                     {datum.isDirectory
                                         ? (
                                             <FolderIcon
@@ -95,8 +95,8 @@ const FileColumn: React.FC<FileColumnProps> = ({
                                         )
                                         : <FileIcon data-testid="file-column-file-icon" />}
                                     {datum.name}
-                                </div>
-                            </div>
+                                </Box>
+                            </Box>
                         </ListItem>
                     ))}
                 </List>
