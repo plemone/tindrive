@@ -19,9 +19,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
-import { useRouterLoader } from '../../hooks';
 import { ls } from '../../queries';
 import { getExtensionDescriptions } from '../../utils';
+import { useContextMenu } from '../ContextMenu';
+import { useRouterLoader, useFolderActions, useFileActions } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -46,6 +47,9 @@ const useStyles = makeStyles(theme => ({
 
 const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const classes = useStyles();
+    const contextMenu = useContextMenu();
+    const fileActions = useFileActions();
+    const folderActions = useFolderActions();
     const router = useRouter();
     const [t] = useTranslation('common');
     const path = router?.query?.path as string || './' as string;
@@ -75,11 +79,22 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data?.ls?.map(datum => (
+                        {data?.ls?.map((datum: {
+                            name: string;
+                            path: string;
+                            extension: string;
+                            isDirectory: boolean;
+                            parentDirectory: string;
+                            createdDate: Date;
+                            size: number;
+                            populatedDate: Date;
+                            onClick: (path: string) => void;
+                        }) => (
                             <TableRow
                                 key={`file-row-${datum.path}`}
                                 className={clsx({ [classes.directoryRow]: datum.isDirectory })}
                                 hover
+                                onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
                                 onClick={
                                     datum.isDirectory
                                         ? (): void => {

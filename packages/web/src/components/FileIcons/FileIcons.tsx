@@ -64,7 +64,17 @@ const FileIcons: React.FC<FileIconsProps> = ({ 'data-testid': dataTestid }) => {
                     size={30}
                 />
             )}
-            {!customLoading && !error && !isEmpty && data?.ls?.map(file => (
+            {!customLoading && !error && !isEmpty && data?.ls?.map((file: {
+                name: string;
+                path: string;
+                extension: string;
+                isDirectory: boolean;
+                parentDirectory: string;
+                createdDate: Date;
+                size: number;
+                populatedDate: Date;
+                onClick: (path: string) => void;
+            }) => (
                 <FileIcon
                     key={`file-icon-${file.path}`}
                     {...file}

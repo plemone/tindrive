@@ -14,9 +14,10 @@ import {
     Box,
 } from '@material-ui/core';
 import { FileColumnProps } from './FileColumn.d';
-import { useRouterLoader } from '../../hooks';
+import { useRouterLoader, useFolderActions, useFileActions } from '../../hooks';
 import { ls } from '../../queries';
 import { Spinner } from '../index';
+import { useContextMenu } from '../ContextMenu';
 
 const useStyles = makeStyles(() => ({
     noContent: {
@@ -42,11 +43,14 @@ const FileColumn: React.FC<FileColumnProps> = ({
     'data-testid': dataTestid,
 }) => {
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
+    const classes = useStyles();
+    const contextMenu = useContextMenu();
+    const fileActions = useFileActions();
+    const folderActions = useFolderActions();
     const router = useRouter();
     const routerPath = router?.query?.path as string || './' as string;
     const customLoading = useRouterLoader(loading);
     const [t] = useTranslation('common');
-    const classes = useStyles();
     const isEmpty = data?.ls?.length === 0;
     const segmentedPath = routerPath.split('/').filter(path => !!path);
 
@@ -59,9 +63,15 @@ const FileColumn: React.FC<FileColumnProps> = ({
         >
             {!customLoading && !error && !isEmpty && (
                 <List>
-                    {data?.ls?.map((datum, index) => (
+                    {data?.ls?.map((datum: {
+                        path: string;
+                        isDirectory: boolean;
+                        parentDirectory: string;
+                        name: string;
+                    }, index: number) => (
                         <ListItem
                             key={`file-list-${datum.path}`}
+                            onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
                             button
                             data-testid={`file-column-${datum.isDirectory ? 'folder' : 'file'}-${index}`}
                             className={datum.isDirectory ? classes.directoryRow : classes.fileRow}

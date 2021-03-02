@@ -8,7 +8,7 @@ import createCache from '@emotion/cache';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
-import { theme } from '../src';
+import { theme, ContextMenuProvider, ConfirmationProvider } from '../src';
 import commonEn from '../src/translations/en/common.json';
 import '../public/index.css';
 
@@ -41,13 +41,17 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
                     <Head>
                         <title>Tindrive</title>
                         <meta
-                            content='initial-scale=1, width=device-width'
-                            name='viewport'
+                            content="initial-scale=1, width=device-width"
+                            name="viewport"
                         />
                     </Head>
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
-                        <Component {...pageProps} />
+                        <ContextMenuProvider>
+                            <ConfirmationProvider>
+                                <Component {...pageProps} />
+                            </ConfirmationProvider>
+                        </ContextMenuProvider>
                     </ThemeProvider>
                 </CacheProvider>
             </I18nextProvider>

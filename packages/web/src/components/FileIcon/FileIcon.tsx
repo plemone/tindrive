@@ -10,7 +10,10 @@ import {
     InsertDriveFile as FileIconIcon,
     Folder as FolderIcon,
 } from '@material-ui/icons';
+import { useContextMenu } from '../ContextMenu';
+import { useFolderActions, useFileActions } from '../../hooks';
 import { FileIconProps } from './FileIcon.d';
+import { Classes } from '../../index.d';
 
 export const useStyles = makeStyles(theme => ({
     root: {
@@ -52,7 +55,11 @@ const FileIcon: React.FC<FileIconProps> = ({
 }) => {
     const characterLimit = 30;
     const classes = useStyles();
-    const getIcon = (isDirectory, classes): React.ReactNode => {
+    const contextMenu = useContextMenu();
+    const fileActions = useFileActions();
+    const folderActions = useFolderActions();
+
+    const getIcon = (isDirectory: boolean, classes: Classes): React.ReactNode => {
         const Component = isDirectory ? FolderIcon : FileIconIcon;
         return (
             <Component
@@ -66,6 +73,7 @@ const FileIcon: React.FC<FileIconProps> = ({
         ? (
             <Tooltip title={name}>
                 <IconButton
+                    onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
                     className={classes.button}
                     onClick={(): void => isDirectory && onClick(path)}
                 >
@@ -81,6 +89,7 @@ const FileIcon: React.FC<FileIconProps> = ({
         )
         : (
             <IconButton
+                onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
                 className={classes.button}
                 onClick={(): void => isDirectory && onClick(path)}
             >

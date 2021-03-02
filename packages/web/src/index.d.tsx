@@ -3,3 +3,5 @@ export interface StandardProps {
     style?: Record<string, unknown>;
     'data-testid'?: string;
 }
+
+export type Classes = Record<string, string>;

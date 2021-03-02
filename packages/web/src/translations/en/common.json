@@ -16,5 +16,17 @@
    },
    "error": {
        "unknown": "An error has occured"
+   },
+   "folderActions": {
+       "confirmDeleteTitle": "Are you sure?",
+       "confirmDeleteMsg": "Deleting this folder will permanently remove the folder and all it's contents from source"
+   },
+   "fileActions": {
+       "confirmDeleteTitle": "Are you sure?",
+       "confirmDeleteMsg": "Deleting this file will permanently remove it from it's source"
+   },
+   "confirmation": {
+        "ok": "Ok",
+        "cancel": "Cancel"
    }
 }
