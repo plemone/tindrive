@@ -8,7 +8,12 @@ import createCache from '@emotion/cache';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
-import { theme, ContextMenuProvider, ConfirmationProvider } from '../src';
+import {
+    theme,
+    ActionTrayProvider,
+    ContextMenuProvider,
+    ConfirmationProvider,
+} from '../src';
 import commonEn from '../src/translations/en/common.json';
 import '../public/index.css';
 
@@ -49,7 +54,9 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
                         <CssBaseline />
                         <ContextMenuProvider>
                             <ConfirmationProvider>
-                                <Component {...pageProps} />
+                                <ActionTrayProvider>
+                                    <Component {...pageProps} />
+                                </ActionTrayProvider>
                             </ConfirmationProvider>
                         </ContextMenuProvider>
                     </ThemeProvider>

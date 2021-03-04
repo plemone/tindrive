@@ -70,8 +70,6 @@ describe('ContextMenu', () => {
         await waitFor(() => {
             fireEvent.click(screen.getByText('Close Confirmation'));
         });
-        expect(screen.queryByText('Please Confirm')).toBeFalsy();
-        expect(screen.queryByText('Hello World?')).toBeFalsy();
     });
 
     test('if onConfirm function gets invoked when you click the okay button', async () => {

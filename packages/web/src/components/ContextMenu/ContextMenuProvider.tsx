@@ -50,7 +50,7 @@ const ContextMenuProvider: React.FC<ContextMenuProviderProps> = ({ children }) =
             >
                 {state.items.map(item => (
                     <MenuItem
-                        key={`menu-item-${item.name}`}
+                        key={`context-menu-item-${item.name}`}
                         onClick={async (e: React.SyntheticEvent) => {
                             await item.handler(e);
                             onClose();

@@ -20,9 +20,14 @@ import { useTranslation } from 'react-i18next';
 import Spinner from '../Spinner';
 import { FileListProps } from './FileList.d';
 import { ls } from '../../queries';
-import { getExtensionDescriptions } from '../../utils';
+import {
+    useFileActions,
+    useRouterLoader,
+    useFolderActions,
+    useWindowDimensions,
+} from '../../hooks';
+import { getDeviceDimensions, getExtensionDescriptions } from '../../utils';
 import { useContextMenu } from '../ContextMenu';
-import { useRouterLoader, useFolderActions, useFileActions } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -56,6 +61,8 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const { error, loading = true, data } = useQuery(ls, { variables: { path } });
     const customLoading = useRouterLoader(loading);
     const isEmpty = data?.ls?.length === 0;
+    const { width } = useWindowDimensions();
+    const minWidth = getDeviceDimensions().tablet.max;
 
     return (
         <Box
@@ -70,12 +77,20 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             <TableCell align="right">
                                 {t('files.kind')}
                             </TableCell>
-                            <TableCell align="right">
-                                {t('files.createdDate')}
-                            </TableCell>
-                            <TableCell align="right">
-                                {t('files.size')}
-                            </TableCell>
+                            {
+                                width > minWidth && (
+                                    <TableCell align="right">
+                                        {t('files.createdDate')}
+                                    </TableCell>
+                                )
+                            }
+                            {
+                                width > minWidth && (
+                                    <TableCell align="right">
+                                        {t('files.size')}
+                                    </TableCell>
+                                )
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -131,14 +146,18 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                                             )
                                     }
                                 </TableCell>
-                                <TableCell align="right">
-                                    {moment(datum.createdDate).format('LLLL')}
+                                {width > minWidth && (
+                                    <TableCell align="right">
+                                        {moment(datum.createdDate).format('LLLL')}
 
-                                </TableCell>
-                                <TableCell align="right">
-                                    {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
+                                    </TableCell>
+                                )}
+                                {width > minWidth && (
+                                    <TableCell align="right">
+                                        {`${Math.round((datum.size / 1024) * 10) / 10} KB`}
 
-                                </TableCell>
+                                    </TableCell>
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>
