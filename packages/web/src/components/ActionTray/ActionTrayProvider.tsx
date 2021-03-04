@@ -1,26 +1,30 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    BottomNavigation,
-    BottomNavigationAction,
+    Box,
+    IconButton,
 } from '@material-ui/core';
+import {
+    Delete as RemoveIcon,
+    Edit as RenameIcon,
+} from '@material-ui/icons';
 import ActionTrayContext from './ActionTrayContext';
-import { ActionTrayProps, MenuItemType } from './ActionTray.d';
+import {
+    ActionTrayProps,
+    MenuItemType,
+} from './ActionTray.d';
 
 const useStyles = makeStyles({
     root: {
         position: 'fixed',
-        bottom: 10,
+        bottom: 20,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 'auto',
         width: '100%',
     },
-    label: {
-        fontSize: 12,
-        color: 'white !important',
-    },
+    action: {},
 });
 
 const ActionTrayProvider: React.FC<ActionTrayProps> = ({ children }) => {
@@ -36,6 +40,7 @@ const ActionTrayProvider: React.FC<ActionTrayProps> = ({ children }) => {
             items,
         }));
     };
+
     const closeActionTray = () => {
         setState(prevState => ({
             ...prevState,
@@ -43,23 +48,18 @@ const ActionTrayProvider: React.FC<ActionTrayProps> = ({ children }) => {
         }));
     };
 
+    const iconMapByName = {
+        remove: <RemoveIcon />,
+        rename: <RenameIcon />,
+    };
+
     return (
         <ActionTrayContext.Provider value={{ openActionTray, closeActionTray }}>
             {children}
             {state.open && (
-                <div className={classes.root}>
-                    <BottomNavigation showLabels>
-                        {state.items.map((item: MenuItemType) => (
-                            <BottomNavigationAction
-                                key={`action-tray-item-${item.name}`}
-                                label={item.title}
-                                value={item.name}
-                                className={classes.label}
-                                onClick={item.handler}
-                            />
-                        ))}
-                    </BottomNavigation>
-                </div>
+                <Box className={classes.root}>
+                    {state.items.map((item: MenuItemType) => (<IconButton key={`action-tray-item-${item.name}`}>{iconMapByName[item.name]}</IconButton>))}
+                </Box>
             )}
         </ActionTrayContext.Provider>
     );

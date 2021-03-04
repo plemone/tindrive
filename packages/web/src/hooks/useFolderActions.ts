@@ -17,8 +17,13 @@ export default function useFolderActions(): {
 
     return [
         {
-            name: 'moveToTrash',
+            name: 'remove',
             title: 'Move to Trash',
+            handler: moveToTrash,
+        },
+        {
+            name: 'rename',
+            title: 'Rename',
             handler: moveToTrash,
         },
     ];
