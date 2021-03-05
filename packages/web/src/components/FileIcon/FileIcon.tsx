@@ -38,21 +38,26 @@ export const useStyles = makeStyles(theme => ({
         },
     },
     button: {
-        borderRadius: '5%',
+        borderRadius: '0%',
         '& .MuiTouchRipple-root span': {
             backgroundColor: `${theme.palette.grey[500]}!important`,
             opacity: 0.3,
         },
+    },
+    selected: {
+        textDecoration: 'none',
+        backgroundColor: 'rgba(148, 168, 245, 0.08)',
     },
 }));
 
 const FileIcon: React.FC<FileIconProps> = ({
     isDirectory,
     name,
-    onClick,
+    onClick: onClickProps,
     path,
     'data-testid': dataTestid,
 }) => {
+    const [selected, setSelected] = React.useState(false);
     const characterLimit = 30;
     const classes = useStyles();
     const contextMenu = useContextMenu();
@@ -69,15 +74,22 @@ const FileIcon: React.FC<FileIconProps> = ({
         );
     };
 
-    const onDoubleClick = (): void => isDirectory && onClick(path);
+    const onDoubleClick = (): void => isDirectory && onClickProps(path);
+
+    const onClick = (event: React.MouseEvent) => {
+        if (event.ctrlKey) {
+            setSelected(!selected);
+        }
+    };
 
     return name.length > characterLimit
         ? (
             <Tooltip title={name}>
                 <IconButton
                     onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
-                    className={classes.button}
+                    className={clsx(classes.button, { [classes.selected]: selected })}
                     onDoubleClick={onDoubleClick}
+                    onClick={onClick}
                     disableRipple
                 >
                     <Box
@@ -93,8 +105,9 @@ const FileIcon: React.FC<FileIconProps> = ({
         : (
             <IconButton
                 onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
-                className={classes.button}
+                className={clsx(classes.button, { [classes.selected]: selected })}
                 onDoubleClick={onDoubleClick}
+                onClick={onClick}
                 disableRipple
             >
                 <Box

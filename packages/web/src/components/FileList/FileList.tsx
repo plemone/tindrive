@@ -48,6 +48,10 @@ const useStyles = makeStyles(theme => ({
     },
     folderIcon: { fill: '#FBD405' },
     row: { cursor: 'pointer' },
+    selected: {
+        textDecoration: 'none',
+        backgroundColor: 'rgba(148, 168, 245, 0.08)',
+    },
 }));
 
 const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
@@ -55,6 +59,7 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const contextMenu = useContextMenu();
     const fileActions = useFileActions();
     const folderActions = useFolderActions();
+    const [selected, setSelected] = React.useState([]);
     const router = useRouter();
     const [t] = useTranslation('common');
     const path = router?.query?.path as string || './' as string;
@@ -63,6 +68,20 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
     const isEmpty = data?.ls?.length === 0;
     const { width } = useWindowDimensions();
     const minWidth = getDeviceDimensions().tablet.max;
+
+    React.useEffect(() => {
+        setSelected([]);
+    }, [path]);
+
+    const onClick = (event: React.MouseEvent, index: number) => {
+        if (event.ctrlKey) {
+            setSelected(prevState => {
+                const newState = [...prevState];
+                newState[index] = !newState[index];
+                return newState;
+            });
+        }
+    };
 
     return (
         <Box
@@ -104,12 +123,13 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                             size: number;
                             populatedDate: Date;
                             onClick: (path: string) => void;
-                        }) => (
+                        }, index: number) => (
                             <TableRow
                                 key={`file-row-${datum.path}`}
-                                className={classes.row}
                                 hover
                                 onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
+                                className={clsx(classes.row, { [classes.selected]: !!selected[index] })}
+                                onClick={(event: React.MouseEvent) => onClick(event, index)}
                                 onDoubleClick={
                                     datum.isDirectory
                                         ? (): void => {

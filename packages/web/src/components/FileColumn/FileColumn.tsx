@@ -33,6 +33,10 @@ const useStyles = makeStyles(() => ({
     },
     folderIcon: { fill: '#FBD405' },
     row: { cursor: 'pointer' },
+    selected: {
+        textDecoration: 'none',
+        backgroundColor: 'rgba(148, 168, 245, 0.08)',
+    },
 }));
 
 const FileColumn: React.FC<FileColumnProps> = ({
@@ -46,12 +50,27 @@ const FileColumn: React.FC<FileColumnProps> = ({
     const contextMenu = useContextMenu();
     const fileActions = useFileActions();
     const folderActions = useFolderActions();
+    const [selected, setSelected] = React.useState([]);
     const router = useRouter();
     const routerPath = router?.query?.path as string || './' as string;
     const customLoading = useRouterLoader(loading);
     const [t] = useTranslation('common');
     const isEmpty = data?.ls?.length === 0;
     const segmentedPath = routerPath.split('/').filter(path => !!path);
+
+    React.useEffect(() => {
+        setSelected([]);
+    }, [path]);
+
+    const onClick = (event: React.MouseEvent, index: number) => {
+        if (event.ctrlKey) {
+            setSelected(prevState => {
+                const newState = [...prevState];
+                newState[index] = !newState[index];
+                return newState;
+            });
+        }
+    };
 
     return (
         <Box
@@ -74,7 +93,8 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
                             button
                             data-testid={`file-column-${datum.isDirectory ? 'folder' : 'file'}-${index}`}
-                            className={classes.row}
+                            className={clsx(classes.row, { [classes.selected]: !!selected[index] })}
+                            onClick={(event: React.MouseEvent) => onClick(event, index)}
                             onDoubleClick={
                                 datum.isDirectory
                                     ? (): void => {
