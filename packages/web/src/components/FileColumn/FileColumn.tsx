@@ -32,8 +32,7 @@ const useStyles = makeStyles(() => ({
         '& svg': { marginRight: 7 },
     },
     folderIcon: { fill: '#FBD405' },
-    directoryRow: { cursor: 'pointer' },
-    fileRow: { cursor: 'default' },
+    row: { cursor: 'pointer' },
 }));
 
 const FileColumn: React.FC<FileColumnProps> = ({
@@ -70,12 +69,13 @@ const FileColumn: React.FC<FileColumnProps> = ({
                         name: string;
                     }, index: number) => (
                         <ListItem
+                            disableRipple
                             key={`file-list-${datum.path}`}
                             onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
                             button
                             data-testid={`file-column-${datum.isDirectory ? 'folder' : 'file'}-${index}`}
-                            className={datum.isDirectory ? classes.directoryRow : classes.fileRow}
-                            onClick={
+                            className={classes.row}
+                            onDoubleClick={
                                 datum.isDirectory
                                     ? (): void => {
                                         if (routerPath === datum.path) {

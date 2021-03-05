@@ -10,7 +10,6 @@ import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
 import {
     theme,
-    ActionTrayProvider,
     ContextMenuProvider,
     ConfirmationProvider,
 } from '../src';
@@ -54,9 +53,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
                         <CssBaseline />
                         <ContextMenuProvider>
                             <ConfirmationProvider>
-                                <ActionTrayProvider>
-                                    <Component {...pageProps} />
-                                </ActionTrayProvider>
+                                <Component {...pageProps} />
                             </ConfirmationProvider>
                         </ContextMenuProvider>
                     </ThemeProvider>

@@ -9,22 +9,38 @@ export default function useFileActions(): {
     const [t] = useTranslation('common');
     const confirmation = useConfirmation();
 
-    const moveToTrash = () => {
+    const remove = () => {
         confirmation.openConfirmation(t('fileActions.confirmDeleteTitle'), t('fileActions.confirmDeleteMsg'), () => {
             confirmation.closeConfirmation();
         });
     };
 
+    const rename = () => {};
+
+    const cut = () => {};
+
+    const copy = () => {};
+
     return [
         {
             name: 'remove',
-            title: 'Move to Trash',
-            handler: moveToTrash,
+            title: 'Remove',
+            handler: remove,
         },
         {
             name: 'rename',
             title: 'Rename',
-            handler: moveToTrash,
+            handler: rename,
+        },
+        {
+            name: 'cut',
+            title: 'Cut',
+            handler: cut,
+        },
+        {
+            name: 'copy',
+            title: 'Copy',
+            handler: copy,
         },
     ];
 }

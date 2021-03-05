@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
         '& svg': { marginRight: 7 },
     },
     folderIcon: { fill: '#FBD405' },
-    directoryRow: { cursor: 'pointer' },
+    row: { cursor: 'pointer' },
 }));
 
 const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
@@ -107,10 +107,10 @@ const FileList: React.FC<FileListProps> = ({ 'data-testid': dataTestid }) => {
                         }) => (
                             <TableRow
                                 key={`file-row-${datum.path}`}
-                                className={clsx({ [classes.directoryRow]: datum.isDirectory })}
+                                className={classes.row}
                                 hover
                                 onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
-                                onClick={
+                                onDoubleClick={
                                     datum.isDirectory
                                         ? (): void => {
                                             // Calling Router with these options should invoke the file called ../../../pages/[path].tsx

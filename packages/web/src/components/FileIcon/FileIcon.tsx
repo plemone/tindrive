@@ -49,7 +49,7 @@ export const useStyles = makeStyles(theme => ({
 const FileIcon: React.FC<FileIconProps> = ({
     isDirectory,
     name,
-    onClick: onClickProps,
+    onClick,
     path,
     'data-testid': dataTestid,
 }) => {
@@ -69,7 +69,7 @@ const FileIcon: React.FC<FileIconProps> = ({
         );
     };
 
-    const onClick = (): void => isDirectory && onClickProps(path);
+    const onDoubleClick = (): void => isDirectory && onClick(path);
 
     return name.length > characterLimit
         ? (
@@ -77,7 +77,8 @@ const FileIcon: React.FC<FileIconProps> = ({
                 <IconButton
                     onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
                     className={classes.button}
-                    onClick={onClick}
+                    onDoubleClick={onDoubleClick}
+                    disableRipple
                 >
                     <Box
                         className={classes.root}
@@ -93,7 +94,8 @@ const FileIcon: React.FC<FileIconProps> = ({
             <IconButton
                 onContextMenu={event => contextMenu.openContextMenu(event, isDirectory ? folderActions : fileActions)}
                 className={classes.button}
-                onClick={onClick}
+                onDoubleClick={onDoubleClick}
+                disableRipple
             >
                 <Box
                     className={classes.root}
