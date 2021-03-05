@@ -19,7 +19,7 @@ import { ls } from '../../queries';
 import { Spinner } from '../index';
 import { useContextMenu } from '../ContextMenu';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
     noContent: {
         display: 'flex',
         justifyContent: 'center',
@@ -36,6 +36,16 @@ const useStyles = makeStyles(() => ({
     selected: {
         textDecoration: 'none',
         backgroundColor: 'rgba(148, 168, 245, 0.08)',
+    },
+    inCurrentFolder: {
+        textDecoration: 'none',
+        backgroundColor: theme.palette.grey.A700,
+    },
+    selectedAndInCurrentFolder: {
+        textDecoration: 'none',
+        borderTop: `1px solid ${theme.palette.primary.light}`,
+        borderBottom: `1px solid ${theme.palette.primary.light}`,
+        backgroundColor: theme.palette.grey.A700,
     },
 }));
 
@@ -93,7 +103,11 @@ const FileColumn: React.FC<FileColumnProps> = ({
                             onContextMenu={event => contextMenu.openContextMenu(event, datum.isDirectory ? folderActions : fileActions)}
                             button
                             data-testid={`file-column-${datum.isDirectory ? 'folder' : 'file'}-${index}`}
-                            className={clsx(classes.row, { [classes.selected]: !!selected[index] })}
+                            className={clsx(classes.row, {
+                                [classes.selected]: (!!selected[index] && segmentedPath[indexProps] !== datum.name),
+                                [classes.inCurrentFolder]: (!selected[index] && segmentedPath[indexProps] === datum.name),
+                                [classes.selectedAndInCurrentFolder]: (!!selected[index] && segmentedPath[indexProps] === datum.name),
+                            })}
                             onClick={(event: React.MouseEvent) => onClick(event, index)}
                             onDoubleClick={
                                 datum.isDirectory
@@ -112,7 +126,6 @@ const FileColumn: React.FC<FileColumnProps> = ({
                                         });
                                     } : undefined
                             }
-                            selected={segmentedPath[indexProps] === datum.name}
                         >
                             <Box key={`file-list-item-${datum.path}`}>
                                 <Box className={classes.name}>

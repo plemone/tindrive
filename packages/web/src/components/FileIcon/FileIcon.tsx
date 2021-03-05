@@ -39,10 +39,6 @@ export const useStyles = makeStyles(theme => ({
     },
     button: {
         borderRadius: '0%',
-        '& .MuiTouchRipple-root span': {
-            backgroundColor: `${theme.palette.grey[500]}!important`,
-            opacity: 0.3,
-        },
     },
     selected: {
         textDecoration: 'none',
